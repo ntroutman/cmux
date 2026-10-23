@@ -116,6 +116,23 @@ final class MarkdownPanelTests: XCTestCase {
         XCTAssertNil(defaults.object(forKey: MarkdownFontFamily.key))
     }
 
+    func testMarkdownThemeSettingsResolvedDefaultTrimsAndTreatsEmptyAsNil() throws {
+        let suiteName = "cmux.markdownThemeTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        // Unset follows the terminal.
+        XCTAssertNil(MarkdownThemeSettings.resolvedDefault(defaults: defaults))
+
+        // Whitespace-only is treated as unset.
+        defaults.set("  \n ", forKey: MarkdownThemeSettings.key)
+        XCTAssertNil(MarkdownThemeSettings.resolvedDefault(defaults: defaults))
+
+        // A real name is trimmed.
+        defaults.set("  Catppuccin Latte  \n", forKey: MarkdownThemeSettings.key)
+        XCTAssertEqual(MarkdownThemeSettings.resolvedDefault(defaults: defaults), "Catppuccin Latte")
+    }
+
     func testMarkdownMaxWidthSettingsClampAndResolvedDefault() throws {
         XCTAssertEqual(MarkdownMaxWidthSettings.clamp(200), MarkdownMaxWidthSettings.minimumCSSPixels)
         XCTAssertEqual(MarkdownMaxWidthSettings.clamp(4000), MarkdownMaxWidthSettings.maximumCSSPixels)

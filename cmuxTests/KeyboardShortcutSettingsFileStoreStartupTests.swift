@@ -572,6 +572,68 @@ final class KeyboardShortcutSettingsFileStoreStartupTests: XCTestCase {
         }
     }
 
+    /// A `markdown.theme` string lands in UserDefaults even when the name does
+    /// not resolve; an unknown name must not raise a parsing issue, which would
+    /// retain the whole previous snapshot and silently keep the old theme.
+    func testSettingsFileParsesMarkdownThemeWithoutIssueForUnknownName() throws {
+        let defaults = UserDefaults.standard
+
+        try preservingDefaults(keys: [
+            MarkdownThemeSettings.key,
+            settingsFileBackupsDefaultsKey,
+            importedManagedDefaultsKey
+        ]) {
+            defaults.removeObject(forKey: MarkdownThemeSettings.key)
+            defaults.removeObject(forKey: settingsFileBackupsDefaultsKey)
+            defaults.removeObject(forKey: importedManagedDefaultsKey)
+
+            let directoryURL = try makeTemporaryDirectory()
+            defer { try? FileManager.default.removeItem(at: directoryURL) }
+
+            let settingsFileURL = directoryURL.appendingPathComponent("cmux.json", isDirectory: false)
+            try writeSettingsFile(
+                """
+                {
+                  "markdown": {
+                    "theme": "Catppuccin Latte"
+                  }
+                }
+                """,
+                to: settingsFileURL
+            )
+
+            let store = KeyboardShortcutSettingsFileStore(
+                primaryPath: settingsFileURL.path,
+                fallbackPath: nil,
+                additionalFallbackPaths: [],
+                startWatching: false
+            )
+
+            withExtendedLifetime(store) {
+                XCTAssertEqual(defaults.string(forKey: MarkdownThemeSettings.key), "Catppuccin Latte")
+                XCTAssertFalse(store.configurationIssues.contains { $0.contains("markdown.theme") })
+            }
+
+            // An unknown name is still accepted at parse time with no issue;
+            // resolution and fallback happen later at appearance-build time.
+            try writeSettingsFile(
+                """
+                {
+                  "markdown": {
+                    "theme": "Definitely Not A Real Theme Name"
+                  }
+                }
+                """,
+                to: settingsFileURL
+            )
+            store.reload()
+            withExtendedLifetime(store) {
+                XCTAssertEqual(defaults.string(forKey: MarkdownThemeSettings.key), "Definitely Not A Real Theme Name")
+                XCTAssertFalse(store.configurationIssues.contains { $0.contains("markdown.theme") })
+            }
+        }
+    }
+
     /// Verifies that cmux.json updates the same preference read by the editor.
     func testSettingsFileParsesFileEditorWordWrap() throws {
         let defaults = UserDefaults.standard

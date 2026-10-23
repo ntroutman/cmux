@@ -14,6 +14,7 @@ private enum SettingsJSONPathFallbackCatalog {
         "markdown.fontSize",
         "markdown.fontFamily",
         "markdown.maxWidth",
+        "markdown.theme",
         "fileEditor.wordWrap",
         "fileEditor.syntaxHighlighting",
         "fileEditor.lineNumbers",
