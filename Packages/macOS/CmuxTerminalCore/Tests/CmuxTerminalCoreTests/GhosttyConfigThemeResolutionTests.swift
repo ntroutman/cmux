@@ -59,19 +59,45 @@ import Testing
         #expect(config.foregroundColor.hexString().caseInsensitiveCompare("#4C4F69") == .orderedSame)
     }
 
-    @Test func unknownThemeNameFails() throws {
-        // Empty themes dir so no candidate file exists for the name.
-        let root = try makeThemesRoot("Present", contents: "background = #000000\nforeground = #ffffff")
+    @Test func resolvedOutcomeReportsNoFailure() throws {
+        // Guards against reintroducing an `Equatable` that treats every success
+        // as unequal: a resolved outcome must be distinguishable from any
+        // failure through `failure == nil`, not through a broken `==`.
+        let root = try makeThemesRoot(
+            "Latte",
+            contents: "background = #eff1f5\nforeground = #4c4f69"
+        )
         defer { try? FileManager.default.removeItem(at: root) }
 
         let outcome = GhosttyConfig.resolveTheme(
-            "Absent",
+            "Latte",
             preferredColorScheme: .light,
             environment: ["GHOSTTY_RESOURCES_DIR": root.path],
             bundleResourceURL: nil
         )
 
-        #expect(outcome == .failed(.unknownTheme(name: "Absent")))
+        #expect(outcome.failure == nil)
+    }
+
+    @Test func unknownThemeNameFails() throws {
+        // Empty themes dir so no candidate file exists for the name. The name
+        // must be collision-resistant: `themeSearchPaths` also walks host
+        // fallbacks (`/Applications/Ghostty.app/...`, `~/.config/ghostty/...`,
+        // `~/Library/Application Support/...`) that `GHOSTTY_RESOURCES_DIR` does
+        // not isolate, so a fixed name could match a real host theme file and
+        // flip this all-paths-must-miss assertion. A per-run UUID cannot.
+        let missingName = "cmux-missing-\(UUID().uuidString)"
+        let root = try makeThemesRoot("Present", contents: "background = #000000\nforeground = #ffffff")
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let outcome = GhosttyConfig.resolveTheme(
+            missingName,
+            preferredColorScheme: .light,
+            environment: ["GHOSTTY_RESOURCES_DIR": root.path],
+            bundleResourceURL: nil
+        )
+
+        #expect(outcome.failure == .unknownTheme(name: missingName))
     }
 
     @Test func unmatchedConditionalSideFails() throws {
@@ -89,7 +115,7 @@ import Testing
             bundleResourceURL: nil
         )
 
-        #expect(outcome == .failed(.unmatchedConditionalSide(preferred: .dark)))
+        #expect(outcome.failure == .unmatchedConditionalSide(preferred: .dark))
     }
 
     @Test func readableFileWithNoColorDirectivesReportsMissingColors() throws {

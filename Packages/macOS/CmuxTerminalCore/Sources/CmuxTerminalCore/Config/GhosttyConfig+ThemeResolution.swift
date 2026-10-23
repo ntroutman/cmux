@@ -15,20 +15,20 @@ public enum GhosttyThemeResolution {
     case resolved(GhosttyConfig)
     /// The theme could not be resolved; the case names the cause.
     case failed(GhosttyThemeResolutionFailure)
-}
 
-extension GhosttyThemeResolution: Equatable {
-    /// Two resolutions compare equal only when both failed with the same cause.
-    /// A `.resolved` config is only ever produced internally and is never
-    /// compared for equality; treating any two successes as unequal keeps this
-    /// `Equatable` without requiring `GhosttyConfig` itself to be `Equatable`.
-    public static func == (lhs: GhosttyThemeResolution, rhs: GhosttyThemeResolution) -> Bool {
-        switch (lhs, rhs) {
-        case let (.failed(lhsFailure), .failed(rhsFailure)):
-            return lhsFailure == rhsFailure
-        default:
-            return false
-        }
+    /// The failure cause when this is `.failed`, else `nil`.
+    ///
+    /// `GhosttyThemeResolution` deliberately is not `Equatable`: its `.resolved`
+    /// payload is a `GhosttyConfig`, which is not `Equatable`, so a synthesized
+    /// or hand-written `==` could never compare two successes meaningfully and
+    /// would silently return `false` for `.resolved`-vs-`.resolved` — breaking
+    /// reflexivity on a public type. The `.failed` cause is the only part worth
+    /// comparing, and ``GhosttyThemeResolutionFailure`` is `Equatable`, so
+    /// callers (Settings validation, the Markdown appearance builder, tests)
+    /// branch on `.resolved`/`.failed` and compare this cause directly.
+    public var failure: GhosttyThemeResolutionFailure? {
+        guard case let .failed(failure) = self else { return nil }
+        return failure
     }
 }
 
