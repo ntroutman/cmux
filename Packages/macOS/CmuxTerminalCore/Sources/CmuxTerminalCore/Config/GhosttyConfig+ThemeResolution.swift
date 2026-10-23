@@ -51,8 +51,9 @@ extension GhosttyConfig {
     /// without reimplementing it.
     ///
     /// Resolution mirrors `loadTheme`: ``appliedThemeName(from:preferredColorScheme:)``
-    /// first (a `nil` there is an unmatched conditional side), then an absolute
-    /// path, then ``themeNameCandidates(from:)`` over ``themeSearchPaths(forThemeName:environment:bundleResourceURL:)``.
+    /// first (a `nil` there is an unmatched conditional side), then a *readable*
+    /// absolute path, then — including when an absolute path is unreadable —
+    /// ``themeNameCandidates(from:)`` over ``themeSearchPaths(forThemeName:environment:bundleResourceURL:)``.
     /// A file is parsed into a fresh ``GhosttyConfig``; success requires both
     /// ``hasParsedBackgroundColor`` and ``hasParsedForegroundColor`` — never the
     /// mere presence of the default colors — otherwise `.missingColors`.
@@ -69,12 +70,13 @@ extension GhosttyConfig {
             return .failed(.unmatchedConditionalSide(preferred: preferredColorScheme))
         }
 
+        // Match `loadTheme` exactly: the absolute branch is taken only when the
+        // path is absolute AND readable; an unreadable absolute path falls
+        // through to the candidate/search loop below rather than short-circuiting.
         let expandedThemePath = NSString(string: resolvedThemeName).expandingTildeInPath
-        if (expandedThemePath as NSString).isAbsolutePath {
-            if let contents = try? String(contentsOfFile: expandedThemePath, encoding: .utf8) {
-                return outcome(forParsedContents: contents, path: expandedThemePath)
-            }
-            return .failed(.unknownTheme(name: resolvedThemeName))
+        if (expandedThemePath as NSString).isAbsolutePath,
+           let contents = try? String(contentsOfFile: expandedThemePath, encoding: .utf8) {
+            return outcome(forParsedContents: contents, path: expandedThemePath)
         }
 
         for candidateName in themeNameCandidates(from: resolvedThemeName) {

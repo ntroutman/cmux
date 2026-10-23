@@ -172,6 +172,58 @@ import Testing
         #expect(config.foregroundColor.hexString().caseInsensitiveCompare("#FFFFFF") == .orderedSame)
     }
 
+    @Test func unreadableAbsolutePathFallsThroughToSearchLoopLikeLoadTheme() throws {
+        // `loadTheme` takes the absolute branch only when the path is absolute
+        // AND readable; an unreadable absolute path falls through to the
+        // candidate x search-path loop (GhosttyConfig.swift loadTheme). The
+        // resolver must match that exactly rather than short-circuit to
+        // `.unknownTheme`. Here the configured value is an absolute path that
+        // does not exist, but a readable file is staged at the fallthrough
+        // location `GHOSTTY_RESOURCES_DIR/themes/<thatAbsolutePath>` (the loop
+        // interpolates the whole name into `themes/<name>`), so a faithful
+        // resolver — and `loadTheme` — find it.
+        let missingAbsolutePath = "/cmux-nonexistent-\(UUID().uuidString)/Themed"
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("cmux-theme-resolution-\(UUID().uuidString)", isDirectory: true)
+        let fallthroughFile = root
+            .appendingPathComponent("themes", isDirectory: true)
+            .appendingPathComponent(missingAbsolutePath, isDirectory: false)
+        try FileManager.default.createDirectory(
+            at: fallthroughFile.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        try "background = #123456\nforeground = #abcdef"
+            .write(to: fallthroughFile, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let environment = ["GHOSTTY_RESOURCES_DIR": root.path]
+        let outcome = GhosttyConfig.resolveTheme(
+            missingAbsolutePath,
+            preferredColorScheme: .dark,
+            environment: environment,
+            bundleResourceURL: nil
+        )
+
+        guard case let .resolved(config) = outcome else {
+            Issue.record("expected .resolved from the fallthrough search, got \(outcome)")
+            return
+        }
+        #expect(config.backgroundColor.hexString().caseInsensitiveCompare("#123456") == .orderedSame)
+        #expect(config.foregroundColor.hexString().caseInsensitiveCompare("#ABCDEF") == .orderedSame)
+
+        // The terminal path agrees: `loadTheme` loads the same colors, proving
+        // the resolver did not diverge from it on the unreadable-absolute case.
+        var loaded = GhosttyConfig()
+        loaded.loadTheme(
+            missingAbsolutePath,
+            environment: environment,
+            bundleResourceURL: nil,
+            preferredColorScheme: .dark
+        )
+        #expect(loaded.backgroundColor.hexString().caseInsensitiveCompare("#123456") == .orderedSame)
+        #expect(loaded.foregroundColor.hexString().caseInsensitiveCompare("#ABCDEF") == .orderedSame)
+    }
+
     @Test func conditionalThemeSidesListsEveryNamedSide() {
         #expect(GhosttyConfig.conditionalThemeSides("light:A,dark:B") == ["A", "B"])
     }
