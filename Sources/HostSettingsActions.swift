@@ -233,20 +233,23 @@ final class HostSettingsActions: SettingsHostActions {
         // Empty follows the terminal; there is nothing to resolve.
         guard !trimmed.isEmpty else { return .valid }
 
-        // Resolve every named side, not just the live one: a conditional that
-        // only breaks when macOS flips appearance is exactly what a user cannot
-        // discover at runtime. `conditionalThemeSides` yields a bare name for a
-        // non-conditional value, so a plain name is validated the same way. The
-        // side names it returns are not themselves conditional, so the color
-        // scheme passed to `resolveTheme` is irrelevant for them.
-        for side in GhosttyConfig.conditionalThemeSides(trimmed) {
-            let outcome = GhosttyConfig.resolveTheme(side, preferredColorScheme: .light)
+        // Resolve the raw value for both appearances, not just the named sides:
+        // a one-sided conditional such as `light:X` names no theme for `.dark`,
+        // so at runtime the dark appearance silently falls back to the terminal
+        // — exactly the break a user cannot discover. Driving `resolveTheme`
+        // per preference (rather than iterating only the explicitly named sides)
+        // surfaces that absent side as `.unmatchedConditionalSide`. A plain name
+        // resolves identically under both and is validated the same way.
+        for preferredColorScheme in [GhosttyConfig.ColorSchemePreference.light, .dark] {
+            let outcome = GhosttyConfig.resolveTheme(trimmed, preferredColorScheme: preferredColorScheme)
             if let failure = outcome.failure {
                 // The reason the row interpolates names the failing side: a
-                // theme name or theme-file path, i.e. the user's own input, not
-                // translatable prose. The localized framing lives in the row's
-                // `settings.app.markdownTheme.invalid` template.
-                return .invalid(message: markdownThemeFailureReason(side: side, failure: failure))
+                // theme name or theme-file path for a resolvable side that is
+                // broken, or the appearance keyword (`light`/`dark`) for a side
+                // the value names no theme for. All are the user's own config
+                // vocabulary, not translatable prose; the localized framing
+                // lives in the row's `settings.app.markdownTheme.invalid` template.
+                return .invalid(message: markdownThemeFailureReason(failure))
             }
         }
         return .valid
@@ -254,20 +257,21 @@ final class HostSettingsActions: SettingsHostActions {
 
     /// Names the failing side for the Settings row's invalid-message template:
     /// the theme name for an unknown name, the file path for a theme with no
-    /// usable colors. A named side from ``GhosttyConfig/conditionalThemeSides``
-    /// is never itself conditional, so `.unmatchedConditionalSide` is
-    /// unreachable here; it falls back to the side name.
+    /// usable colors, and the appearance keyword (`light`/`dark`) for a
+    /// conditional value that names no theme for that appearance at all.
     private func markdownThemeFailureReason(
-        side: String,
-        failure: GhosttyThemeResolutionFailure
+        _ failure: GhosttyThemeResolutionFailure
     ) -> String {
         switch failure {
         case let .unknownTheme(name):
             return name
         case let .missingColors(path):
             return path
-        case .unmatchedConditionalSide:
-            return side
+        case let .unmatchedConditionalSide(preferred):
+            switch preferred {
+            case .light: return "light"
+            case .dark: return "dark"
+            }
         }
     }
 
