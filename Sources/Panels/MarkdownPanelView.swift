@@ -75,8 +75,11 @@ struct MarkdownPanelView: View {
         ZStack {
             MarkdownWebRenderer(
                 markdown: panel.content,
-                theme: MarkdownWebTheme.resolve(backgroundColor: themeBackgroundColor),
-                backgroundColor: appearance.contentBackgroundColor,
+                theme: MarkdownWebTheme.resolve(
+                    backgroundColor: themeBackgroundColor,
+                    foregroundColor: markdownAppearance.proseForeground
+                ),
+                backgroundColor: markdownAppearance.appearance.contentBackgroundColor,
                 isVisibleInUI: isVisibleInUI && panel.displayMode == .preview,
                 panelId: panel.id,
                 workspaceId: panel.workspaceId,
@@ -99,10 +102,10 @@ struct MarkdownPanelView: View {
                 FilePreviewTextEditor(
                     panel: panel,
                     isVisibleInUI: isVisibleInUI,
-                    themeBackgroundColor: appearance.contentBackgroundColor,
+                    themeBackgroundColor: markdownAppearance.appearance.contentBackgroundColor,
                     themeForegroundColor: themeForegroundColor,
-                    drawsBackground: appearance.drawsContentBackground,
-                    gutterBackgroundColor: appearance.backgroundColor,
+                    drawsBackground: markdownAppearance.appearance.drawsContentBackground,
+                    gutterBackgroundColor: markdownAppearance.appearance.backgroundColor,
                     wordWrap: fileEditorWordWrap,
                     filePath: panel.filePath
                 )
@@ -209,16 +212,27 @@ struct MarkdownPanelView: View {
 
     // MARK: - Theme
 
+    /// The viewer's appearance, themed from `markdown.theme` when it resolves
+    /// and falling back to the terminal `appearance` otherwise. Divider and
+    /// unfocused-overlay values stay the terminal's so splits look uniform.
+    private var markdownAppearance: MarkdownPanelAppearance {
+        MarkdownPanelAppearance.resolve(
+            themeSetting: panel.themeSetting,
+            terminalAppearance: appearance,
+            preferredColorScheme: MarkdownPanelAppearance.preferredColorScheme()
+        )
+    }
+
     private var contentBackgroundColor: Color {
-        Color(nsColor: appearance.contentBackgroundColor)
+        Color(nsColor: markdownAppearance.appearance.contentBackgroundColor)
     }
 
     private var themeBackgroundColor: NSColor {
-        appearance.backgroundColor
+        markdownAppearance.appearance.backgroundColor
     }
 
     private var themeForegroundColor: NSColor {
-        appearance.foregroundColor
+        markdownAppearance.appearance.foregroundColor
     }
 
     private var themeColorScheme: ColorScheme {

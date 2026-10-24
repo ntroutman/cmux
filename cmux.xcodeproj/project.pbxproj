@@ -2658,6 +2658,8 @@
 		D6069002D6069002D6069002 /* MarkdownMermaidZoomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6069001D6069001D6069001 /* MarkdownMermaidZoomTests.swift */; };
 		FFC108C8FD07CF3A1C2470E7 /* MarkdownPanel+Focus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95528F9C36831CC37BC6C483 /* MarkdownPanel+Focus.swift */; };
 		A5001420 /* MarkdownPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5001418 /* MarkdownPanel.swift */; };
+		318F6490BFECDD313ECEA945 /* MarkdownPanelAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5EA68D5E36A49966A19B6AA /* MarkdownPanelAppearance.swift */; };
+		ADD4B37436F56227564FBFF3 /* MarkdownPanelAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E67EC57BD801A47BF3EBAF /* MarkdownPanelAppearanceTests.swift */; };
 		A50014F2 /* MarkdownPanelFileLinkResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50014F0 /* MarkdownPanelFileLinkResolver.swift */; };
 		D3664002D3664002D3664002 /* MarkdownPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3664001D3664001D3664001 /* MarkdownPanelTests.swift */; };
 		A5001421 /* MarkdownPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5001419 /* MarkdownPanelView.swift */; };
@@ -7328,6 +7330,8 @@
 		D6069001D6069001D6069001 /* MarkdownMermaidZoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownMermaidZoomTests.swift; sourceTree = "<group>"; };
 		95528F9C36831CC37BC6C483 /* MarkdownPanel+Focus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Panels/MarkdownPanel+Focus.swift"; sourceTree = "<group>"; };
 		A5001418 /* MarkdownPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panels/MarkdownPanel.swift; sourceTree = "<group>"; };
+		E5EA68D5E36A49966A19B6AA /* MarkdownPanelAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panels/MarkdownPanelAppearance.swift; sourceTree = "<group>"; };
+		12E67EC57BD801A47BF3EBAF /* MarkdownPanelAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MarkdownPanelAppearanceTests.swift"; sourceTree = "<group>"; };
 		A50014F0 /* MarkdownPanelFileLinkResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panels/MarkdownPanelFileLinkResolver.swift; sourceTree = "<group>"; };
 		D3664001D3664001D3664001 /* MarkdownPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPanelTests.swift; sourceTree = "<group>"; };
 		A5001419 /* MarkdownPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panels/MarkdownPanelView.swift; sourceTree = "<group>"; };
@@ -12629,6 +12633,7 @@
 				7947118FF892144AE54C82D2 /* ChiefPaneDragPayload.swift */,
 				0D10F73113F55349CE0E475D /* ChiefHomeConversationRows.swift */,
 				A51F19464DBAEA515EA9D603 /* MarkdownThemeSettings.swift */,
+				E5EA68D5E36A49966A19B6AA /* MarkdownPanelAppearance.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -14263,6 +14268,7 @@
 				116A20BE2E7DF60266E43B58 /* ClaudeConfigDirectorySaveCaptureTests.swift */,
 				E4287F92FA9BEFC300BBCD4F /* ClaudeDroppedLaunchCaptureAccountTests.swift */,
 				3B9E68D467C4A6A1B8DE001E /* MarkdownForegroundRenderingTests.swift */,
+				12E67EC57BD801A47BF3EBAF /* MarkdownPanelAppearanceTests.swift */,
 			);
 			path = cmuxTests;
 			sourceTree = "<group>";
@@ -16447,6 +16453,7 @@
 				F5168A050000000000000001 /* MarkdownMaxWidthSettings.swift in Sources */,
 				FFC108C8FD07CF3A1C2470E7 /* MarkdownPanel+Focus.swift in Sources */,
 				A5001420 /* MarkdownPanel.swift in Sources */,
+				318F6490BFECDD313ECEA945 /* MarkdownPanelAppearance.swift in Sources */,
 				A50014F2 /* MarkdownPanelFileLinkResolver.swift in Sources */,
 				A5001421 /* MarkdownPanelView.swift in Sources */,
 				BE6969B1DDA3D4C8DD0FE939 /* MarkdownThemeSettings.swift in Sources */,
@@ -19069,6 +19076,7 @@
 				391F87E7AE6F1D0B6E8015C5 /* MarkdownForegroundRenderingTests.swift in Sources */,
 				D7470002D7470002D7470002 /* MarkdownLinkBoundaryRegressionTests.swift in Sources */,
 				D6069002D6069002D6069002 /* MarkdownMermaidZoomTests.swift in Sources */,
+				ADD4B37436F56227564FBFF3 /* MarkdownPanelAppearanceTests.swift in Sources */,
 				D3664002D3664002D3664002 /* MarkdownPanelTests.swift in Sources */,
 				6DE488DA436F06A877527820 /* MemoryPressureMonitorSampleObserverTests.swift in Sources */,
 					7490A0017490A0017490A001 /* MemoryPressureMonitorTests.swift in Sources */,

@@ -70,6 +70,12 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
     /// `MarkdownMaxWidthSettings`.
     @Published private(set) var maxContentWidth: Double
 
+    /// The `markdown.theme` value this viewer paints with (a Ghostty theme name,
+    /// conditional `light:X,dark:Y`, or absolute path), or `nil` to follow the
+    /// terminal. Seeded from `MarkdownThemeSettings.resolvedDefault()`; observing
+    /// default changes is a later leaf.
+    @Published private(set) var themeSetting: String?
+
     /// Stable markdown renderer state. Keep this panel-owned so split/tab
     /// layout churn does not recreate the WKWebView and flash existing content.
     let rendererSession = MarkdownRendererSession()
@@ -163,6 +169,7 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
         self.fontSize = MarkdownFontSizeSettings.clamp(fontSize ?? defaultSize)
         self.fontFamily = defaultFamily
         self.maxContentWidth = defaultMaxWidth
+        self.themeSetting = MarkdownThemeSettings.resolvedDefault()
         self.followedFontSize = defaultSize
         self.followedFontFamily = defaultFamily
         self.followedMaxContentWidth = defaultMaxWidth
