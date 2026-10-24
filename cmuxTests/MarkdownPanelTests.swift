@@ -266,6 +266,98 @@ final class MarkdownPanelTests: XCTestCase {
         XCTAssertEqual(panel.fontFamily, "Avenir Next")
     }
 
+    func testMarkdownPanelThemeSettingFollowsDefaultsEvenWithLocalTypographyOverride() throws {
+        let fileManager = FileManager.default
+        let directoryURL = fileManager.temporaryDirectory
+            .appendingPathComponent("cmux-markdown-theme-follow-\(UUID().uuidString)", isDirectory: true)
+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        let fileURL = directoryURL.appendingPathComponent("README.md")
+        try "# hello".write(to: fileURL, atomically: true, encoding: .utf8)
+        defer { try? fileManager.removeItem(at: directoryURL) }
+
+        let themeKey = MarkdownThemeSettings.key
+        let savedTheme = UserDefaults.standard.object(forKey: themeKey)
+        UserDefaults.standard.removeObject(forKey: themeKey)
+        defer {
+            if let savedTheme {
+                UserDefaults.standard.set(savedTheme, forKey: themeKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: themeKey)
+            }
+        }
+
+        let panel = MarkdownPanel(workspaceId: UUID(), filePath: fileURL.path, fontSize: 15)
+        defer { panel.close() }
+        XCTAssertNil(panel.themeSetting)
+
+        // A local zoom customizes typography so the typography observer stops
+        // following; the theme observer must still carry the theme.
+        XCTAssertTrue(panel.zoomIn())
+
+        UserDefaults.standard.set("Catppuccin Latte", forKey: themeKey)
+        XCTAssertEqual(panel.themeSetting, "Catppuccin Latte")
+
+        // Clearing the default returns the viewer to following the terminal.
+        UserDefaults.standard.removeObject(forKey: themeKey)
+        XCTAssertNil(panel.themeSetting)
+    }
+
+    func testMarkdownPanelGhosttyConfigDidReloadBumpsThemeGeneration() throws {
+        let fileManager = FileManager.default
+        let directoryURL = fileManager.temporaryDirectory
+            .appendingPathComponent("cmux-markdown-theme-reload-\(UUID().uuidString)", isDirectory: true)
+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        let fileURL = directoryURL.appendingPathComponent("README.md")
+        try "# hello".write(to: fileURL, atomically: true, encoding: .utf8)
+        defer { try? fileManager.removeItem(at: directoryURL) }
+
+        let panel = MarkdownPanel(workspaceId: UUID(), filePath: fileURL.path)
+        defer { panel.close() }
+
+        let before = panel.themeGeneration
+        NotificationCenter.default.post(name: .ghosttyConfigDidReload, object: nil)
+        XCTAssertEqual(panel.themeGeneration, before + 1)
+    }
+
+    func testMarkdownPanelSystemAppearanceChangeBumpsThemeGeneration() throws {
+        let fileManager = FileManager.default
+        let directoryURL = fileManager.temporaryDirectory
+            .appendingPathComponent("cmux-markdown-theme-appearance-\(UUID().uuidString)", isDirectory: true)
+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        let fileURL = directoryURL.appendingPathComponent("README.md")
+        try "# hello".write(to: fileURL, atomically: true, encoding: .utf8)
+        defer { try? fileManager.removeItem(at: directoryURL) }
+
+        let panel = MarkdownPanel(workspaceId: UUID(), filePath: fileURL.path)
+        defer { panel.close() }
+
+        // `SystemAppearanceObserver` posts `.systemAppearanceDidChange` when the
+        // live OS appearance flips; a conditional theme must re-resolve its side.
+        let before = panel.themeGeneration
+        NotificationCenter.default.post(name: .systemAppearanceDidChange, object: nil)
+        XCTAssertEqual(panel.themeGeneration, before + 1)
+    }
+
+    func testMarkdownPanelThemeObserversTearDownOnClose() throws {
+        let fileManager = FileManager.default
+        let directoryURL = fileManager.temporaryDirectory
+            .appendingPathComponent("cmux-markdown-theme-teardown-\(UUID().uuidString)", isDirectory: true)
+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        let fileURL = directoryURL.appendingPathComponent("README.md")
+        try "# hello".write(to: fileURL, atomically: true, encoding: .utf8)
+        defer { try? fileManager.removeItem(at: directoryURL) }
+
+        let panel = MarkdownPanel(workspaceId: UUID(), filePath: fileURL.path)
+        panel.close()
+
+        // After close the appearance observers are gone, so a reload or
+        // appearance flip must not advance the generation.
+        let after = panel.themeGeneration
+        NotificationCenter.default.post(name: .ghosttyConfigDidReload, object: nil)
+        NotificationCenter.default.post(name: .systemAppearanceDidChange, object: nil)
+        XCTAssertEqual(panel.themeGeneration, after)
+    }
+
     func testMarkdownPanelFindLifecycle() throws {
         let fileManager = FileManager.default
         let directoryURL = fileManager.temporaryDirectory

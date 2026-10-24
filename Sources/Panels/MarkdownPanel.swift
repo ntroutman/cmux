@@ -72,9 +72,18 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
 
     /// The `markdown.theme` value this viewer paints with (a Ghostty theme name,
     /// conditional `light:X,dark:Y`, or absolute path), or `nil` to follow the
-    /// terminal. Seeded from `MarkdownThemeSettings.resolvedDefault()`; observing
-    /// default changes is a later leaf.
+    /// terminal. Seeded from `MarkdownThemeSettings.resolvedDefault()` and kept
+    /// current by ``observeThemeDefaults()`` so a Settings or `cmux reload-config`
+    /// change recolors an open viewer without reopening it.
     @Published private(set) var themeSetting: String?
+
+    /// Bumped on inputs that change the resolved theme without moving
+    /// `themeSetting` itself: an app/system appearance flip (a conditional
+    /// `light:X,dark:Y` switches sides) and a same-name `cmux reload-config`
+    /// (the theme file changed under an unchanged name). `MarkdownPanelView`
+    /// reads it alongside `themeSetting` so the appearance cache re-resolves on
+    /// either, re-reading disk exactly once per bump.
+    @Published private(set) var themeGeneration: Int = 0
 
     /// Stable markdown renderer state. Keep this panel-owned so split/tab
     /// layout churn does not recreate the WKWebView and flash existing content.
@@ -131,6 +140,20 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
     var isClosed: Bool = false
     // NotificationCenter token; removal is thread-safe so deinit can drop it.
     private nonisolated(unsafe) var typographyDefaultsObserver: NSObjectProtocol?
+    // Re-reads `markdown.theme` (and bumps `themeGeneration` on an app
+    // appearance-mode change, which is also a UserDefaults key) so a Settings
+    // or `cmux reload-config` change recolors an open viewer.
+    private nonisolated(unsafe) var themeDefaultsObserver: NSObjectProtocol?
+    // Bumps `themeGeneration` when the live OS appearance flips (posted by
+    // `SystemAppearanceObserver` in system mode) so a conditional theme switches
+    // sides without reopening the viewer.
+    private nonisolated(unsafe) var systemAppearanceObserver: NSObjectProtocol?
+    // Bumps `themeGeneration` after a configuration reload commits and fans out,
+    // so a same-name theme-file edit (unchanged `markdown.theme`) re-resolves.
+    private nonisolated(unsafe) var configReloadObserver: NSObjectProtocol?
+    // The app appearance mode last seen by `themeDefaultsObserver`, so only an
+    // actual mode flip bumps the generation rather than every preference write.
+    private var observedAppearanceMode: AppearanceMode
     // The typography default this viewer is currently tracking. While the panel
     // still matches it, a default change (Set as Default / cmux.json reload) is
     // adopted; once the user customizes the panel it diverges and is left alone.
@@ -170,6 +193,9 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
         self.fontFamily = defaultFamily
         self.maxContentWidth = defaultMaxWidth
         self.themeSetting = MarkdownThemeSettings.resolvedDefault()
+        self.observedAppearanceMode = AppearanceSettings.mode(
+            for: UserDefaults.standard.string(forKey: AppearanceSettings.appearanceModeKey)
+        )
         self.followedFontSize = defaultSize
         self.followedFontFamily = defaultFamily
         self.followedMaxContentWidth = defaultMaxWidth
@@ -188,6 +214,7 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
         _ = loadFileContent(replacingDirtyContent: false)
         startWatchingForFileChanges()
         observeTypographyDefaults()
+        observeThemeAppearance()
         rendererSession.onMarkdownRendered = { [weak self] in
             self?.replayPendingPreviewFocusAfterWindowAttach()
             self?.replayActiveFindAfterRender()
@@ -296,6 +323,98 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
         followedFontSize = newSize
         followedFontFamily = newFamily
         followedMaxContentWidth = newMaxWidth
+    }
+
+    // MARK: - Theme live updates
+
+    /// Keeps an open viewer following the live theme without reopening it. Three
+    /// independent observers feed the appearance cache:
+    ///
+    /// - a UserDefaults observer that re-reads `markdown.theme` into
+    ///   `themeSetting` (so Settings or a `cmux reload-config` that changed the
+    ///   value recolors the viewer) and, since the app appearance mode is also a
+    ///   UserDefaults key, bumps `themeGeneration` when that mode flips so a
+    ///   conditional `light:X,dark:Y` switches sides. This is deliberately
+    ///   separate from `adoptTypographyDefaultsIfFollowing`, which bails once the
+    ///   viewer has a local zoom or font override — the theme must follow
+    ///   regardless of a local typography override;
+    /// - `.systemAppearanceDidChange`, posted by `SystemAppearanceObserver` on a
+    ///   live OS Light/Dark flip in system mode, to bump `themeGeneration`;
+    /// - `.ghosttyConfigDidReload`, posted only after a configuration reload
+    ///   commits and fans out, to bump `themeGeneration` so a same-name
+    ///   theme-file edit (unchanged `markdown.theme`) re-resolves. The
+    ///   `com.cmuxterm.themes.reload-config` distributed notification is
+    ///   intentionally not observed: it fires before the reload commits and the
+    ///   socket/menu/file-watcher reload paths bypass it.
+    ///
+    /// The UserDefaults handler updates state synchronously on the main actor
+    /// (the observer helper already hops to it) rather than deferring through a
+    /// `Task`, so a Settings change is reflected on the same run loop turn.
+    private func observeThemeAppearance() {
+        themeDefaultsObserver = NotificationCenter.default.addUserDefaultsObserver(object: UserDefaults.standard) { [weak self] in
+            self?.adoptThemeDefaults()
+        }
+        systemAppearanceObserver = NotificationCenter.default.addObserver(
+            forName: .systemAppearanceDidChange,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            MarkdownPanel.onMainActor { self?.bumpThemeGeneration() }
+        }
+        configReloadObserver = NotificationCenter.default.addObserver(
+            forName: .ghosttyConfigDidReload,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            MarkdownPanel.onMainActor { self?.bumpThemeGeneration() }
+        }
+    }
+
+    /// Runs `action` on the main actor, synchronously when the notification was
+    /// posted on the main thread (the common case) so a live update lands on the
+    /// same run loop turn, and via a hop otherwise. Mirrors the boundary shape of
+    /// `NotificationCenter.addUserDefaultsObserver`.
+    private static func onMainActor(_ action: @escaping @MainActor () -> Void) {
+        if Thread.isMainThread {
+            MainActor.assumeIsolated { action() }
+        } else {
+            Task { @MainActor in action() }
+        }
+    }
+
+    private func adoptThemeDefaults() {
+        guard !isClosed else { return }
+        let newSetting = MarkdownThemeSettings.resolvedDefault()
+        if newSetting != themeSetting {
+            themeSetting = newSetting
+        }
+        let newMode = AppearanceSettings.mode(
+            for: UserDefaults.standard.string(forKey: AppearanceSettings.appearanceModeKey)
+        )
+        if newMode != observedAppearanceMode {
+            observedAppearanceMode = newMode
+            bumpThemeGeneration()
+        }
+    }
+
+    private func bumpThemeGeneration() {
+        guard !isClosed else { return }
+        themeGeneration &+= 1
+    }
+
+    private func removeThemeAppearanceObservers() {
+        if let themeDefaultsObserver {
+            NotificationCenter.default.removeObserver(themeDefaultsObserver)
+            self.themeDefaultsObserver = nil
+        }
+        if let systemAppearanceObserver {
+            NotificationCenter.default.removeObserver(systemAppearanceObserver)
+            self.systemAppearanceObserver = nil
+        }
+        if let configReloadObserver {
+            NotificationCenter.default.removeObserver(configReloadObserver)
+            self.configReloadObserver = nil
+        }
     }
 
     // MARK: - Font size / zoom
@@ -426,6 +545,7 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
             NotificationCenter.default.removeObserver(typographyDefaultsObserver)
             self.typographyDefaultsObserver = nil
         }
+        removeThemeAppearanceObservers()
     }
 
     func updateWorkspaceId(
@@ -706,6 +826,15 @@ final class MarkdownPanel: Panel, ObservableObject, FilePreviewTextEditingPanel 
     deinit {
         if let typographyDefaultsObserver {
             NotificationCenter.default.removeObserver(typographyDefaultsObserver)
+        }
+        if let themeDefaultsObserver {
+            NotificationCenter.default.removeObserver(themeDefaultsObserver)
+        }
+        if let systemAppearanceObserver {
+            NotificationCenter.default.removeObserver(systemAppearanceObserver)
+        }
+        if let configReloadObserver {
+            NotificationCenter.default.removeObserver(configReloadObserver)
         }
     }
 }

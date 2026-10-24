@@ -165,15 +165,21 @@ struct MarkdownPanelAppearance: Equatable {
 /// content refresh, reading the appearance several times per pass. The terminal
 /// `PanelAppearance` it composes over is a pre-computed value built off the hot
 /// path; this cache keeps the viewer's resolution off that path too. Given the
-/// same `(themeSetting, terminalAppearance, preferredColorScheme)` it returns
-/// the stored result and does no I/O; on a change it resolves once and, on a
-/// transition into a new failure, logs exactly one warning (so a permanently
-/// unresolvable `markdown.theme` does not spam the log per frame).
+/// same `(themeSetting, terminalAppearance, preferredColorScheme, themeGeneration)`
+/// it returns the stored result and does no I/O; on a change it resolves once
+/// and, on a transition into a new failure, logs exactly one warning (so a
+/// permanently unresolvable `markdown.theme` does not spam the log per frame).
 final class MarkdownPanelAppearanceCache {
     private struct Inputs: Equatable {
         let themeSetting: String?
         let terminalAppearance: PanelAppearance
         let preferredColorScheme: GhosttyConfig.ColorSchemePreference
+        /// A monotonic counter bumped by `MarkdownPanel` on a same-name
+        /// `cmux reload-config` or an app/system appearance flip — changes the
+        /// derived theme can carry without any other input moving. Folding it
+        /// into the key forces exactly one fresh disk read (and one-shot warning)
+        /// per bump; without it a same-name reload would return the stale value.
+        let themeGeneration: Int
     }
 
     private var inputs: Inputs?
@@ -193,12 +199,14 @@ final class MarkdownPanelAppearanceCache {
         themeSetting: String?,
         terminalAppearance: PanelAppearance,
         preferredColorScheme: GhosttyConfig.ColorSchemePreference,
+        themeGeneration: Int = 0,
         resolver: (String, GhosttyConfig.ColorSchemePreference) -> GhosttyThemeResolution = MarkdownPanelAppearance.defaultResolver
     ) -> MarkdownPanelAppearance {
         let requested = Inputs(
             themeSetting: themeSetting,
             terminalAppearance: terminalAppearance,
-            preferredColorScheme: preferredColorScheme
+            preferredColorScheme: preferredColorScheme,
+            themeGeneration: themeGeneration
         )
         if inputs == requested, let cached {
             return cached

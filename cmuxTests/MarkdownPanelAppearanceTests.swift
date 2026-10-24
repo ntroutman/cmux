@@ -219,6 +219,57 @@ struct MarkdownPanelAppearanceTests {
     }
 
     @Test
+    func cacheReResolvesWhenThemeGenerationChangesWithUnchangedOtherInputs() throws {
+        // A same-name reload-config or appearance flip changes nothing in the
+        // other inputs; the generation bump is the only signal that the disk
+        // theme (or the live appearance) must be re-read. Without it folded into
+        // the cache key the stale result would be returned.
+        let terminal = darkTranslucentTerminalAppearance()
+        let cache = MarkdownPanelAppearanceCache { _, _ in }
+        var resolverCalls = 0
+        let resolver: (String, GhosttyConfig.ColorSchemePreference) -> GhosttyThemeResolution = { _, _ in
+            resolverCalls += 1
+            return self.resolvedTheme(background: "#eff1f5", foreground: "#4c4f69")
+        }
+
+        _ = cache.appearance(themeSetting: "Custom", terminalAppearance: terminal, preferredColorScheme: .dark, themeGeneration: 0, resolver: resolver)
+        // Repeated read at the same generation stays cached.
+        _ = cache.appearance(themeSetting: "Custom", terminalAppearance: terminal, preferredColorScheme: .dark, themeGeneration: 0, resolver: resolver)
+        #expect(resolverCalls == 1)
+
+        // A bump re-resolves exactly once even though every other input is equal.
+        _ = cache.appearance(themeSetting: "Custom", terminalAppearance: terminal, preferredColorScheme: .dark, themeGeneration: 1, resolver: resolver)
+        _ = cache.appearance(themeSetting: "Custom", terminalAppearance: terminal, preferredColorScheme: .dark, themeGeneration: 1, resolver: resolver)
+        #expect(resolverCalls == 2)
+    }
+
+    @Test
+    func cacheWarnsAfterGenerationBumpMadeTheThemeUnresolvable() throws {
+        // A reload-config that rewrites the theme file into an invalid state must
+        // still warn once, even though the theme name (and every other input but
+        // the generation) is unchanged.
+        let terminal = darkTranslucentTerminalAppearance()
+        var warnings: [GhosttyThemeResolutionFailure] = []
+        let cache = MarkdownPanelAppearanceCache { _, failure in warnings.append(failure) }
+
+        _ = cache.appearance(
+            themeSetting: "Custom",
+            terminalAppearance: terminal,
+            preferredColorScheme: .dark,
+            themeGeneration: 0
+        ) { _, _ in self.resolvedTheme(background: "#eff1f5", foreground: "#4c4f69") }
+        #expect(warnings.isEmpty)
+
+        _ = cache.appearance(
+            themeSetting: "Custom",
+            terminalAppearance: terminal,
+            preferredColorScheme: .dark,
+            themeGeneration: 1
+        ) { _, _ in .failed(.unknownTheme(name: "Custom")) }
+        #expect(warnings.count == 1)
+    }
+
+    @Test
     func cacheWarnsOncePerDistinctFailureNotPerRead() throws {
         let terminal = darkTranslucentTerminalAppearance()
         var warnings: [GhosttyThemeResolutionFailure] = []

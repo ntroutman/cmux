@@ -224,7 +224,14 @@ struct MarkdownPanelView: View {
         appearanceCache.appearance(
             themeSetting: panel.themeSetting,
             terminalAppearance: appearance,
-            preferredColorScheme: MarkdownPanelAppearance.preferredColorScheme()
+            preferredColorScheme: MarkdownPanelAppearance.preferredColorScheme(),
+            // `themeGeneration` carries same-name reload-config and appearance
+            // flips that move nothing else; reading it alongside `themeSetting`
+            // makes the cache re-resolve on either. No parse cache beyond this
+            // memo: `resolve` is a handful of small file reads per change,
+            // matching the reload-config cost the user already pays — the
+            // 'cache' builder decision for this epic.
+            themeGeneration: panel.themeGeneration
         )
     }
 
