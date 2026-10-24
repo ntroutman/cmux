@@ -28,8 +28,9 @@ struct MarkdownPanelAppearance: Equatable {
     let source: Source
     /// The failure that forced the terminal fallback, or `nil` when the viewer
     /// follows the terminal by choice (unset/empty `markdown.theme`) or a theme
-    /// resolved. ``MarkdownPanelAppearanceCache`` logs this once per distinct
-    /// `(themeSetting, failure)` rather than on every render.
+    /// resolved. ``MarkdownPanelAppearanceCache`` logs one warning on each
+    /// transition into a new failure case rather than on every render, so a
+    /// permanently unresolvable `markdown.theme` does not spam the log.
     let resolutionFailure: GhosttyThemeResolutionFailure?
 
     /// Where a `MarkdownPanelAppearance` got its colors.
