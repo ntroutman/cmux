@@ -395,8 +395,15 @@ struct MarkdownWebTheme: Equatable {
     let neutralMutedBackground: String
     let border: String
     let mutedBorder: String
+    /// Body text color override, or nil to leave GitHub's stylesheet in charge.
+    /// When nil the renderer clears any previously installed override so a
+    /// themed→unset transition returns to the stock polarity text color.
+    let foreground: String?
 
-    static func resolve(backgroundColor: NSColor) -> MarkdownWebTheme {
+    static func resolve(
+        backgroundColor: NSColor,
+        foregroundColor: NSColor? = nil
+    ) -> MarkdownWebTheme {
         let base = backgroundColor.markdownOpaqueSRGB
         let isDark = !base.isLightColor
         let overlayColor: NSColor = isDark ? .white : .black
@@ -418,7 +425,8 @@ struct MarkdownWebTheme: Equatable {
             mutedBackground: muted.markdownCSSColor,
             neutralMutedBackground: neutralMuted.markdownCSSColor,
             border: border.markdownCSSColor,
-            mutedBorder: border.withAlphaComponent(border.alphaComponent * 0.70).markdownCSSColor
+            mutedBorder: border.withAlphaComponent(border.alphaComponent * 0.70).markdownCSSColor,
+            foreground: foregroundColor.map(\.markdownCSSColor)
         )
     }
 }

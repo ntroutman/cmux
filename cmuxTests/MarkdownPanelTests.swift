@@ -60,6 +60,35 @@ final class MarkdownPanelTests: XCTestCase {
         XCTAssertFalse(theme.neutralMutedBackground.contains("0.420"))
     }
 
+    func testMarkdownWebThemeCarriesRawForegroundOnlyWhenProvided() throws {
+        let background = NSColor(srgbRed: 0.10, green: 0.12, blue: 0.14, alpha: 1)
+        let foreground = NSColor(srgbRed: 0.90, green: 0.85, blue: 0.80, alpha: 0.5)
+
+        let unset = MarkdownWebTheme.resolve(backgroundColor: background)
+        let themed = MarkdownWebTheme.resolve(
+            backgroundColor: background,
+            foregroundColor: foreground
+        )
+
+        // Unset keeps the foreground channel closed and every other field
+        // byte-for-byte equal to today's resolution.
+        XCTAssertNil(unset.foreground)
+        XCTAssertEqual(themed.isDark, unset.isDark)
+        XCTAssertEqual(themed.background, unset.background)
+        XCTAssertEqual(themed.mutedBackground, unset.mutedBackground)
+        XCTAssertEqual(themed.neutralMutedBackground, unset.neutralMutedBackground)
+        XCTAssertEqual(themed.border, unset.border)
+        XCTAssertEqual(themed.mutedBorder, unset.mutedBorder)
+
+        // The channel carries the raw color (alpha preserved), not an
+        // opaque-ified or overlay-tinted value.
+        let components = try XCTUnwrap(Self.cssRGBAComponents(try XCTUnwrap(themed.foreground)))
+        XCTAssertEqual(components.red, 230)
+        XCTAssertEqual(components.green, 217)
+        XCTAssertEqual(components.blue, 204)
+        XCTAssertEqual(components.alpha, 0.5, accuracy: 0.001)
+    }
+
     func testMarkdownThemeOverlayFallsBackToFullOverlayWhenContrastIsUnreachable() {
         let base = NSColor(srgbRed: 0.2, green: 0.24, blue: 0.28, alpha: 0.4)
         let overlay = base.markdownThemeOverlay(targetContrast: 21, of: base)
