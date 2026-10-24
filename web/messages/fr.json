@@ -2224,7 +2224,8 @@
         "markdown": {
           "fontSize": "Default body font size, in points, for newly opened markdown viewers. Zoom a viewer live with Cmd-+ / Cmd-- / Cmd-0.",
           "fontFamily": "Default body font family for newly opened markdown viewers. Leave empty for the system markdown font stack.",
-          "maxWidth": "Default maximum reading column width, in CSS pixels, for newly opened markdown viewers."
+          "maxWidth": "Default maximum reading column width, in CSS pixels, for newly opened markdown viewers.",
+          "theme": "Ghostty theme for the Markdown viewer: a bundled or user theme name, light:X,dark:Y, or an absolute theme-file path. Leave empty to follow the terminal."
         },
         "sidebar": {
           "compactAgentStatus": "Afficher chaque espace de travail sur une seule ligne : une icône colorée avant le titre indique l’état de l’agent, des éléments non lus et de la pull request, et remplace les lignes de statut des agents (par exemple En cours ou Saisie requise), la ligne de branche et de dossier et les lignes de pull request, dont les détails passent dans l’infobulle de l’icône. Les autres entrées de statut gardent leurs lignes.",

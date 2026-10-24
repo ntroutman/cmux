@@ -2204,7 +2204,8 @@
         "markdown": {
           "fontSize": "Default body font size, in points, for newly opened markdown viewers. Zoom a viewer live with Cmd-+ / Cmd-- / Cmd-0.",
           "fontFamily": "Default body font family for newly opened markdown viewers. Leave empty for the system markdown font stack.",
-          "maxWidth": "Default maximum reading column width, in CSS pixels, for newly opened markdown viewers."
+          "maxWidth": "Default maximum reading column width, in CSS pixels, for newly opened markdown viewers.",
+          "theme": "Ghostty theme for the Markdown viewer: a bundled or user theme name, light:X,dark:Y, or an absolute theme-file path. Leave empty to follow the terminal."
         },
         "sidebar": {
           "compactAgentStatus": "Показувати кожен робочий простір в одному рядку: один кольоровий значок перед назвою показує стан агента, непрочитаного та pull request і замінює рядки стану агентів (наприклад, «Виконується» або «Потрібне введення»), рядок гілки й каталогу та рядки pull request, чиї подробиці переходять у підказку значка. Інші записи стану зберігають власні рядки.",
