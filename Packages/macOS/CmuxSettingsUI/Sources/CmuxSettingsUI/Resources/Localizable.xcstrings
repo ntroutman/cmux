@@ -16802,6 +16802,242 @@
           }
         }
       }
+    },
+    "settings.app.markdownTheme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown Viewer Theme"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سمة عارض Markdown"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown-Viewer-Thema"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema del visor de Markdown"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thème du visualiseur Markdown"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown ビューアのテーマ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown 뷰어 테마"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown 查看器主题"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown 檢視器主題"
+          }
+        }
+      }
+    },
+    "settings.app.markdownTheme.invalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This theme can't be resolved: %@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذّر حلّ هذه السمة: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Thema kann nicht aufgelöst werden: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se puede resolver este tema: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce thème est introuvable : %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このテーマを解決できません: %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 테마를 확인할 수 없습니다: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法解析此主题：%@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法解析此主題：%@"
+          }
+        }
+      }
+    },
+    "settings.app.markdownTheme.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow terminal"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اتبع الطرفية"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminal folgen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seguir el terminal"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivre le terminal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ターミナルに従う"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "터미널 따르기"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟随终端"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟隨終端機"
+          }
+        }
+      }
+    },
+    "settings.app.markdownTheme.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghostty theme for the Markdown viewer, for example Catppuccin Latte. Leave empty to follow the terminal."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سمة Ghostty لعارض Markdown، مثل Catppuccin Latte. اتركه فارغًا ليتبع الطرفية."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghostty-Thema für den Markdown-Viewer, zum Beispiel Catppuccin Latte. Leer lassen, um dem Terminal zu folgen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema de Ghostty para el visor de Markdown, por ejemplo Catppuccin Latte. Déjalo vacío para seguir el terminal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thème Ghostty du visualiseur Markdown, par exemple Catppuccin Latte. Laissez vide pour suivre le terminal."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown ビューアに使う Ghostty テーマです（例: Catppuccin Latte）。空のままにするとターミナルに従います。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown 뷰어에 사용할 Ghostty 테마입니다. 예: Catppuccin Latte. 비워 두면 터미널을 따릅니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown 查看器使用的 Ghostty 主题，例如 Catppuccin Latte。留空则跟随终端。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown 檢視器使用的 Ghostty 主題，例如 Catppuccin Latte。留空則跟隨終端機。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

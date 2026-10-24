@@ -2475,6 +2475,7 @@
 		B7F100010000000000000001 /* HostSettingsActions+NotificationSounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F100010000000000000002 /* HostSettingsActions+NotificationSounds.swift */; };
 		CD0CFE6200000000CD0CFE62 /* HostSettingsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0CFE6300000000CD0CFE63 /* HostSettingsActions.swift */; };
 		F79000000000000000000001 /* HostSettingsActionsLocalTmuxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79000000000000000000002 /* HostSettingsActionsLocalTmuxTests.swift */; };
+		1FC454C0E73C2DF33E941A70 /* HostSettingsActionsMarkdownThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFE7B250AADC0CCDBEF95B8 /* HostSettingsActionsMarkdownThemeTests.swift */; };
 		809100000000000000000001 /* HostSettingsShortcutNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809100000000000000000002 /* HostSettingsShortcutNotificationTests.swift */; };
 		F1C1AA21B7E84D10A1C10001 /* InactivePaneFirstClickFocusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C1AA20B7E84D10A1C10001 /* InactivePaneFirstClickFocusTests.swift */; };
 		7A0CE1000000000000000048 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7A0CE1000000000000000022 /* InfoPlist.xcstrings */; };
@@ -7155,6 +7156,7 @@
 		B7F100010000000000000002 /* HostSettingsActions+NotificationSounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HostSettingsActions+NotificationSounds.swift"; sourceTree = "<group>"; };
 		CD0CFE6300000000CD0CFE63 /* HostSettingsActions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HostSettingsActions.swift; sourceTree = "<group>"; };
 		F79000000000000000000002 /* HostSettingsActionsLocalTmuxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostSettingsActionsLocalTmuxTests.swift; sourceTree = "<group>"; };
+		6DFE7B250AADC0CCDBEF95B8 /* HostSettingsActionsMarkdownThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HostSettingsActionsMarkdownThemeTests.swift"; sourceTree = "<group>"; };
 		809100000000000000000002 /* HostSettingsShortcutNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostSettingsShortcutNotificationTests.swift; sourceTree = "<group>"; };
 		F1C1AA20B7E84D10A1C10001 /* InactivePaneFirstClickFocusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactivePaneFirstClickFocusTests.swift; sourceTree = "<group>"; };
 		7A0CE1000000000000000021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -14269,6 +14271,7 @@
 				E4287F92FA9BEFC300BBCD4F /* ClaudeDroppedLaunchCaptureAccountTests.swift */,
 				3B9E68D467C4A6A1B8DE001E /* MarkdownForegroundRenderingTests.swift */,
 				12E67EC57BD801A47BF3EBAF /* MarkdownPanelAppearanceTests.swift */,
+				6DFE7B250AADC0CCDBEF95B8 /* HostSettingsActionsMarkdownThemeTests.swift */,
 			);
 			path = cmuxTests;
 			sourceTree = "<group>";
@@ -19019,6 +19022,7 @@
 				C0D878FCFB109001931F29AB /* HostAccountFlowTeamChangeTests.swift in Sources */,
 				B1F0C0040000000000000001 /* HostedInspectorDockControlScriptTests.swift in Sources */,
 				F79000000000000000000001 /* HostSettingsActionsLocalTmuxTests.swift in Sources */,
+				1FC454C0E73C2DF33E941A70 /* HostSettingsActionsMarkdownThemeTests.swift in Sources */,
 				809100000000000000000001 /* HostSettingsShortcutNotificationTests.swift in Sources */,
 				F1C1AA21B7E84D10A1C10001 /* InactivePaneFirstClickFocusTests.swift in Sources */,
 				C0DE71450000000000000003 /* InMemoryWorkspaceCreateIdempotencyStore.swift in Sources */,

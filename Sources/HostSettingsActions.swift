@@ -6,6 +6,7 @@ import CmuxWorkspaces
 import CmuxSettings
 import CmuxSettingsUI
 import CmuxSwiftRenderUI
+import CmuxTerminalCore
 import CmuxUpdater
 import CmuxFoundation
 import Foundation
@@ -225,6 +226,49 @@ final class HostSettingsActions: SettingsHostActions {
         AppDelegate.shared?.reloadGhosttyConfigurationForCmuxThemeSource(
             GhosttySurfaceConfigurationRefresh.cmuxThemeReloadSource(phase: phaseName)
         )
+    }
+
+    func validateMarkdownThemeName(_ rawValue: String) -> MarkdownThemeValidation {
+        let trimmed = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Empty follows the terminal; there is nothing to resolve.
+        guard !trimmed.isEmpty else { return .valid }
+
+        // Resolve every named side, not just the live one: a conditional that
+        // only breaks when macOS flips appearance is exactly what a user cannot
+        // discover at runtime. `conditionalThemeSides` yields a bare name for a
+        // non-conditional value, so a plain name is validated the same way. The
+        // side names it returns are not themselves conditional, so the color
+        // scheme passed to `resolveTheme` is irrelevant for them.
+        for side in GhosttyConfig.conditionalThemeSides(trimmed) {
+            let outcome = GhosttyConfig.resolveTheme(side, preferredColorScheme: .light)
+            if let failure = outcome.failure {
+                // The reason the row interpolates names the failing side: a
+                // theme name or theme-file path, i.e. the user's own input, not
+                // translatable prose. The localized framing lives in the row's
+                // `settings.app.markdownTheme.invalid` template.
+                return .invalid(message: markdownThemeFailureReason(side: side, failure: failure))
+            }
+        }
+        return .valid
+    }
+
+    /// Names the failing side for the Settings row's invalid-message template:
+    /// the theme name for an unknown name, the file path for a theme with no
+    /// usable colors. A named side from ``GhosttyConfig/conditionalThemeSides``
+    /// is never itself conditional, so `.unmatchedConditionalSide` is
+    /// unreachable here; it falls back to the side name.
+    private func markdownThemeFailureReason(
+        side: String,
+        failure: GhosttyThemeResolutionFailure
+    ) -> String {
+        switch failure {
+        case let .unknownTheme(name):
+            return name
+        case let .missingColors(path):
+            return path
+        case .unmatchedConditionalSide:
+            return side
+        }
     }
 
     func notifyShortcutSettingsDidChange() {
