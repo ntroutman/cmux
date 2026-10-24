@@ -26,6 +26,11 @@ struct MarkdownPanelAppearance: Equatable {
     let proseForeground: NSColor?
     /// Whether the appearance came from a resolved theme or the terminal.
     let source: Source
+    /// The failure that forced the terminal fallback, or `nil` when the viewer
+    /// follows the terminal by choice (unset/empty `markdown.theme`) or a theme
+    /// resolved. ``MarkdownPanelAppearanceCache`` logs this once per distinct
+    /// `(themeSetting, failure)` rather than on every render.
+    let resolutionFailure: GhosttyThemeResolutionFailure?
 
     /// Where a `MarkdownPanelAppearance` got its colors.
     enum Source: Equatable {
@@ -34,6 +39,18 @@ struct MarkdownPanelAppearance: Equatable {
         case terminal
         /// `markdown.theme` resolved to the named theme.
         case theme(name: String)
+    }
+
+    init(
+        appearance: PanelAppearance,
+        proseForeground: NSColor?,
+        source: Source,
+        resolutionFailure: GhosttyThemeResolutionFailure? = nil
+    ) {
+        self.appearance = appearance
+        self.proseForeground = proseForeground
+        self.source = source
+        self.resolutionFailure = resolutionFailure
     }
 
     /// The default theme resolver: ``CmuxTerminalCore/GhosttyConfig/resolveTheme(_:preferredColorScheme:environment:bundleResourceURL:)``
@@ -52,7 +69,13 @@ struct MarkdownPanelAppearance: Equatable {
     /// chrome foreground, and the raw theme foreground as `proseForeground`,
     /// while copying the terminal's divider and unfocused-overlay values and
     /// forcing the page opaque. A resolution failure falls back to the terminal
-    /// appearance and logs one warning naming the cause.
+    /// appearance and carries the failure in `resolutionFailure` so the caller
+    /// can warn once on a state transition instead of on every render.
+    ///
+    /// This is a pure function: it reads the theme (through `resolver`) and maps
+    /// the outcome to an appearance without logging. ``MarkdownPanelAppearanceCache``
+    /// drives the one-shot warning and keeps this resolution — which hits disk
+    /// through the default resolver — off the SwiftUI render path.
     static func resolve(
         themeSetting: String?,
         terminalAppearance: PanelAppearance,
@@ -84,14 +107,15 @@ struct MarkdownPanelAppearance: Equatable {
             return MarkdownPanelAppearance(
                 appearance: appearance,
                 proseForeground: config.foregroundColor,
-                source: .theme(name: rawValue)
+                source: .theme(name: rawValue),
+                resolutionFailure: nil
             )
         case let .failed(failure):
-            logger.warning("markdown.theme '\(rawValue, privacy: .public)' did not resolve: \(String(describing: failure), privacy: .public); following the terminal appearance")
             return MarkdownPanelAppearance(
                 appearance: terminalAppearance,
                 proseForeground: nil,
-                source: .terminal
+                source: .terminal,
+                resolutionFailure: failure
             )
         }
     }
@@ -121,6 +145,7 @@ struct MarkdownPanelAppearance: Equatable {
 
     static func == (lhs: MarkdownPanelAppearance, rhs: MarkdownPanelAppearance) -> Bool {
         lhs.source == rhs.source
+            && lhs.resolutionFailure == rhs.resolutionFailure
             && lhs.proseForeground == rhs.proseForeground
             && lhs.appearance.backgroundColor == rhs.appearance.backgroundColor
             && lhs.appearance.foregroundColor == rhs.appearance.foregroundColor
@@ -128,6 +153,75 @@ struct MarkdownPanelAppearance: Equatable {
             && lhs.appearance.unfocusedOverlayNSColor == rhs.appearance.unfocusedOverlayNSColor
             && lhs.appearance.unfocusedOverlayOpacity == rhs.appearance.unfocusedOverlayOpacity
             && lhs.appearance.usesClearContentBackground == rhs.appearance.usesClearContentBackground
+    }
+}
+
+/// Memoizes ``MarkdownPanelAppearance/resolve(themeSetting:terminalAppearance:preferredColorScheme:resolver:)``
+/// so the disk-backed theme resolution runs only when its inputs change, never
+/// on every SwiftUI render pass.
+///
+/// `MarkdownPanelView.body` re-evaluates on typing, focus/find changes, and
+/// content refresh, reading the appearance several times per pass. The terminal
+/// `PanelAppearance` it composes over is a pre-computed value built off the hot
+/// path; this cache keeps the viewer's resolution off that path too. Given the
+/// same `(themeSetting, terminalAppearance, preferredColorScheme)` it returns
+/// the stored result and does no I/O; on a change it resolves once and, on a
+/// transition into a new failure, logs exactly one warning (so a permanently
+/// unresolvable `markdown.theme` does not spam the log per frame).
+final class MarkdownPanelAppearanceCache {
+    private struct Inputs: Equatable {
+        let themeSetting: String?
+        let terminalAppearance: PanelAppearance
+        let preferredColorScheme: GhosttyConfig.ColorSchemePreference
+    }
+
+    private var inputs: Inputs?
+    private var cached: MarkdownPanelAppearance?
+    /// The failure last warned about, so the same unresolvable value is logged
+    /// once rather than on every re-resolution.
+    private var warnedFailure: GhosttyThemeResolutionFailure?
+    /// The warning sink, injectable so tests can count one-shot warnings; the
+    /// default logs to os_log.
+    private let warn: (String, GhosttyThemeResolutionFailure) -> Void
+
+    init(warn: @escaping (String, GhosttyThemeResolutionFailure) -> Void = MarkdownPanelAppearanceCache.logWarning) {
+        self.warn = warn
+    }
+
+    func appearance(
+        themeSetting: String?,
+        terminalAppearance: PanelAppearance,
+        preferredColorScheme: GhosttyConfig.ColorSchemePreference,
+        resolver: (String, GhosttyConfig.ColorSchemePreference) -> GhosttyThemeResolution = MarkdownPanelAppearance.defaultResolver
+    ) -> MarkdownPanelAppearance {
+        let requested = Inputs(
+            themeSetting: themeSetting,
+            terminalAppearance: terminalAppearance,
+            preferredColorScheme: preferredColorScheme
+        )
+        if inputs == requested, let cached {
+            return cached
+        }
+
+        let resolved = MarkdownPanelAppearance.resolve(
+            themeSetting: themeSetting,
+            terminalAppearance: terminalAppearance,
+            preferredColorScheme: preferredColorScheme,
+            resolver: resolver
+        )
+
+        if let failure = resolved.resolutionFailure, failure != warnedFailure {
+            warn(themeSetting ?? "", failure)
+        }
+        warnedFailure = resolved.resolutionFailure
+
+        inputs = requested
+        cached = resolved
+        return resolved
+    }
+
+    static func logWarning(_ themeSetting: String, _ failure: GhosttyThemeResolutionFailure) {
+        logger.warning("markdown.theme '\(themeSetting, privacy: .public)' did not resolve: \(String(describing: failure), privacy: .public); following the terminal appearance")
     }
 }
 

@@ -92,10 +92,13 @@ struct MarkdownPanelAppearanceTests {
 
         #expect(result.source == .terminal)
         #expect(result.proseForeground == nil)
+        // The fallback carries the failure so the cache can warn once on the
+        // transition; the appearance otherwise matches the terminal.
         #expect(result == MarkdownPanelAppearance(
             appearance: terminal,
             proseForeground: nil,
-            source: .terminal
+            source: .terminal,
+            resolutionFailure: .unknownTheme(name: "Nonexistent Theme")
         ))
     }
 
@@ -158,6 +161,116 @@ struct MarkdownPanelAppearanceTests {
         )
 
         #expect(liveReadCount == 0)
+    }
+
+    // MARK: - Cache (resolution off the render path, one-shot warning)
+
+    @Test
+    func cacheResolvesOnceForRepeatedReadsWithUnchangedInputs() throws {
+        let terminal = darkTranslucentTerminalAppearance()
+        let cache = MarkdownPanelAppearanceCache { _, _ in }
+        var resolverCalls = 0
+
+        // The view reads the appearance several times per body pass and re-runs
+        // body on typing/focus/find; identical inputs must not touch the
+        // disk-backed resolver again.
+        for _ in 0..<10 {
+            _ = cache.appearance(
+                themeSetting: "Catppuccin Latte",
+                terminalAppearance: terminal,
+                preferredColorScheme: .dark
+            ) { _, _ in
+                resolverCalls += 1
+                return self.resolvedTheme(background: "#eff1f5", foreground: "#4c4f69")
+            }
+        }
+
+        #expect(resolverCalls == 1)
+    }
+
+    @Test
+    func cacheReResolvesWhenAnyInputChanges() throws {
+        let terminal = darkTranslucentTerminalAppearance()
+        let cache = MarkdownPanelAppearanceCache { _, _ in }
+        var resolverCalls = 0
+        let resolver: (String, GhosttyConfig.ColorSchemePreference) -> GhosttyThemeResolution = { _, _ in
+            resolverCalls += 1
+            return self.resolvedTheme(background: "#eff1f5", foreground: "#4c4f69")
+        }
+
+        _ = cache.appearance(themeSetting: "Latte", terminalAppearance: terminal, preferredColorScheme: .dark, resolver: resolver)
+        // Theme setting change.
+        _ = cache.appearance(themeSetting: "Mocha", terminalAppearance: terminal, preferredColorScheme: .dark, resolver: resolver)
+        // Preferred color scheme change.
+        _ = cache.appearance(themeSetting: "Mocha", terminalAppearance: terminal, preferredColorScheme: .light, resolver: resolver)
+        // Terminal appearance identity change.
+        var otherTerminal = terminal
+        otherTerminal = PanelAppearance(
+            backgroundColor: NSColor(hex: "#000000")!,
+            foregroundColor: terminal.foregroundColor,
+            dividerColor: terminal.dividerColor,
+            unfocusedOverlayNSColor: terminal.unfocusedOverlayNSColor,
+            unfocusedOverlayOpacity: terminal.unfocusedOverlayOpacity,
+            usesClearContentBackground: terminal.usesClearContentBackground
+        )
+        _ = cache.appearance(themeSetting: "Mocha", terminalAppearance: otherTerminal, preferredColorScheme: .light, resolver: resolver)
+
+        #expect(resolverCalls == 4)
+    }
+
+    @Test
+    func cacheWarnsOncePerDistinctFailureNotPerRead() throws {
+        let terminal = darkTranslucentTerminalAppearance()
+        var warnings: [GhosttyThemeResolutionFailure] = []
+        let cache = MarkdownPanelAppearanceCache { _, failure in warnings.append(failure) }
+
+        // A permanently unresolvable theme read many times (body re-evaluates on
+        // every keystroke) must warn exactly once, not once per read.
+        for _ in 0..<10 {
+            _ = cache.appearance(
+                themeSetting: "Nonexistent",
+                terminalAppearance: terminal,
+                preferredColorScheme: .dark
+            ) { _, _ in .failed(.unknownTheme(name: "Nonexistent")) }
+        }
+        #expect(warnings.count == 1)
+
+        // A transition to a different failure warns again.
+        _ = cache.appearance(
+            themeSetting: "AlsoBad",
+            terminalAppearance: terminal,
+            preferredColorScheme: .dark
+        ) { _, _ in .failed(.unknownTheme(name: "AlsoBad")) }
+        #expect(warnings.count == 2)
+
+        // Recovering to a resolved theme, then failing with the same cause as
+        // before, warns again (the failure is no longer the last-warned one).
+        _ = cache.appearance(
+            themeSetting: "Latte",
+            terminalAppearance: terminal,
+            preferredColorScheme: .dark
+        ) { _, _ in self.resolvedTheme(background: "#eff1f5", foreground: "#4c4f69") }
+        _ = cache.appearance(
+            themeSetting: "AlsoBad",
+            terminalAppearance: terminal,
+            preferredColorScheme: .dark
+        ) { _, _ in .failed(.unknownTheme(name: "AlsoBad")) }
+        #expect(warnings.count == 3)
+    }
+
+    @Test
+    func resolveDoesNotLogWarningItself() throws {
+        // `resolve` is pure: the failure is carried in `resolutionFailure` for
+        // the cache to warn on a transition, so `resolve` can stay off the
+        // warning path even if called per render.
+        let result = MarkdownPanelAppearance.resolve(
+            themeSetting: "Nonexistent",
+            terminalAppearance: darkTranslucentTerminalAppearance(),
+            preferredColorScheme: .dark
+        ) { _, _ in .failed(.unknownTheme(name: "Nonexistent")) }
+
+        #expect(result.source == .terminal)
+        #expect(result.resolutionFailure == .unknownTheme(name: "Nonexistent"))
     }
 
     /// A defaults suite in system appearance mode, so `preferredColorScheme`

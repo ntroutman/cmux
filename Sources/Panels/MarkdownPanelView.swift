@@ -25,6 +25,11 @@ struct MarkdownPanelView: View {
     let appearance: PanelAppearance
     let onRequestPanelFocus: () -> Void
 
+    /// Memoizes the disk-backed `markdown.theme` resolution so it runs only when
+    /// the setting, terminal appearance, or preferred color scheme changes — not
+    /// on every `body` pass (typing, focus/find, content refresh).
+    @State private var appearanceCache = MarkdownPanelAppearanceCache()
+
     @State private var focusFlashOpacity: Double = 0.0
     @State private var focusFlashAnimationGeneration: Int = 0
     @State private var copyConfirmation: CopyConfirmation? = nil
@@ -216,7 +221,7 @@ struct MarkdownPanelView: View {
     /// and falling back to the terminal `appearance` otherwise. Divider and
     /// unfocused-overlay values stay the terminal's so splits look uniform.
     private var markdownAppearance: MarkdownPanelAppearance {
-        MarkdownPanelAppearance.resolve(
+        appearanceCache.appearance(
             themeSetting: panel.themeSetting,
             terminalAppearance: appearance,
             preferredColorScheme: MarkdownPanelAppearance.preferredColorScheme()
