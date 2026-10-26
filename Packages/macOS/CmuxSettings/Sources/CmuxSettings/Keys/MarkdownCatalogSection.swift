@@ -38,6 +38,17 @@ public struct MarkdownCatalogSection: SettingCatalogSection {
         userDefaultsKey: "markdown.maxWidth"
     )
 
+    /// Ghostty theme name for the markdown viewer: a bare theme name,
+    /// `light:X,dark:Y`, or an absolute theme-file path. Empty follows the
+    /// terminal, so an unset value leaves the viewer byte-for-byte as it is
+    /// today. An unresolvable name is handled at appearance-build time, not at
+    /// parse time, so it never poisons the last-good settings snapshot.
+    public let theme = DefaultsKey<String>(
+        id: "markdown.theme",
+        defaultValue: "",
+        userDefaultsKey: "markdown.theme"
+    )
+
     /// Creates the markdown settings section with its default keys.
     public init() {}
 }

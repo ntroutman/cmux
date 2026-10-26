@@ -394,7 +394,7 @@ struct MarkdownWebRenderer: NSViewRepresentable {
 
         private func applyTheme(_ theme: MarkdownWebTheme) {
             guard let webView else { return }
-            let payload = [
+            var payload = [
                 "--bgColor-default": theme.background,
                 "--bgColor-muted": theme.mutedBackground,
                 "--bgColor-neutral-muted": theme.neutralMutedBackground,
@@ -402,6 +402,14 @@ struct MarkdownWebRenderer: NSViewRepresentable {
                 "--borderColor-muted": theme.mutedBorder,
                 "--borderColor-neutral-muted": theme.mutedBorder
             ]
+            if let foreground = theme.foreground {
+                payload["--fgColor-default"] = foreground
+            }
+            // An unset foreground must clear a previously installed override so
+            // a themed→unset or themed→unresolvable transition returns body
+            // text to GitHub's stock color for the current polarity. setProperty
+            // alone never removes a custom property, so emit the removal inline.
+            let clearForeground = theme.foreground == nil
             guard let data = try? JSONSerialization.data(withJSONObject: payload),
                   let json = String(data: data, encoding: .utf8) else { return }
             let js = """
@@ -411,6 +419,9 @@ struct MarkdownWebRenderer: NSViewRepresentable {
               Object.keys(vars).forEach(function(name) {
                 content.style.setProperty(name, vars[name]);
               });
+              if (\(clearForeground ? "true" : "false")) {
+                content.style.removeProperty('--fgColor-default');
+              }
               content.style.background = 'transparent';
               if (window.__cmuxApplyTheme) { window.__cmuxApplyTheme(); }
             })(\(json));

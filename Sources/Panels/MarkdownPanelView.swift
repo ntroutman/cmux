@@ -25,6 +25,11 @@ struct MarkdownPanelView: View {
     let appearance: PanelAppearance
     let onRequestPanelFocus: () -> Void
 
+    /// Memoizes the disk-backed `markdown.theme` resolution so it runs only when
+    /// the setting, terminal appearance, or preferred color scheme changes — not
+    /// on every `body` pass (typing, focus/find, content refresh).
+    @State private var appearanceCache = MarkdownPanelAppearanceCache()
+
     @State private var focusFlashOpacity: Double = 0.0
     @State private var focusFlashAnimationGeneration: Int = 0
     @State private var copyConfirmation: CopyConfirmation? = nil
@@ -75,8 +80,11 @@ struct MarkdownPanelView: View {
         ZStack {
             MarkdownWebRenderer(
                 markdown: panel.content,
-                theme: MarkdownWebTheme.resolve(backgroundColor: themeBackgroundColor),
-                backgroundColor: appearance.contentBackgroundColor,
+                theme: MarkdownWebTheme.resolve(
+                    backgroundColor: themeBackgroundColor,
+                    foregroundColor: markdownAppearance.proseForeground
+                ),
+                backgroundColor: markdownAppearance.appearance.contentBackgroundColor,
                 isVisibleInUI: isVisibleInUI && panel.displayMode == .preview,
                 panelId: panel.id,
                 workspaceId: panel.workspaceId,
@@ -99,10 +107,10 @@ struct MarkdownPanelView: View {
                 FilePreviewTextEditor(
                     panel: panel,
                     isVisibleInUI: isVisibleInUI,
-                    themeBackgroundColor: appearance.contentBackgroundColor,
+                    themeBackgroundColor: markdownAppearance.appearance.contentBackgroundColor,
                     themeForegroundColor: themeForegroundColor,
-                    drawsBackground: appearance.drawsContentBackground,
-                    gutterBackgroundColor: appearance.backgroundColor,
+                    drawsBackground: markdownAppearance.appearance.drawsContentBackground,
+                    gutterBackgroundColor: markdownAppearance.appearance.backgroundColor,
                     wordWrap: fileEditorWordWrap,
                     filePath: panel.filePath
                 )
@@ -209,16 +217,34 @@ struct MarkdownPanelView: View {
 
     // MARK: - Theme
 
+    /// The viewer's appearance, themed from `markdown.theme` when it resolves
+    /// and falling back to the terminal `appearance` otherwise. Divider and
+    /// unfocused-overlay values stay the terminal's so splits look uniform.
+    private var markdownAppearance: MarkdownPanelAppearance {
+        appearanceCache.appearance(
+            themeSetting: panel.themeSetting,
+            terminalAppearance: appearance,
+            preferredColorScheme: MarkdownPanelAppearance.preferredColorScheme(),
+            // `themeGeneration` carries same-name reload-config and appearance
+            // flips that move nothing else; reading it alongside `themeSetting`
+            // makes the cache re-resolve on either. No parse cache beyond this
+            // memo: `resolve` is a handful of small file reads per change,
+            // matching the reload-config cost the user already pays — the
+            // 'cache' builder decision for this epic.
+            themeGeneration: panel.themeGeneration
+        )
+    }
+
     private var contentBackgroundColor: Color {
-        Color(nsColor: appearance.contentBackgroundColor)
+        Color(nsColor: markdownAppearance.appearance.contentBackgroundColor)
     }
 
     private var themeBackgroundColor: NSColor {
-        appearance.backgroundColor
+        markdownAppearance.appearance.backgroundColor
     }
 
     private var themeForegroundColor: NSColor {
-        appearance.foregroundColor
+        markdownAppearance.appearance.foregroundColor
     }
 
     private var themeColorScheme: ColorScheme {

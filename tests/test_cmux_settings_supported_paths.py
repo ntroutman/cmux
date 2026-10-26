@@ -131,6 +131,7 @@ class SupportedPathsTests(unittest.TestCase):
             "markdown.fontSize",
             "markdown.fontFamily",
             "markdown.maxWidth",
+            "markdown.theme",
             "fileEditor.wordWrap",
             "fileEditor.syntaxHighlighting",
             "fileExplorer.doubleClickAction",
