@@ -1,5 +1,6 @@
 import AppKit
 import CmuxTerminalCore
+import Foundation
 import SwiftUI
 import Testing
 
@@ -77,6 +78,49 @@ struct MarkdownPanelAppearanceTests {
 
         #expect(result.appearance.usesClearContentBackground == false)
         #expect(result.appearance.backgroundColor.alphaComponent == 1)
+    }
+
+    @Test
+    func absolutePathThemeFileWithBackgroundOpacityStillDrawsOpaque() throws {
+        // The synthesized-alpha test above forces alpha onto `config.backgroundColor`;
+        // a real theme file's `background-opacity` lands in the separate
+        // `backgroundOpacity` field instead. This drives the *default* resolver
+        // over an on-disk absolute-path theme so the whole parse-to-appearance
+        // path proves the directive is discarded for the opaque Markdown page.
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("cmux-md-theme-opacity-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let themeFile = root.appendingPathComponent("translucent-theme", isDirectory: false)
+        try "background = #eff1f5\nforeground = #4c4f69\nbackground-opacity = 0.5\n".write(
+            to: themeFile,
+            atomically: true,
+            encoding: .utf8
+        )
+
+        // The parser must actually see the directive — otherwise this would
+        // prove nothing about discarding it — so confirm the resolved config
+        // carries a sub-1 opacity before checking the appearance drops it.
+        guard case let .resolved(config) = GhosttyConfig.resolveTheme(
+            themeFile.path,
+            preferredColorScheme: .dark
+        ) else {
+            Issue.record("expected the absolute-path theme file to resolve")
+            return
+        }
+        #expect(config.backgroundOpacity < 1)
+
+        let result = MarkdownPanelAppearance.resolve(
+            themeSetting: themeFile.path,
+            terminalAppearance: darkTranslucentTerminalAppearance(),
+            preferredColorScheme: .dark
+        )
+
+        #expect(result.source == .theme(name: themeFile.path))
+        #expect(result.appearance.usesClearContentBackground == false)
+        #expect(result.appearance.backgroundColor.alphaComponent == 1)
+        #expect(result.appearance.backgroundColor == NSColor(hex: "#eff1f5"))
+        #expect(result.proseForeground == NSColor(hex: "#4c4f69"))
     }
 
     @Test
