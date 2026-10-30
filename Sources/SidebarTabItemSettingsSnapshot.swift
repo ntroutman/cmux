@@ -10,6 +10,9 @@ struct SidebarTabItemSettingsSnapshot: Equatable {
     let wrapsWorkspaceTitles: Bool
     /// `sidebar.compactAgentStatus`: agent status entries draw on the title line.
     let compactsAgentStatus: Bool
+    /// `sidebar.groupDividers`: workspace groups draw a tinted header band and
+    /// an indent guide down their members. Off restores today's flat look.
+    let showsGroupDividers: Bool
     /// `sidebar.compactStatusIcons`, keeping only known states and non-empty names.
     let compactStatusIcons: [String: String]
     let showsWorkspaceDescription: Bool
@@ -75,6 +78,7 @@ struct SidebarTabItemSettingsSnapshot: Equatable {
         hidesAllDetails = settings.value(for: sidebar.hideAllDetails)
         wrapsWorkspaceTitles = settings.value(for: sidebar.wrapWorkspaceTitles)
         compactsAgentStatus = settings.value(for: sidebar.compactAgentStatus)
+        showsGroupDividers = settings.value(for: sidebar.groupDividers)
         compactStatusIcons = SidebarCompactStatusGlyph.validIconOverrides(settings.value(for: sidebar.compactStatusIcons))
         let detailVisibility = SidebarWorkspaceDetailVisibility(
             showWorkspaceDescription: settings.value(for: sidebar.showWorkspaceDescription),
