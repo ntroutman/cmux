@@ -80,6 +80,11 @@ NOT_IN_CMUX_JSON = frozenset({
     "mobile.phonePush.forwardingEnabled",
     "mobile.phonePush.hideContent",
     "mobile.phonePush.mode",
+    # The group-dividers catalog key exists for the sidebar renderer and
+    # settings UI, but its cmux.json schema entry, supported path, and
+    # section parser land in a sibling leaf of the sidebar-group-visual-divide
+    # epic (cmux-ta4). Move the id into the schema when that wiring lands.
+    "sidebar.groupDividers",
     # Sidebar remembered UI state remains UserDefaults-only. The cmux.json
     # paths for the ordinary appearance settings are covered by the parser.
     "sidebar.rightMaxWidth.remembered",
