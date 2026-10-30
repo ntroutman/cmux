@@ -2,8 +2,13 @@ import CmuxTerminal
 import Foundation
 
 /// Nonblocking ordered handoff from Ghostty's serialized PTY callback to the
-/// main actor. The latest-directory snapshot is confined to that serialized
-/// callback and preserves callback order for later OSC notifications.
+/// main actor. The AsyncStream handoff still preserves callback order for later
+/// OSC notifications. The latest-directory snapshot is no longer confined to
+/// that callback: it is a lock-guarded, last-writer-wins field written by the
+/// OSC 7 callback thread (`enqueue`) and by main-actor socket reports
+/// (`recordExternallyReportedDirectory`), and read by the
+/// `GHOSTTY_ACTION_OPEN_URL` cmd-click path and the desktop-notification
+/// `hookDirectory` path via `directorySnapshot()`.
 final class GhosttyCurrentDirectoryActionDispatcher {
     typealias Delivery = @MainActor @Sendable (GhosttyCurrentDirectoryAction) -> Void
 
@@ -11,6 +16,16 @@ final class GhosttyCurrentDirectoryActionDispatcher {
     private let endBoundaryHash: UInt64?
     private let replayBoundaryContinuation: AsyncStream<GhosttyCurrentDirectoryAction>.Continuation
     private let ordinaryContinuation: AsyncStream<GhosttyCurrentDirectoryAction>.Continuation
+    // LOCK CARVE-OUT (skills/cmux-architecture Swift 6 concurrency): the writer
+    // (GHOSTTY_ACTION_PWD) and primary reader (GHOSTTY_ACTION_OPEN_URL) are
+    // synchronous C action callbacks on Ghostty's I/O thread — and, for a
+    // cmd-click release, synchronously on main — plus main-actor socket reports;
+    // none can `await` an actor, so an actor cannot serve this field. Each
+    // critical section is a single optional-String assign or read, never held
+    // across hashing, the AsyncStream yield, or main-actor work. It replaces an
+    // existing unsynchronized cross-thread access and guards no ongoing domain
+    // state (the authoritative directory record stays in Workspace).
+    private let latestDirectoryLock = NSLock()
     private var latestDirectory: String?
 
     init(
@@ -64,7 +79,9 @@ final class GhosttyCurrentDirectoryActionDispatcher {
         surfaceView: GhosttyNSView,
         terminalSurface: TerminalSurface?
     ) {
+        latestDirectoryLock.lock()
         latestDirectory = directory.isEmpty ? nil : directory
+        latestDirectoryLock.unlock()
         let directoryHash = Self.stableHash(directory)
         let isStartBoundary = directoryHash == startBoundaryHash
         let isEndBoundary = directoryHash == endBoundaryHash
@@ -82,10 +99,25 @@ final class GhosttyCurrentDirectoryActionDispatcher {
         }
     }
 
-    /// The last PWD value observed before the current callback in Ghostty's
-    /// serialized surface action stream.
+    /// The latest lock-protected directory value by execution order, written by
+    /// the OSC 7 callback (`enqueue`) and by socket reports
+    /// (`recordExternallyReportedDirectory`).
     func directorySnapshot() -> String? {
-        latestDirectory
+        latestDirectoryLock.lock()
+        defer { latestDirectoryLock.unlock() }
+        return latestDirectory
+    }
+
+    /// Records an already-normalized directory from a socket report, bypassing
+    /// the AsyncStream handoff: it never yields an action, so `deliver` and
+    /// `recordReportedWorkingDirectory` do not run for it (the socket report
+    /// already updated the authoritative record itself). An empty string is a
+    /// no-op that leaves the snapshot unchanged; it does not clear.
+    func recordExternallyReportedDirectory(_ directory: String) {
+        guard !directory.isEmpty else { return }
+        latestDirectoryLock.lock()
+        latestDirectory = directory
+        latestDirectoryLock.unlock()
     }
 
     @MainActor

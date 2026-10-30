@@ -3949,7 +3949,11 @@ class GhosttyNSView: NSView, NSUserInterfaceValidations {
     fileprivate let titleUpdateIngress = GhosttyTitleUpdateIngress()
     /// Retained independently because the weak surface can clear before view teardown.
     private var titleUpdateSurfaceKey: GhosttyTitleUpdateSurfaceKey?
-    // SAFETY: replay setup replaces this before runtime attachment; callbacks only read it.
+    // SAFETY: replay setup (registerNotificationScrollReplayBoundaries) replaces this
+    // dispatcher object before runtime attachment, so the reference itself is never
+    // reassigned concurrently; the object's latest-directory snapshot is now mutated and
+    // read cross-thread (OSC 7 callback thread and main-actor socket reports) under the
+    // dispatcher's own lock.
     nonisolated(unsafe) var currentDirectoryActionDispatcher = GhosttyCurrentDirectoryActionDispatcher()
     var scrollbar: GhosttyScrollbar?
     /// Pending scrollbar value written from the action callback thread;
