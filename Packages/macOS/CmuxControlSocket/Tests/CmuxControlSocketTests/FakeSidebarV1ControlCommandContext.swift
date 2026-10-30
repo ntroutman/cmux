@@ -27,6 +27,24 @@ final class FakeSidebarV1ControlCommandContext: ControlCommandContext {
         scope: ControlSidebarPanelScope,
         stateRawValue: String
     )?
+    nonisolated(unsafe) var scopedDirectoryPublishCall: (
+        scope: ControlSidebarPanelScope,
+        directory: String
+    )?
+    nonisolated(unsafe) var scopedDirectoryUpdateCall: (
+        scope: ControlSidebarPanelScope,
+        directory: String,
+        displayLabel: String?
+    )?
+    nonisolated(unsafe) var directoryUpdateCall: (
+        tabArg: String?,
+        panelArg: String?,
+        directory: String,
+        displayLabel: String?
+    )?
+    /// Ordered record of the pwd seam calls so a test can assert the in-hop
+    /// publish precedes the queued record write.
+    nonisolated(unsafe) var directoryCallLog: [String] = []
     nonisolated(unsafe) var statusUpsertCall: (
         target: ControlSidebarTabTarget,
         key: String,
@@ -108,6 +126,36 @@ final class FakeSidebarV1ControlCommandContext: ControlCommandContext {
         stateRawValue: String
     ) {
         shellStateCall = (scope, stateRawValue)
+    }
+
+    func controlSidebarTabManagerAvailable() -> Bool { true }
+
+    func controlSidebarPublishScopedDirectorySnapshot(
+        scope: ControlSidebarPanelScope,
+        directory: String
+    ) {
+        scopedDirectoryPublishCall = (scope, directory)
+        directoryCallLog.append("publish")
+    }
+
+    nonisolated func controlSidebarScheduleScopedDirectoryUpdate(
+        scope: ControlSidebarPanelScope,
+        directory: String,
+        displayLabel: String?
+    ) {
+        scopedDirectoryUpdateCall = (scope, directory, displayLabel)
+        directoryCallLog.append("schedule")
+    }
+
+    func controlSidebarUpdateDirectory(
+        tabArg: String?,
+        panelArg: String?,
+        directory: String,
+        displayLabel: String?
+    ) -> ControlSidebarPanelWriteResolution {
+        directoryUpdateCall = (tabArg, panelArg, directory, displayLabel)
+        directoryCallLog.append("fallback")
+        return .done
     }
 
     func controlSidebarSetWorkspaceLoading(

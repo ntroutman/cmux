@@ -273,4 +273,57 @@ struct ControlCommandCoordinatorSidebarV1Tests {
         #expect(context.manualPullRequestCall == nil)
     }
 
+    @Test func reportPwdScopedPublishesSnapshotBeforeSchedulingRecord() {
+        let context = FakeSidebarV1ControlCommandContext()
+        let coordinator = ControlCommandCoordinator(context: context)
+        let workspaceID = UUID()
+        let panelID = UUID()
+
+        let response = coordinator.handleSidebarV1(
+            command: "report_pwd",
+            args: "/b --tab=\(workspaceID.uuidString) --panel=\(panelID.uuidString)"
+        )
+
+        #expect(response == "OK")
+        #expect(context.scopedDirectoryPublishCall?.scope.workspaceID == workspaceID)
+        #expect(context.scopedDirectoryPublishCall?.scope.panelID == panelID)
+        #expect(context.scopedDirectoryPublishCall?.directory == "/b")
+        #expect(context.scopedDirectoryUpdateCall?.directory == "/b")
+        // The cmd-click snapshot publish runs in-hop, before the queued record.
+        #expect(context.directoryCallLog == ["publish", "schedule"])
+    }
+
+    @Test func reportPwdScopedPublishesFilesystemPathNotDisplayLabel() {
+        let context = FakeSidebarV1ControlCommandContext()
+        let coordinator = ControlCommandCoordinator(context: context)
+        let workspaceID = UUID()
+        let panelID = UUID()
+
+        let response = coordinator.handleSidebarV1(
+            command: "report_pwd",
+            args: "Label --path=/x --tab=\(workspaceID.uuidString) --panel=\(panelID.uuidString)"
+        )
+
+        #expect(response == "OK")
+        #expect(context.scopedDirectoryPublishCall?.directory == "/x")
+        #expect(context.scopedDirectoryUpdateCall?.displayLabel == "Label")
+    }
+
+    @Test func reportPwdFallbackDoesNotPublishScopedSnapshot() {
+        let context = FakeSidebarV1ControlCommandContext()
+        let coordinator = ControlCommandCoordinator(context: context)
+        let workspaceID = UUID()
+
+        // No `--panel`: the fallback path resolves the focused surface app-side
+        // and publishes there, never through the scoped publish requirement.
+        let response = coordinator.handleSidebarV1(
+            command: "report_pwd",
+            args: "/b --tab=\(workspaceID.uuidString)"
+        )
+
+        #expect(response == "OK")
+        #expect(context.scopedDirectoryPublishCall == nil)
+        #expect(context.directoryUpdateCall?.directory == "/b")
+        #expect(context.directoryCallLog == ["fallback"])
+    }
 }

@@ -247,6 +247,12 @@ public protocol ControlSidebarContext: AnyObject {
     /// reported alongside the real filesystem path (`--path=`).
     nonisolated func controlSidebarScheduleScopedDirectoryUpdate(scope: ControlSidebarPanelScope, directory: String, displayLabel: String?)
 
+    /// Publishes the explicit-scope `report_pwd` path to the surface's
+    /// cmd-click directory snapshot inside the command's main hop, before OK.
+    /// The queued record write (``controlSidebarScheduleScopedDirectoryUpdate``)
+    /// is unchanged, and the drain path must not re-publish.
+    func controlSidebarPublishScopedDirectorySnapshot(scope: ControlSidebarPanelScope, directory: String)
+
     /// Applies the fallback `report_pwd` directory update.
     func controlSidebarUpdateDirectory(tabArg: String?, panelArg: String?, directory: String, displayLabel: String?) -> ControlSidebarPanelWriteResolution
 

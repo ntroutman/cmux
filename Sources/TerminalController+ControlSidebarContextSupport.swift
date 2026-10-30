@@ -1,5 +1,6 @@
 import CmuxControlSocket
 import CmuxSidebar
+import CmuxSidebarGit
 import CmuxTerminal
 import CmuxWorkspaces
 import Foundation
@@ -309,7 +310,8 @@ extension TerminalController {
                 tab: tab,
                 surfaceId: scope.panelID,
                 directory: directory,
-                displayLabel: displayLabel
+                displayLabel: displayLabel,
+                publishSnapshot: false
             )
         }
     }
@@ -331,17 +333,23 @@ extension TerminalController {
                 tab: tab,
                 surfaceId: surfaceId,
                 directory: directory,
-                displayLabel: displayLabel
+                displayLabel: displayLabel,
+                publishSnapshot: true
             )
         }
     }
 
+    /// Applies one `report_pwd` to the sidebar record, then — only when
+    /// `publishSnapshot` is set — mirrors the path into the surface's cmd-click
+    /// snapshot. The scoped drain path passes `false`: its in-hop publish
+    /// already ran, and a second publish at drain could overwrite a newer OSC 7.
     private func controlSidebarApplyDirectoryReport(
         tabManager: TabManager?,
         tab: Workspace,
         surfaceId: UUID,
         directory: String,
-        displayLabel: String?
+        displayLabel: String?,
+        publishSnapshot: Bool
     ) {
         if let tabManager {
             tabManager.updateReportedSurfaceDirectory(
@@ -355,6 +363,37 @@ extension TerminalController {
         } else {
             _ = tab.updatePanelDirectory(panelId: surfaceId, directory: directory, displayLabel: displayLabel)
         }
+        if publishSnapshot {
+            publishExternallyReportedDirectorySnapshot(tab: tab, surfaceId: surfaceId, directory: directory)
+        }
+    }
+
+    /// Publishes a socket-reported directory to a local surface's cmd-click
+    /// snapshot — the `GhosttyCurrentDirectoryActionDispatcher.latestDirectory`
+    /// that `GHOSTTY_ACTION_OPEN_URL` reads — so a `report_pwd` reaches the
+    /// directory relative links resolve against, not just the sidebar record.
+    ///
+    /// Admitted only for local-provenance surfaces, using the same `Workspace`
+    /// predicates the sidebar write uses: remote and cloud surfaces keep their
+    /// snapshot untouched. The path is normalized exactly as the sidebar
+    /// normalizes it; a blank report is a no-op (matching
+    /// `Workspace.updatePanelDirectory`'s blank rejection). Callers pass the
+    /// filesystem path only — never the `report_pwd <label> --path=<path>`
+    /// display label. The write bypasses the dispatcher's AsyncStream, so it
+    /// never re-runs `TabManager.updateReportedSurfaceDirectory`.
+    func publishExternallyReportedDirectorySnapshot(tab: Workspace, surfaceId: UUID, directory: String) {
+        guard !tab.cloudDirectoryProvenanceRequired(panelId: surfaceId),
+              tab.allowsLocalDirectoryFallback(panelId: surfaceId) else { return }
+        guard let normalized = directory.nonEmptyNormalizedGitProbeDirectory else { return }
+        tab.terminalPanel(for: surfaceId)?.hostedView.surfaceView
+            .currentDirectoryActionDispatcher
+            .recordExternallyReportedDirectory(normalized)
+    }
+
+    func controlSidebarPublishScopedDirectorySnapshot(scope: ControlSidebarPanelScope, directory: String) {
+        guard let tab = AppDelegate.shared?.tabManagerFor(tabId: scope.workspaceID)?
+            .tabs.first(where: { $0.id == scope.workspaceID }) else { return }
+        publishExternallyReportedDirectorySnapshot(tab: tab, surfaceId: scope.panelID, directory: directory)
     }
 
     /// The shared head of the synchronous panel-targeted sidebar writes
