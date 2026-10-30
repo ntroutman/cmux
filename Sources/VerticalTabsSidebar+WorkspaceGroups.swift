@@ -8,6 +8,25 @@ import CmuxSettings
 import CmuxWorkspaces
 
 extension VerticalTabsSidebar {
+    /// Effective header color hex per group, resolved once per sidebar refresh
+    /// so the header icon, band, and guide all read the same value below the
+    /// list boundary. Matches the rule the header icon already used: the
+    /// group's own custom color wins, else the matching per-directory
+    /// workspace-group config color (`configColor`), else no entry. Groups with
+    /// no effective color are omitted so callers index with an optional lookup.
+    static func groupColorHexByGroupId(
+        groups: [WorkspaceGroup],
+        configColor: (WorkspaceGroup) -> String?
+    ) -> [UUID: String] {
+        var result: [UUID: String] = [:]
+        result.reserveCapacity(groups.count)
+        for group in groups {
+            guard let color = group.customColor ?? configColor(group) else { continue }
+            result[group.id] = color
+        }
+        return result
+    }
+
     func sidebarWorkspaceGroupTableConfiguration(
         group: WorkspaceGroup,
         memberWorkspaceIds: [UUID],
@@ -26,7 +45,7 @@ extension VerticalTabsSidebar {
             && selectedTabIds.count > 1
         let anchorCwd = liveAnchorId.flatMap { renderContext.workspaceById[$0]?.currentDirectory }
         let resolvedConfig = cmuxConfigStore.resolveWorkspaceGroupConfig(forCwd: anchorCwd)
-        let effectiveColor = group.customColor ?? resolvedConfig?.color
+        let effectiveColor = renderContext.groupColorHexByGroupId[group.id]
         let effectiveIcon = RenderableSystemSymbol.resolvedWorkspaceGroupIcon(
             explicit: group.iconSymbol,
             configured: resolvedConfig?.iconSymbol
@@ -213,7 +232,7 @@ extension VerticalTabsSidebar {
             && selectedTabIds.count > 1
         let anchorCwd = liveAnchorId.flatMap { renderContext.workspaceById[$0]?.currentDirectory }
         let resolvedConfig = cmuxConfigStore.resolveWorkspaceGroupConfig(forCwd: anchorCwd)
-        let effectiveColor = group.customColor ?? resolvedConfig?.color
+        let effectiveColor = renderContext.groupColorHexByGroupId[group.id]
         let effectiveIcon = RenderableSystemSymbol.resolvedWorkspaceGroupIcon(
             explicit: group.iconSymbol,
             configured: resolvedConfig?.iconSymbol

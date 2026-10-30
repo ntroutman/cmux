@@ -3600,6 +3600,7 @@
 		9521A0040000000000000001 /* SidebarWorkspacePendingDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9521A0030000000000000001 /* SidebarWorkspacePendingDrag.swift */; };
 		A13296000000000000000302 /* SidebarWorkspacePresenceHeadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13296000000000000000301 /* SidebarWorkspacePresenceHeadsView.swift */; };
 		C9A57201C9A57201C9A57201 /* SidebarWorkspaceRenderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A57202C9A57202C9A57202 /* SidebarWorkspaceRenderItem.swift */; };
+		4C6092AF6F44475F065918FD /* SidebarWorkspaceRenderItemGroupFactsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1093441A7606C5F6705806B3 /* SidebarWorkspaceRenderItemGroupFactsTests.swift */; };
 		C9A57211C9A57211C9A57211 /* SidebarWorkspaceRenderItemID.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A57212C9A57212C9A57212 /* SidebarWorkspaceRenderItemID.swift */; };
 		C9A5760DC9A5760DC9A5760D /* SidebarWorkspaceReorderDropOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A5760EC9A5760EC9A5760E /* SidebarWorkspaceReorderDropOverlay.swift */; };
 		C9A57305C9A57305C9A57305 /* SidebarWorkspaceReorderDropOverlayHitTestingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A57306C9A57306C9A57306 /* SidebarWorkspaceReorderDropOverlayHitTestingTests.swift */; };
@@ -8260,6 +8261,7 @@
 		9521A0030000000000000001 /* SidebarWorkspacePendingDrag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar/SidebarWorkspacePendingDrag.swift; sourceTree = "<group>"; };
 		A13296000000000000000301 /* SidebarWorkspacePresenceHeadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar/SidebarWorkspacePresenceHeadsView.swift; sourceTree = "<group>"; };
 		C9A57202C9A57202C9A57202 /* SidebarWorkspaceRenderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWorkspaceRenderItem.swift; sourceTree = "<group>"; };
+		1093441A7606C5F6705806B3 /* SidebarWorkspaceRenderItemGroupFactsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarWorkspaceRenderItemGroupFactsTests.swift"; sourceTree = "<group>"; };
 		C9A57212C9A57212C9A57212 /* SidebarWorkspaceRenderItemID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWorkspaceRenderItemID.swift; sourceTree = "<group>"; };
 		C9A5760EC9A5760EC9A5760E /* SidebarWorkspaceReorderDropOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWorkspaceReorderDropOverlay.swift; sourceTree = "<group>"; };
 		C9A57306C9A57306C9A57306 /* SidebarWorkspaceReorderDropOverlayHitTestingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWorkspaceReorderDropOverlayHitTestingTests.swift; sourceTree = "<group>"; };
@@ -14275,6 +14277,7 @@
 				12E67EC57BD801A47BF3EBAF /* MarkdownPanelAppearanceTests.swift */,
 				6DFE7B250AADC0CCDBEF95B8 /* HostSettingsActionsMarkdownThemeTests.swift */,
 				34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */,
+				1093441A7606C5F6705806B3 /* SidebarWorkspaceRenderItemGroupFactsTests.swift */,
 			);
 			path = cmuxTests;
 			sourceTree = "<group>";
@@ -19371,6 +19374,7 @@
 				C135190000000000000000B1 /* SidebarWorkspaceGroupConfigOpenerTests.swift in Sources */,
 				C9A57303C9A57303C9A57303 /* SidebarWorkspaceGroupHeaderMetricsTests.swift in Sources */,
 				6707F0236707F0236707F023 /* SidebarWorkspaceNotificationIndexTests.swift in Sources */,
+				4C6092AF6F44475F065918FD /* SidebarWorkspaceRenderItemGroupFactsTests.swift in Sources */,
 				C9A57305C9A57305C9A57305 /* SidebarWorkspaceReorderDropOverlayHitTestingTests.swift in Sources */,
 				B8624C9A000000000000009A /* SidebarWorkspaceRowHeightCacheRegressionTests.swift in Sources */,
 				B8624C990000000000000099 /* SidebarWorkspaceRowHeightInvariantTests.swift in Sources */,
