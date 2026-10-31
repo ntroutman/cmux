@@ -12886,7 +12886,8 @@ struct VerticalTabsSidebar: View, Equatable {
             todoControlsEnabled: WorkspaceTodoFeature.isEnabled,
             isMetadataExpanded: expandedMetadataWorkspaceIds.contains(tab.id),
             isMarkdownExpanded: expandedMarkdownWorkspaceIds.contains(tab.id),
-            displayAccessibility: environment.displayAccessibility
+            displayAccessibility: environment.displayAccessibility,
+            groupGuide: input.groupGuide
         )
         let commands = SidebarWorkspaceRowCommands(
             tab: tab,
@@ -15407,9 +15408,31 @@ struct VerticalTabsSidebar: View, Equatable {
             indicatorScope: dragState.dropIndicatorScope
         )
         let settings = renderContext.tabItemSettings
+        let groupId = renderContext.workspaceGroupIdByWorkspaceId[tab.id] ?? nil
+        // The indent guide draws for a rendered member of an expanded group
+        // (collapsed members are dropped from the render projection, so a
+        // non-nil groupId here is always an expanded member) when the setting
+        // is on and the indent leaves room. endsRun comes from the render
+        // context's rendered-adjacency fact, never from list position.
+        let groupGuide: SidebarGroupGuide? = {
+            guard settings.showsGroupDividers,
+                  SidebarWorkspaceGroupingMetrics.showsGuide,
+                  let groupId else { return nil }
+            let color = sidebarGroupGuideColor(
+                groupColorHex: renderContext.groupColorHexByGroupId[groupId],
+                colorScheme: renderContext.environment.colorScheme,
+                increaseContrast: renderContext.environment.displayAccessibility.increaseContrast,
+                brightenInDarkMode: settings.brightenInDarkMode,
+                over: renderContext.environment.readabilityBackdropHex
+            )
+            return SidebarGroupGuide(
+                color: color,
+                endsRun: renderContext.guideRunEndWorkspaceIds.contains(tab.id)
+            )
+        }()
         let result = SidebarWorkspaceRowInput(
             workspaceId: tab.id,
-            groupId: renderContext.workspaceGroupIdByWorkspaceId[tab.id] ?? nil,
+            groupId: groupId,
             index: index,
             workspaceCount: renderContext.workspaceCount,
             workspace: workspaceSnapshot,
@@ -15446,7 +15469,8 @@ struct VerticalTabsSidebar: View, Equatable {
             inferredTaskStatus: workspaceSnapshot.taskStatusInput.inferred,
             activeTodoOverride: workspaceSnapshot.taskStatusInput.activeOverride,
             isTodoStatusHidden: workspaceSnapshot.taskStatusInput.isHidden,
-            hasManualCustomColor: workspaceSnapshot.hasManualCustomColor
+            hasManualCustomColor: workspaceSnapshot.hasManualCustomColor,
+            groupGuide: groupGuide
         )
         return result
     }

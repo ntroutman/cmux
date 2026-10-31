@@ -487,6 +487,18 @@ struct SidebarWorkspaceRowBackgroundStyle: Equatable, Hashable {
     static let clear = Self(color: nil, opacity: 0)
 }
 
+/// The member indent guide a workspace row paints in both renderers. `color`
+/// is the resolved guide tint — ``sidebarGroupGuideColor`` already bakes the
+/// wash opacity into its alpha — and `endsRun` marks the row that terminates
+/// its group's contiguous rendered run, so its segment stops short of the
+/// bottom edge instead of overlapping the inter-row gap. Paint-only: carried
+/// on the row snapshot/model and normalized out of member-row height
+/// equivalence, so a guide color or boundary change never remeasures a row.
+struct SidebarGroupGuide: Equatable, Hashable {
+    let color: NSColor
+    let endsRun: Bool
+}
+
 func sidebarWorkspaceRowExplicitRailNSColor(
     activeTabIndicatorStyle: WorkspaceIndicatorStyle,
     customColorHex: String?,

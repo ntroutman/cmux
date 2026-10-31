@@ -12,7 +12,9 @@ struct SidebarTabItemSettingsSnapshot: Equatable {
     let compactsAgentStatus: Bool
     /// `sidebar.groupDividers`: workspace groups draw a tinted header band and
     /// an indent guide down their members. Off restores today's flat look.
-    let showsGroupDividers: Bool
+    /// `var` only so the member row model can neutralize this paint-only flag
+    /// in its height comparator; the value is set once in `init`.
+    var showsGroupDividers: Bool
     /// `sidebar.compactStatusIcons`, keeping only known states and non-empty names.
     let compactStatusIcons: [String: String]
     let showsWorkspaceDescription: Bool
