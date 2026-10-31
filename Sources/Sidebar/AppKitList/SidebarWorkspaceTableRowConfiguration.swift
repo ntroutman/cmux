@@ -140,7 +140,14 @@ struct SidebarWorkspaceTableRowConfiguration {
             guard let value = value as? SidebarGroupHeaderRowModel else { return false }
             return value == groupHeaderModel
         }
-        self.isHeightEquivalentValue = self.isEquivalentValue
+        // Keep the height cache across a group recolor: the band, tint and
+        // multi-selection wash a recolor rewrites are paint-only, so the
+        // header's own comparator ignores them while catching the gap,
+        // first-row fact, divider flag and name that do change its height.
+        self.isHeightEquivalentValue = { value in
+            guard let value = value as? SidebarGroupHeaderRowModel else { return false }
+            return value.hasHeightEquivalentContent(to: groupHeaderModel)
+        }
     }
 
     init(

@@ -3487,6 +3487,7 @@
 		A8624F0C0000000000000001 /* SidebarFocusBoundaryReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8624F0C0000000000000002 /* SidebarFocusBoundaryReference.swift */; };
 		8175A0010000000000000001 /* SidebarGitProcessCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8175A0010000000000000002 /* SidebarGitProcessCompositionTests.swift */; };
 		EAEB8DD53EE969F4A1515AC7 /* SidebarGroupDividerAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */; };
+		DDDBEB1CC61EDAFD1469DD75 /* SidebarGroupHeaderDividerPlumbingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E04B49801F51D2F37502BE /* SidebarGroupHeaderDividerPlumbingTests.swift */; };
 		F10753000000000000000001 /* SidebarGroupHeaderRowActions+NotificationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10753000000000000000002 /* SidebarGroupHeaderRowActions+NotificationState.swift */; };
 		B804A0200000000000000020 /* SidebarGroupHeaderRowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B804B0200000000000000020 /* SidebarGroupHeaderRowModel.swift */; };
 		B804A0210000000000000021 /* SidebarGroupHeaderRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B804B0210000000000000021 /* SidebarGroupHeaderRowView.swift */; };
@@ -8149,6 +8150,7 @@
 		A8624F0C0000000000000002 /* SidebarFocusBoundaryReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar/SidebarFocusBoundaryReference.swift; sourceTree = "<group>"; };
 		8175A0010000000000000002 /* SidebarGitProcessCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarGitProcessCompositionTests.swift; sourceTree = "<group>"; };
 		34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupDividerAppearanceTests.swift"; sourceTree = "<group>"; };
+		48E04B49801F51D2F37502BE /* SidebarGroupHeaderDividerPlumbingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupHeaderDividerPlumbingTests.swift"; sourceTree = "<group>"; };
 		F10753000000000000000002 /* SidebarGroupHeaderRowActions+NotificationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sidebar/AppKitList/Cells/SidebarGroupHeaderRowActions+NotificationState.swift"; sourceTree = "<group>"; };
 		B804B0200000000000000020 /* SidebarGroupHeaderRowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar/AppKitList/Cells/SidebarGroupHeaderRowModel.swift; sourceTree = "<group>"; };
 		B804B0210000000000000021 /* SidebarGroupHeaderRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar/AppKitList/Cells/SidebarGroupHeaderRowView.swift; sourceTree = "<group>"; };
@@ -14278,6 +14280,7 @@
 				6DFE7B250AADC0CCDBEF95B8 /* HostSettingsActionsMarkdownThemeTests.swift */,
 				34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */,
 				1093441A7606C5F6705806B3 /* SidebarWorkspaceRenderItemGroupFactsTests.swift */,
+				48E04B49801F51D2F37502BE /* SidebarGroupHeaderDividerPlumbingTests.swift */,
 			);
 			path = cmuxTests;
 			sourceTree = "<group>";
@@ -19345,6 +19348,7 @@
 				B8624C060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift in Sources */,
 				8175A0010000000000000001 /* SidebarGitProcessCompositionTests.swift in Sources */,
 				EAEB8DD53EE969F4A1515AC7 /* SidebarGroupDividerAppearanceTests.swift in Sources */,
+				DDDBEB1CC61EDAFD1469DD75 /* SidebarGroupHeaderDividerPlumbingTests.swift in Sources */,
 				B8624C010000000000000001 /* SidebarHiddenPresentationTests.swift in Sources */,
 				51D800000000000000000001 /* SidebarIdentifierFormattingTests.swift in Sources */,
 				AABBCC000000000000000206 /* SidebarInlineRenameKeyResolverTests.swift in Sources */,

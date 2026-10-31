@@ -27,6 +27,38 @@ extension VerticalTabsSidebar {
         return result
     }
 
+    /// The two computed header-band facts — the band fill and the scaled top
+    /// gap — resolved once per refresh so both renderers carry identical values
+    /// below the list boundary. `bandStyle` is `nil` and `topGap` is `0` when
+    /// the divider treatment is off; the gap is also `0` for the first rendered
+    /// row. The band color math lives in ``sidebarGroupBandStyle``, which the
+    /// row background already consumes with the same inputs.
+    static func sidebarGroupHeaderBandFacts(
+        showsGroupDividers: Bool,
+        isFirstRenderedRow: Bool,
+        groupColorHex: String?,
+        fontScale: CGFloat,
+        colorScheme: ColorScheme,
+        increaseContrast: Bool,
+        brightenInDarkMode: Bool,
+        over backdropHex: String?
+    ) -> (bandStyle: SidebarWorkspaceRowBackgroundStyle?, topGap: CGFloat) {
+        let metrics = SidebarWorkspaceGroupHeaderMetrics(
+            fontScale: fontScale,
+            showsGroupDividers: showsGroupDividers
+        )
+        let topGap = metrics.topGap(isFirstRenderedRow: isFirstRenderedRow)
+        guard showsGroupDividers else { return (nil, topGap) }
+        let bandStyle = sidebarGroupBandStyle(
+            groupColorHex: groupColorHex,
+            colorScheme: colorScheme,
+            increaseContrast: increaseContrast,
+            brightenInDarkMode: brightenInDarkMode,
+            over: backdropHex
+        )
+        return (bandStyle, topGap)
+    }
+
     func sidebarWorkspaceGroupTableConfiguration(
         group: WorkspaceGroup,
         memberWorkspaceIds: [UUID],
@@ -123,6 +155,17 @@ extension VerticalTabsSidebar {
             tabIds: renderContext.sidebarReorderIds,
             indicatorScope: dragState.dropIndicatorScope
         )
+        let isFirstRenderedRow = renderContext.firstRenderedRowId == .group(group.id)
+        let bandFacts = VerticalTabsSidebar.sidebarGroupHeaderBandFacts(
+            showsGroupDividers: settings.showsGroupDividers,
+            isFirstRenderedRow: isFirstRenderedRow,
+            groupColorHex: effectiveColor,
+            fontScale: settings.sidebarFontScale,
+            colorScheme: renderContext.environment.colorScheme,
+            increaseContrast: renderContext.environment.displayAccessibility.increaseContrast,
+            brightenInDarkMode: settings.brightenInDarkMode,
+            over: renderContext.environment.readabilityBackdropHex
+        )
         let model = SidebarGroupHeaderRowModel(
             groupId: group.id,
             anchorWorkspaceId: group.anchorWorkspaceId,
@@ -157,7 +200,11 @@ extension VerticalTabsSidebar {
             bottomDropIndicatorVisible: bottomDropIndicatorVisible,
             colorSchemeIsDark: renderContext.environment.colorScheme == .dark,
             notificationBadgeColorHex: settings.notificationBadgeColorHex,
-            accentColor: settings.accentColor
+            accentColor: settings.accentColor,
+            bandStyle: bandFacts.bandStyle,
+            showsGroupDividers: settings.showsGroupDividers,
+            topGap: bandFacts.topGap,
+            isFirstRenderedRow: isFirstRenderedRow
         )
         let actions = makeWorkspaceGroupHeaderActions(
             groupId: group.id,
@@ -313,6 +360,17 @@ extension VerticalTabsSidebar {
             tabIds: renderContext.sidebarReorderIds,
             indicatorScope: dragState.dropIndicatorScope
         )
+        let isFirstRenderedRow = renderContext.firstRenderedRowId == rowId
+        let bandFacts = VerticalTabsSidebar.sidebarGroupHeaderBandFacts(
+            showsGroupDividers: settings.showsGroupDividers,
+            isFirstRenderedRow: isFirstRenderedRow,
+            groupColorHex: effectiveColor,
+            fontScale: settings.sidebarFontScale,
+            colorScheme: renderContext.environment.colorScheme,
+            increaseContrast: renderContext.environment.displayAccessibility.increaseContrast,
+            brightenInDarkMode: settings.brightenInDarkMode,
+            over: renderContext.environment.readabilityBackdropHex
+        )
         return SidebarWorkspaceGroupRowSnapshot(
             groupId: group.id,
             anchorWorkspaceId: group.anchorWorkspaceId,
@@ -349,7 +407,11 @@ extension VerticalTabsSidebar {
             topDropIndicatorVisible: topDropIndicatorVisible,
             bottomDropIndicatorVisible: bottomDropIndicatorVisible,
             shouldCollectWorkspaceDropTargets: shouldCollectWorkspaceDropTargets,
-            notificationBadgeColorHex: settings.notificationBadgeColorHex
+            notificationBadgeColorHex: settings.notificationBadgeColorHex,
+            bandStyle: bandFacts.bandStyle,
+            showsGroupDividers: settings.showsGroupDividers,
+            topGap: bandFacts.topGap,
+            isFirstRenderedRow: isFirstRenderedRow
         )
     }
 
