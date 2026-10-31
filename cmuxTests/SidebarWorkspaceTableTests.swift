@@ -630,6 +630,7 @@ struct SidebarWorkspaceTableTests {
     }
 
     @Test
+    @MainActor
     func rowHeightEstimateAccountsForScaleWrappingAndDetails() {
         let calculator = SidebarWorkspaceTableRowHeightCalculator()
         let compact = calculator.estimatedWorkspaceHeight(
@@ -645,7 +646,13 @@ struct SidebarWorkspaceTableTests {
 
         #expect(compact == 31)
         #expect(detailed == 144)
-        #expect(calculator.estimatedGroupHeaderHeight(fontScale: 1) == 36)
+        // The group-header estimate is now the authoritative height itself, so
+        // the cached and measured heights never disagree (no first-row settle).
+        let headerModel = SidebarGroupHeaderBandTests.makeModel()
+        #expect(
+            calculator.estimatedGroupHeaderHeight(model: headerModel)
+                == SidebarGroupHeaderTableCellView.preferredHeight(model: headerModel)
+        )
         #expect(detailed > compact)
     }
 

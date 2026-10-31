@@ -254,8 +254,8 @@ struct SidebarWorkspaceTableRowConfiguration {
     var estimatedHeight: CGFloat {
         let fontScale = CGFloat(environment.globalFontMagnificationPercent) / 100
         let calculator = SidebarWorkspaceTableRowHeightCalculator()
-        if isGroupHeader {
-            return calculator.estimatedGroupHeaderHeight(fontScale: fontScale)
+        if isGroupHeader, let headerModel = appKitGroupHeaderModel {
+            return calculator.estimatedGroupHeaderHeight(model: headerModel)
         }
         return calculator.estimatedWorkspaceHeight(
             fontScale: fontScale,

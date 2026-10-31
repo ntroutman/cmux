@@ -466,6 +466,9 @@ extension VerticalTabsSidebar {
             topDropIndicatorVisible: snapshot.topDropIndicatorVisible,
             bottomDropIndicatorVisible: snapshot.bottomDropIndicatorVisible,
             notificationBadgeColorHex: snapshot.notificationBadgeColorHex,
+            bandStyle: snapshot.bandStyle,
+            showsGroupDividers: snapshot.showsGroupDividers,
+            topGap: snapshot.topGap,
             actions: actions,
             onContextMenuAppear: {},
             onContextMenuDisappear: {}

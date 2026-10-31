@@ -20,7 +20,14 @@ struct SidebarWorkspaceTableRowHeightCalculator {
         return ceil(16 + titleHeight + auxiliaryHeight + interlineSpacing)
     }
 
-    func estimatedGroupHeaderHeight(fontScale: CGFloat) -> CGFloat {
-        ceil(26 * max(0.5, fontScale) + 10)
+    /// Group headers have deterministic, layout-free heights, so the estimate
+    /// is the authoritative height itself. Delegating to
+    /// ``SidebarGroupHeaderTableCellView/preferredHeight(model:)`` keeps the two
+    /// from diverging on the font scale (`model.fontScale`, not the global
+    /// magnification), the name size, or the top gap — any mismatch settles the
+    /// first row when the real measurement lands.
+    @MainActor
+    func estimatedGroupHeaderHeight(model: SidebarGroupHeaderRowModel) -> CGFloat {
+        SidebarGroupHeaderTableCellView.preferredHeight(model: model)
     }
 }
