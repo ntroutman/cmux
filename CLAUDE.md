@@ -1,3 +1,15 @@
+# Fork: ntroutman/cmux
+
+This is a personal fork. `main` is the custom build, and nothing goes back to
+`manaflow-ai/cmux` (remote `upstream`, push disabled). These rules override any
+conflicting rule below.
+
+- Before starting new work, sync `origin/main` with upstream. New worktrees branch
+  from `origin/main`. Follow [fork sync](docs/fork-sync.md).
+- Never squash-merge into `main`; use a fast-forward or a merge commit. A squash
+  drops upstream ancestry, and every later sync conflicts.
+- Open PRs against `ntroutman/cmux` (`gh pr create -R ntroutman/cmux`), never upstream.
+
 # cmux agent notes
 
 Keep repo-wide decisions here; procedures belong in [CONTRIBUTING.md](CONTRIBUTING.md),
