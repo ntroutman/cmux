@@ -43,9 +43,33 @@ public final class CustomSidebarTemplateGalleryRequest {
 /// protocol once and injects it via ``SettingsRuntime``; sections
 /// check for `nil` callbacks and hide the corresponding buttons
 /// when no host action is available.
+/// Outcome of validating a Markdown Viewer Theme name against the host's
+/// Ghostty theme resolver.
+///
+/// `.unavailable` is the protocol-extension default: a conformer that cannot
+/// reach the resolver (previews, tests, Foundation-only hosts) reports
+/// "validation unavailable" rather than silently claiming every name is valid.
+/// The real host overrides the method to return `.valid` / `.invalid`.
+public enum MarkdownThemeValidation: Equatable {
+    case valid
+    /// The name failed to resolve; `message` is the host resolver's reason,
+    /// for example an unknown theme name or an unresolvable conditional side.
+    case invalid(message: String)
+    case unavailable
+}
+
 @MainActor
 public protocol SettingsHostActions: AnyObject, CloudMachinesSettingsActions {
     func computersSettingsActions() -> ComputersSettingsActions
+
+    /// Validates a Markdown Viewer Theme name on commit (not per keystroke).
+    ///
+    /// An empty name follows the terminal and is always `.valid`. A bare name,
+    /// absolute path, or conditional `light:X,dark:Y` resolves through the
+    /// host's Ghostty theme resolver; a conditional validates every named side
+    /// and reports the first that fails by name. Synchronous and main-actor:
+    /// one resolution is a handful of small file reads over a fixed search path.
+    func validateMarkdownThemeName(_ rawValue: String) -> MarkdownThemeValidation
     /// A registry snapshot used to populate the per-agent notification sound
     /// matrix. The host owns discovery so newly registered agents appear
     /// without a second list in the settings package.
@@ -506,6 +530,14 @@ public extension SettingsHostActions {
     /// Package-only hosts have no Ghostty config, so the gallery stays hidden.
     func terminalThemeGalleryContext() -> TerminalThemeGalleryContext? { nil }
     func terminalThemeConfigDidChange(phase: TerminalThemeReloadPhase) {}
+
+    /// Package-only hosts cannot reach the Ghostty theme resolver, so Markdown
+    /// theme validation is unavailable rather than silently valid. The real
+    /// host overrides this.
+    func validateMarkdownThemeName(_ rawValue: String) -> MarkdownThemeValidation {
+        _ = rawValue
+        return .unavailable
+    }
 
     /// Default no-op for package-only settings hosts without a bundled cmux CLI.
     func openTerminalImport() {}

@@ -6,6 +6,7 @@ import CmuxWorkspaces
 import CmuxSettings
 import CmuxSettingsUI
 import CmuxSwiftRenderUI
+import CmuxTerminalCore
 import CmuxUpdater
 import CmuxFoundation
 import Foundation
@@ -225,6 +226,53 @@ final class HostSettingsActions: SettingsHostActions {
         AppDelegate.shared?.reloadGhosttyConfigurationForCmuxThemeSource(
             GhosttySurfaceConfigurationRefresh.cmuxThemeReloadSource(phase: phaseName)
         )
+    }
+
+    func validateMarkdownThemeName(_ rawValue: String) -> MarkdownThemeValidation {
+        let trimmed = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Empty follows the terminal; there is nothing to resolve.
+        guard !trimmed.isEmpty else { return .valid }
+
+        // Resolve the raw value for both appearances, not just the named sides:
+        // a one-sided conditional such as `light:X` names no theme for `.dark`,
+        // so at runtime the dark appearance silently falls back to the terminal
+        // — exactly the break a user cannot discover. Driving `resolveTheme`
+        // per preference (rather than iterating only the explicitly named sides)
+        // surfaces that absent side as `.unmatchedConditionalSide`. A plain name
+        // resolves identically under both and is validated the same way.
+        for preferredColorScheme in [GhosttyConfig.ColorSchemePreference.light, .dark] {
+            let outcome = GhosttyConfig.resolveTheme(trimmed, preferredColorScheme: preferredColorScheme)
+            if let failure = outcome.failure {
+                // The reason the row interpolates names the failing side: a
+                // theme name or theme-file path for a resolvable side that is
+                // broken, or the appearance keyword (`light`/`dark`) for a side
+                // the value names no theme for. All are the user's own config
+                // vocabulary, not translatable prose; the localized framing
+                // lives in the row's `settings.app.markdownTheme.invalid` template.
+                return .invalid(message: markdownThemeFailureReason(failure))
+            }
+        }
+        return .valid
+    }
+
+    /// Names the failing side for the Settings row's invalid-message template:
+    /// the theme name for an unknown name, the file path for a theme with no
+    /// usable colors, and the appearance keyword (`light`/`dark`) for a
+    /// conditional value that names no theme for that appearance at all.
+    private func markdownThemeFailureReason(
+        _ failure: GhosttyThemeResolutionFailure
+    ) -> String {
+        switch failure {
+        case let .unknownTheme(name):
+            return name
+        case let .missingColors(path):
+            return path
+        case let .unmatchedConditionalSide(preferred):
+            switch preferred {
+            case .light: return "light"
+            case .dark: return "dark"
+            }
+        }
     }
 
     func notifyShortcutSettingsDidChange() {

@@ -10,7 +10,7 @@ does not appear in the schema is not a license to add a guessed
 |---|---|---|---|
 | `terminal` | Font, theme, cursor, scrollback, rendering, and terminal keybindings | `~/.config/ghostty/config`; cmux-owned presentation such as the scrollbar and scroll speed uses `terminal.*` | Ghostty config validation; `cmux reload-config` |
 | `browser` | Page zoom, theme, search/omnibar behavior, download prompts, navigation routing, and hidden-page memory policy | `browser.*` in `cmux.json`; browser profile import, page navigation, devtools, and per-page state use the browser UI or `cmux browser` | `cmux-settings validate`; `cmux reload-config` |
-| `markdown` | Default prose size, prose font, reading-column width, and Cmd-click routing | `markdown.fontSize`, `markdown.fontFamily`, `markdown.maxWidth`, and `app.openMarkdownInCmuxViewer` | `cmux-settings validate`; `cmux reload-config` |
+| `markdown` | Default prose size, prose font, reading-column width, viewer theme, and Cmd-click routing | `markdown.fontSize`, `markdown.fontFamily`, `markdown.maxWidth`, `markdown.theme`, and `app.openMarkdownInCmuxViewer` | `cmux-settings validate`; `cmux reload-config` |
 | `diff` | New-viewer layout and one-invocation layout override | `diffViewer.defaultLayout`; `cmux diff --layout unified|split` overrides it for one invocation | `cmux-settings validate`; `cmux reload-config` |
 | `filePreview` | Whether a file opens in cmux, whether Markdown uses the rendered viewer, where double-click routes, and text-editor rendering | `app.openSupportedFilesInCmux`, `app.openMarkdownInCmuxViewer`, `app.preferredEditor`, `fileExplorer.doubleClickAction`, and `fileEditor.*`; generic Quick Look media has no additional cmux template knobs | `cmux-settings validate`; `cmux reload-config` |
 | `rightSidebarTool` | Which tool is shown, tab order, and Dock commands | `cmux right-sidebar set <mode>`, Settings > Sidebar > right-sidebar tabs, and `.cmux/dock.json` or `~/.config/cmux/dock.json` | `cmux right-sidebar mode`; parse Dock JSON; `cmux reload-config` for JSON changes |
@@ -18,7 +18,7 @@ does not appear in the schema is not a license to add a guessed
 | `notes` | Project-scoped notes rendering | No `notes.*` or `templates.notes` setting is shipped yet. If the notes surface is Markdown, use the `markdown.*` defaults; otherwise wait for its schema section | Do not write an unknown key; re-check the schema when notes customization lands |
 
 The current schema intentionally exposes only the knobs listed above. Markdown
-theme, line-height, syntax-highlighter, and anchor/image behavior, plus
+line-height, syntax-highlighter, and anchor/image behavior, plus
 file-preview backend selection, fallback policy, size limits, and video
 autoplay, do not have dedicated cmux settings yet. Viewer navigation shortcuts
 are schema-backed under `shortcuts.bindings.diffViewerScroll*` and are shared by

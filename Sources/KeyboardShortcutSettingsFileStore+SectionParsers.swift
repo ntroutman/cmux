@@ -526,6 +526,16 @@ extension CmuxSettingsFileStore {
         } else if section.keys.contains("maxWidth") {
             logInvalid("markdown.maxWidth", sourcePath: sourcePath)
         }
+
+        // Any string name is accepted here regardless of whether it resolves;
+        // an unresolvable name falls back to the terminal at appearance-build
+        // time, so it must not raise a parsing issue (which would retain the
+        // entire previous last-good snapshot and silently keep the old theme).
+        if let value = jsonString(section["theme"]) {
+            snapshot.managedUserDefaults[MarkdownThemeSettings.key] = .string(value.trimmingCharacters(in: .whitespacesAndNewlines))
+        } else if section.keys.contains("theme") {
+            logInvalid("markdown.theme", sourcePath: sourcePath)
+        }
     }
 
     func parseMobileSection(

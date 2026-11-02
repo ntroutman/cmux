@@ -38,6 +38,8 @@ public struct AppSection: View {
     @State private var globalFontMagnification: DefaultsValueModel<Int>
     @State private var markdownFontSize: DefaultsValueModel<Int>
     @State private var markdownFontFamily: DefaultsValueModel<String>
+    @State private var markdownTheme: DefaultsValueModel<String>
+    @State private var markdownThemeValidation: MarkdownThemeValidationModel
     @State private var markdownMaxWidth: DefaultsValueModel<Int>
     @State private var canvasPaneGap: DefaultsValueModel<Int>
     @State private var canvasSnapping: DefaultsValueModel<Bool>
@@ -88,6 +90,10 @@ public struct AppSection: View {
     /// telemetry off, so the row says so and locks; re-read on change signals.
     @State private var telemetryManagedByPolicy = ManagedDevicePolicy().isEnforced(.disableTelemetry)
 
+    /// Validation runs when the Markdown Viewer Theme field loses focus or the
+    /// user presses Return, not per keystroke.
+    @FocusState private var markdownThemeFocused: Bool
+
     public init(
         defaultsStore: UserDefaultsSettingsStore,
         catalog: SettingCatalog,
@@ -113,6 +119,14 @@ public struct AppSection: View {
         _globalFontMagnification = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.app.globalFontMagnification))
         _markdownFontSize = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.markdown.fontSize))
         _markdownFontFamily = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.markdown.fontFamily))
+        _markdownTheme = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.markdown.theme))
+        _markdownThemeValidation = State(initialValue: MarkdownThemeValidationModel(
+            hostActions: hostActions,
+            invalidTemplate: String(
+                localized: "settings.app.markdownTheme.invalid",
+                defaultValue: "This theme can't be resolved: %@"
+            )
+        ))
         _markdownMaxWidth = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.markdown.maxWidth))
         _canvasPaneGap = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.canvas.paneGap))
         _canvasSnapping = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.canvas.snappingEnabled))
@@ -176,7 +190,7 @@ public struct AppSection: View {
             mainCard
         }
         .task {
-            startSettingsObservation([language, appIcon, placement, inheritDir, minimalMode, keepWorkspaceOpen, firstClick, focusHistoryIncludesPanesAndTabs, equalizeSplitsOnCreate, fileDrop, preferredEditor, openSupported, openMarkdown, globalFontMagnification, markdownFontSize, markdownFontFamily, markdownMaxWidth, canvasPaneGap, canvasSnapping, fileEditorWordWrap, fileEditorSyntaxHighlighting, fileEditorLineNumbers, fileEditorIndentGuides, fileEditorCurrentLineHighlight, fileEditorTabWidth, iMessage, reorder, dockBadge, menuBarOnly, showInMenuBar, paneRing, paneFlash, paneFlashDoubleBlink, paneFlashOnTyping, paneFlashThemeColor, desktopNotifications, agentPermissionPrompt, agentTurnComplete, agentIdleReminder, soundName, soundWhenFocused, soundCommand, customSoundFile, soundOverrides, telemetry, confirmQuit, warnCloseTab, warnCloseAgentSession, warnCloseX, warnCloseWorkspace, alwaysConfirmCloseWorkspace, warnCloseWindow, hideCloseButton, renameSelects, paletteAllSurfaces])
+            startSettingsObservation([language, appIcon, placement, inheritDir, minimalMode, keepWorkspaceOpen, firstClick, focusHistoryIncludesPanesAndTabs, equalizeSplitsOnCreate, fileDrop, preferredEditor, openSupported, openMarkdown, globalFontMagnification, markdownFontSize, markdownFontFamily, markdownTheme, markdownMaxWidth, canvasPaneGap, canvasSnapping, fileEditorWordWrap, fileEditorSyntaxHighlighting, fileEditorLineNumbers, fileEditorIndentGuides, fileEditorCurrentLineHighlight, fileEditorTabWidth, iMessage, reorder, dockBadge, menuBarOnly, showInMenuBar, paneRing, paneFlash, paneFlashDoubleBlink, paneFlashOnTyping, paneFlashThemeColor, desktopNotifications, agentPermissionPrompt, agentTurnComplete, agentIdleReminder, soundName, soundWhenFocused, soundCommand, customSoundFile, soundOverrides, telemetry, confirmQuit, warnCloseTab, warnCloseAgentSession, warnCloseX, warnCloseWorkspace, alwaysConfirmCloseWorkspace, warnCloseWindow, hideCloseButton, renameSelects, paletteAllSurfaces])
             await soundAgentCache.loadIfNeeded { await hostActions.notificationSoundAgentOptions() }
             if languageAtAppear == nil { languageAtAppear = language.current }; if telemetryAtAppear == nil { telemetryAtAppear = telemetry.current }
         }
@@ -534,6 +548,41 @@ public struct AppSection: View {
                 .textFieldStyle(.roundedBorder)
                 .frame(width: 200)
                 .accessibilityIdentifier("SettingsMarkdownFontFamilyTextField")
+            }
+            SettingsCardDivider()
+
+            // Markdown Viewer Theme
+            SettingsCardRow(
+                configurationReview: .json("markdown.theme"),
+                String(localized: "settings.app.markdownTheme", defaultValue: "Markdown Viewer Theme"),
+                subtitle: String(localized: "settings.app.markdownTheme.subtitle", defaultValue: "Ghostty theme for the Markdown viewer, for example Catppuccin Latte. Leave empty to follow the terminal.")
+            ) {
+                VStack(alignment: .trailing, spacing: 4) {
+                    TextField(
+                        String(localized: "settings.app.markdownTheme.placeholder", defaultValue: "Follow terminal"),
+                        text: Binding(get: { markdownTheme.current }, set: { markdownTheme.set($0) })
+                    )
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 200)
+                    .focused($markdownThemeFocused)
+                    .onSubmit { markdownThemeValidation.validate(markdownTheme.current) }
+                    // Clear a stale message the moment the user resumes typing;
+                    // revalidation waits for the next commit (focus loss / Return).
+                    .onChange(of: markdownTheme.current) { markdownThemeValidation.clear() }
+                    .onChange(of: markdownThemeFocused) {
+                        if !markdownThemeFocused {
+                            markdownThemeValidation.validate(markdownTheme.current)
+                        }
+                    }
+                    .accessibilityIdentifier("SettingsMarkdownThemeTextField")
+
+                    if let message = markdownThemeValidation.validationMessage {
+                        Text(message)
+                            .cmuxFont(.caption)
+                            .foregroundStyle(.orange)
+                            .frame(width: 200, alignment: .leading)
+                    }
+                }
             }
             SettingsCardDivider()
 

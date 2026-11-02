@@ -2424,6 +2424,12 @@ enum CmuxEmbeddedConfigSchema {
           "default": 980,
           "description": "Default maximum reading column width, in CSS pixels, for newly opened markdown viewers.",
           "descriptionKey": "schemaDescriptions.markdown.maxWidth"
+        },
+        "theme": {
+          "type": "string",
+          "default": "",
+          "description": "Ghostty theme for the Markdown viewer: a bundled or user theme name, light:X,dark:Y, or an absolute theme-file path. Leave empty to follow the terminal.",
+          "descriptionKey": "schemaDescriptions.markdown.theme"
         }
       }
     },
