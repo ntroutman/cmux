@@ -76,12 +76,8 @@ extension Array where Element == CuratedSettingEntry {
                 title: String(localized: "settings.app.focusHistoryIncludesPanesAndTabs", defaultValue: "Include Panes and Tabs in Focus History"),
                 synonyms: "app.focusHistoryIncludesPanesAndTabs focus history back forward panes tabs workspaces only navigation"
             ),
-            .init(
-                section: .app,
-                id: "equalize-splits-on-create",
-                title: String(localized: "settings.app.equalizeSplitsOnCreate", defaultValue: "Equalize Splits on Create"),
-                synonyms: "app.equalizeSplitsOnCreate equalize balance distribute even equal split pane size new split"
-            ),
+            .equalizeSplitsOnCreate,
+            .equalizeSplitsOnDividerDoubleClick,
             .init(section: .app, id: "file-drops", title: String(localized: "settings.app.fileDrop.defaultBehavior", defaultValue: "File Drops"), synonyms: "File Drops drag drop files finder path text terminal editor split preview shift"),
             .init(section: .app, id: "preferred-editor", title: String(localized: "settings.app.preferredEditor", defaultValue: "Open Files With"), synonyms: "Open Files With app.preferredEditor editor open file code vscode visual studio zed sublime subl cursor"),
             .init(section: .app, id: "supported-file-previews", title: String(localized: "settings.app.openSupportedFilesInCmux", defaultValue: "Open Supported Files in cmux"), synonyms: "Open Supported Files in cmux app.openSupportedFilesInCmux cmd click file preview pdf image video audio quicklook quick look editor external"),
@@ -375,6 +371,14 @@ extension Array where Element == CuratedSettingEntry {
                 detailText: String(localized: "settings.app.compactAgentStatus.subtitle", defaultValue: "Show each workspace on one line, with one colored icon before the title for agent, unread, and pull request state. Hover the icon for details."),
                 paths: ["sidebar.compactAgentStatus"],
                 synonyms: "sidebar.compactAgentStatus compact agent status running needs input glyph icon title line dense claude codex"
+            ),
+            .init(
+                section: .sidebarAppearance,
+                id: "group-dividers",
+                title: String(localized: "settings.app.groupDividers", defaultValue: "Group dividers"),
+                detailText: String(localized: "settings.app.groupDividers.subtitle", defaultValue: "Tint each group's header and run a guide down its members."),
+                paths: ["sidebar.groupDividers"],
+                synonyms: "sidebar.groupDividers group dividers divider band guide folder separator header tint group boundary"
             ),
             .init(section: .sidebarAppearance, id: "right-max-width", title: String(localized: "settings.sidebar.rightMaxWidth", defaultValue: "Dock Max Width"), synonyms: "Dock Max Width sidebar.rightMaxWidth dock right sidebar max width terminal reservation cap logs lazygit"),
 

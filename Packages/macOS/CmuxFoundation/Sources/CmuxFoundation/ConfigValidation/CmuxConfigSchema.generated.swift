@@ -829,6 +829,12 @@ enum CmuxEmbeddedConfigSchema {
           "default": false,
           "description": "When true, creating a split resizes the panes in that split's row or column to equal sizes. When false, a new split halves the pane it was created from."
         },
+        "equalizeSplitsOnDividerDoubleClick": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, double-clicking a split divider makes the panes in its row or column equal in size. Other rows and columns keep their sizes.",
+          "descriptionKey": "schemaDescriptions.app.equalizeSplitsOnDividerDoubleClick"
+        },
         "preferredEditor": {
           "type": "string",
           "default": "",
@@ -1798,6 +1804,12 @@ enum CmuxEmbeddedConfigSchema {
           "default": false,
           "descriptionKey": "schemaDescriptions.sidebar.compactAgentStatus",
           "description": "Show each workspace on one line: one colored icon before the title for agent, unread, and pull request state replaces the agent status rows (for example Running or Needs input), the branch and directory line, and the pull request rows, whose details move to the icon's tooltip. Other status entries keep their rows."
+        },
+        "groupDividers": {
+          "type": "boolean",
+          "default": true,
+          "descriptionKey": "schemaDescriptions.sidebar.groupDividers",
+          "description": "Mark workspace group boundaries: each group's collapsible header sits on a tinted band with space above it, and a thin guide runs down the gutter beside its members. Turn off to restore the flat list with a smaller header name and no band or guide."
         },
         "compactStatusIcons": {
           "type": "object",

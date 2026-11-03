@@ -1158,6 +1158,29 @@ export const cloudVmSessions = pgTable(
   ],
 );
 
+/**
+ * Teammates who may start app chats on a team Cloud machine besides its
+ * creator (Leo, 2026-10-31: "we can't simply block always"). The machine's
+ * creator or a team admin writes a row through /api/vm/[id]/chat-grants; the
+ * attach endpoint answers `vmKind: owner` to a granted caller still on the
+ * machine's team (services/vms/vmKind.ts). A grant goes with its machine.
+ */
+export const cloudVmChatGrants = pgTable(
+  "cloud_vm_chat_grants",
+  {
+    vmId: uuid("vm_id")
+      .notNull()
+      .references(() => cloudVms.id, { onDelete: "cascade" }),
+    userId: text("user_id").notNull(),
+    /** Who shared it: the machine's creator or a team admin. */
+    grantedBy: text("granted_by").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("cloud_vm_chat_grants_vm_user_unique").on(table.vmId, table.userId),
+  ],
+);
+
 // Billing runtime records are transactional lifecycle state, not analytics.
 export const cloudVmRuntimeIntervals = pgTable("cloud_vm_runtime_intervals", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -2930,7 +2953,7 @@ export const appleNotifications = pgTable("apple_notifications", {
 ]);
 
 /**
- * Opt-in hang reports from cmux NEXT Nightly (schema 1, see
+ * Opt-in hang reports from cmux NEXT Nightly (schema 2, see
  * `app/api/hang-reports`). Anonymous: `install_id` is a random per-Mac UUID
  * the client rotates every 30 days. No IP address, account or user agent is
  * stored. `received_day` is the server's UTC day and carries the per-install
