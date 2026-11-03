@@ -1102,7 +1102,7 @@ private func require<T>(_ value: T?, _ message: String? = nil) throws -> T {
                     SidebarWorkspaceReorderWorkspaceSnapshot(id: dragged, isPinned: false, groupId: nil)
                 ],
                 groups: [
-                    SidebarWorkspaceReorderGroupSnapshot(id: groupId, anchorWorkspaceId: anchor, isPinned: false)
+                    SidebarWorkspaceReorderGroupSnapshot(id: groupId, anchorWorkspaceId: anchor, isPinned: false, isEmpty: true)
                 ],
                 targets: [
                     SidebarWorkspaceReorderDropTarget(
