@@ -13,16 +13,13 @@ import Testing
 /// reads, the JSON path must map to that defaults key, and the embedded schema
 /// must declare the path so `cmux set sidebar.groupDividers` is accepted.
 /// Models `SidebarCompactAgentStatusTests`' precedent for a sidebar boolean.
+///
+/// Each case loads into a private defaults suite. The test host runs the app,
+/// whose live store re-applies `~/.config/cmux/cmux.json` on every defaults
+/// change and removes from `.standard` the managed keys it doesn't own.
 @Suite("Sidebar group dividers settings file", .serialized)
 struct SidebarGroupDividersSettingsTests {
     private static let groupDividersKey = "sidebarGroupDividers"
-    private static let settingsFileBackupsDefaultsKey = "cmux.settingsFile.backups.v1"
-    private static let importedManagedDefaultsKey = "cmux.settingsFile.importedManagedDefaults.v1"
-    private static let keys = [
-        groupDividersKey,
-        settingsFileBackupsDefaultsKey,
-        importedManagedDefaultsKey
-    ]
 
     @Test
     func turnsGroupDividersOff() throws {
@@ -79,21 +76,12 @@ struct SidebarGroupDividersSettingsTests {
     }
 
     private func loadSettingsFile(_ contents: String, verify: (UserDefaults) -> Void) throws {
-        let defaults = UserDefaults.standard
-        let saved = Self.keys.map { ($0, defaults.object(forKey: $0)) }
-        for key in Self.keys { defaults.removeObject(forKey: key) }
-        defer {
-            for (key, value) in saved {
-                if let value {
-                    defaults.set(value, forKey: key)
-                } else {
-                    defaults.removeObject(forKey: key)
-                }
-            }
-        }
+        let suite = "cmux-group-dividers-settings-\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
 
         let directoryURL = FileManager.default.temporaryDirectory.appendingPathComponent(
-            "cmux-group-dividers-settings-\(UUID().uuidString)",
+            suite,
             isDirectory: true
         )
         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
@@ -105,6 +93,8 @@ struct SidebarGroupDividersSettingsTests {
             primaryPath: settingsFileURL.path,
             fallbackPath: nil,
             additionalFallbackPaths: [],
+            notificationCenter: NotificationCenter(),
+            userDefaults: defaults,
             startWatching: false
         )
 
