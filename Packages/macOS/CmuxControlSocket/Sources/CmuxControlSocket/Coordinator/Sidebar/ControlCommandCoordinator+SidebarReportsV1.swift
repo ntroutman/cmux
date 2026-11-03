@@ -292,6 +292,7 @@ extension ControlCommandCoordinator {
                 return parseError
             }
             if let scope {
+                seam.controlSidebarPublishScopedDirectorySnapshot(scope: scope, directory: directory)
                 seam.controlSidebarScheduleScopedDirectoryUpdate(
                     scope: scope,
                     directory: directory,

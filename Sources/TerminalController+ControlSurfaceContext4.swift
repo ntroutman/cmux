@@ -131,6 +131,9 @@ extension TerminalController {
         } else {
             _ = tab.updatePanelDirectory(panelId: surfaceId, directory: path)
         }
+        // `.recorded` covers live remote terminals too; the helper's provenance
+        // gate — not this enum — keeps remote/cloud snapshots untouched.
+        publishExternallyReportedDirectorySnapshot(tab: tab, surfaceId: surfaceId, directory: path)
         return .recorded(surfaceID: surfaceId)
     }
 
