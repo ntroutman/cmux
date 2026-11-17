@@ -74,7 +74,7 @@ workspace uses; it still leaves painting untouched.
   config color) and never read the anchor workspace's color; this change leaves that path
   alone. Coloring a header from its anchor's worktree would need a precedence rule among
   the group color, the config color, the anchor's manual color and the automatic color,
-  and is a follow-up.
+  and belongs to the separate workspace-groups session that owns header coloring.
 - Changing the Workspace Color menu, the custom color prompt, or the CLI. The CLI's
   `set_color` and `clear_color` write `workspace.customColor` directly; with the setting
   on, `clear_color` therefore reveals the automatic color, which is the intended
@@ -417,13 +417,15 @@ across 45 rows; if it is loud, the palette or rail width is the follow-up.
 - Whether the factory takes the automatic color as its own parameter or one combined
   fallback.
 
-## Decisions for Nathaniel at approval
+## Decisions at approval
+
+Nathaniel approved the spec on 2026-11-16 with these four trade-offs as written:
 
 - Workspaces outside any git repository get no automatic color; the cwd fallback was
-  dropped to avoid a color change during startup. Say if they should be colored anyway.
+  dropped to avoid a color change during startup.
 - In a workspace with panes in different repositories the color follows focus while the
   branch and directory lines do not.
 - Collisions happen at small counts, not only past sixteen worktrees.
 - Group anchor workspaces (one per group, nine in Nathaniel's sidebar) get no automatic
-  color, because the group header stands for them and header coloring is out of scope.
-  Say if the header should take its anchor's worktree color in this change instead.
+  color here, because the group header stands for them. Header coloring is owned by a
+  separate session working on workspace groups, not by this epic.
