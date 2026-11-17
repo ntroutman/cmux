@@ -129,8 +129,9 @@ enum WorkspaceTabColorSettings {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
         let body = trimmed.hasPrefix("#") ? String(trimmed.dropFirst()) : trimmed
-        guard body.count == 6 else { return nil }
-        guard UInt64(body, radix: 16) != nil else { return nil }
+        // Per-character ASCII check: `UInt64(_:radix:)` accepts a leading
+        // sign, so "+12345" passed a length-then-parse check.
+        guard body.count == 6, body.allSatisfy({ $0.isASCII && $0.isHexDigit }) else { return nil }
         return "#" + body.uppercased()
     }
 
