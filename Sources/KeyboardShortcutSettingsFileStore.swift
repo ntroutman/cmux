@@ -807,6 +807,14 @@ final class CmuxSettingsFileStore {
                 logInvalid("workspaceColors.unselectedFillOpacity", sourcePath: sourcePath)
             }
         }
+        if section.keys.contains("autoColor") {
+            let autoColorKey = SettingCatalog().workspaceColors.autoColor
+            if let mode = WorkspaceAutoColorMode.decodeFromJSON(section["autoColor"]) {
+                snapshot.managedUserDefaults[autoColorKey.userDefaultsKey] = .string(mode.rawValue)
+            } else {
+                logInvalid(autoColorKey.id, sourcePath: sourcePath)
+            }
+        }
         if section.keys.contains("notificationBadgeColor") {
             guard let value = parseNullableHex(
                 section["notificationBadgeColor"],
