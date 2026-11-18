@@ -2461,6 +2461,7 @@
 		C1ADE10002A1B2C3D4E5F719 /* grok in Copy CLI */ = {isa = PBXBuildFile; fileRef = C1ADE10001A1B2C3D4E5F719 /* grok */; };
 		A93770010000000000000002 /* GrokSessionLocator+ProcessDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93770010000000000000001 /* GrokSessionLocator+ProcessDiscovery.swift */; };
 		937700020000000000000001 /* GrokVaultAgentPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937700010000000000000001 /* GrokVaultAgentPersistenceTests.swift */; };
+		7E5D1B147E5D1B147E5D1B14 /* HashedPaletteAssigner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A147E5D1A147E5D1A14 /* HashedPaletteAssigner.swift */; };
 		C0DE34020000000000000005 /* HelpMenuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE34020000000000000006 /* HelpMenuUITests.swift */; };
 		9A64450B4D141E4A80FC9397 /* HerdrResumeBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44D8B169E078B6036415AC7 /* HerdrResumeBinding.swift */; };
 		37BCA223B0EBED2ABFEAF6BC /* HerdrResumeBindingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BE49145FE4324D6FDDBC60 /* HerdrResumeBindingTests.swift */; };
@@ -4614,7 +4615,13 @@
 		A11EAD000000000000000000 /* WorkspaceAppearanceResolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11EAD000000000000000001 /* WorkspaceAppearanceResolution.swift */; };
 		A85630010000000000000002 /* WorkspaceAttentionColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85630010000000000000001 /* WorkspaceAttentionColor.swift */; };
 		A5F0C0010000000000000002 /* WorkspaceAttentionFlashRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F0C0010000000000000001 /* WorkspaceAttentionFlashRingView.swift */; };
+		7E5D1B127E5D1B127E5D1B12 /* WorkspaceAutoColorAssigning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A127E5D1A127E5D1A12 /* WorkspaceAutoColorAssigning.swift */; };
+		7E5D1B167E5D1B167E5D1B16 /* WorkspaceAutoColorInput+Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A167E5D1A167E5D1A16 /* WorkspaceAutoColorInput+Workspace.swift */; };
+		7E5D1B107E5D1B107E5D1B10 /* WorkspaceAutoColorInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A107E5D1A107E5D1A10 /* WorkspaceAutoColorInput.swift */; };
+		7E5D1B117E5D1B117E5D1B11 /* WorkspaceAutoColorKeyProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A117E5D1A117E5D1A11 /* WorkspaceAutoColorKeyProviding.swift */; };
+		7E5D1B157E5D1B157E5D1B15 /* WorkspaceAutoColorResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A157E5D1A157E5D1A15 /* WorkspaceAutoColorResolver.swift */; };
 		90A1860A0795B0B1A66CD37E /* WorkspaceAutoColorSettingsFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852B556644233DBABC239B30 /* WorkspaceAutoColorSettingsFileTests.swift */; };
+		434A856FA2CD3922989F5E3A /* WorkspaceAutoColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E2EA0BF0A58711C6112B14 /* WorkspaceAutoColorTests.swift */; };
 		CA52B0160000000000000000 /* WorkspaceCanvasHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA52C0160000000000000000 /* WorkspaceCanvasHostView.swift */; };
 		B2929B53F4CC4C9D972771EC /* WorkspaceChecklistAttachmentQuickLookController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3981070E40BA4F53B8406CE4 /* WorkspaceChecklistAttachmentQuickLookController.swift */; };
 		C12524000000000000000001 /* WorkspaceClosePanelFallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12524000000000000000002 /* WorkspaceClosePanelFallbackTests.swift */; };
@@ -4783,6 +4790,7 @@
 		6B524A0BA34FD46A771335AB /* WorkspaceUnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F8ED91A4B55D34BE6A0668 /* WorkspaceUnitTests.swift */; };
 		B95EC019F70D4F23BD3C8D1D /* WorkspaceWorkingDirectorySpawnUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81464EB0D515022903F26DD8 /* WorkspaceWorkingDirectorySpawnUITests.swift */; };
 		8672E0088672E0088672E008 /* WorkstreamEvent+FeedIngress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8672E0078672E0078672E007 /* WorkstreamEvent+FeedIngress.swift */; };
+		7E5D1B137E5D1B137E5D1B13 /* WorktreeDirectoryKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A137E5D1A137E5D1A13 /* WorktreeDirectoryKeyProvider.swift */; };
 		A78C42010000000000000001 /* XCUIApplication+CmuxTestApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78C42010000000000000002 /* XCUIApplication+CmuxTestApplication.swift */; };
 		84E00D47E4584162AE53BC8D /* xterm-ghostty in Resources */ = {isa = PBXBuildFile; fileRef = B2E7294509CC42FE9191870E /* xterm-ghostty */; };
 
@@ -7170,6 +7178,7 @@
 		C1ADE10001A1B2C3D4E5F719 /* grok */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Resources/bin/grok; sourceTree = SOURCE_ROOT; };
 		A93770010000000000000001 /* GrokSessionLocator+ProcessDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GrokSessionLocator+ProcessDiscovery.swift"; sourceTree = "<group>"; };
 		937700010000000000000001 /* GrokVaultAgentPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokVaultAgentPersistenceTests.swift; sourceTree = "<group>"; };
+		7E5D1A147E5D1A147E5D1A14 /* HashedPaletteAssigner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashedPaletteAssigner.swift; sourceTree = "<group>"; };
 		C0DE34020000000000000006 /* HelpMenuUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpMenuUITests.swift; sourceTree = "<group>"; };
 		A44D8B169E078B6036415AC7 /* HerdrResumeBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HerdrResumeBinding.swift; sourceTree = "<group>"; };
 		05BE49145FE4324D6FDDBC60 /* HerdrResumeBindingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HerdrResumeBindingTests.swift"; sourceTree = "<group>"; };
@@ -9289,7 +9298,13 @@
 		A11EAD000000000000000001 /* WorkspaceAppearanceResolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAppearanceResolution.swift; sourceTree = "<group>"; };
 		A85630010000000000000001 /* WorkspaceAttentionColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panels/WorkspaceAttentionColor.swift; sourceTree = "<group>"; };
 		A5F0C0010000000000000001 /* WorkspaceAttentionFlashRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panels/WorkspaceAttentionFlashRingView.swift; sourceTree = "<group>"; };
+		7E5D1A127E5D1A127E5D1A12 /* WorkspaceAutoColorAssigning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAutoColorAssigning.swift; sourceTree = "<group>"; };
+		7E5D1A167E5D1A167E5D1A16 /* WorkspaceAutoColorInput+Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceAutoColorInput+Workspace.swift"; sourceTree = "<group>"; };
+		7E5D1A107E5D1A107E5D1A10 /* WorkspaceAutoColorInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAutoColorInput.swift; sourceTree = "<group>"; };
+		7E5D1A117E5D1A117E5D1A11 /* WorkspaceAutoColorKeyProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAutoColorKeyProviding.swift; sourceTree = "<group>"; };
+		7E5D1A157E5D1A157E5D1A15 /* WorkspaceAutoColorResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAutoColorResolver.swift; sourceTree = "<group>"; };
 		852B556644233DBABC239B30 /* WorkspaceAutoColorSettingsFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceAutoColorSettingsFileTests.swift"; sourceTree = "<group>"; };
+		E8E2EA0BF0A58711C6112B14 /* WorkspaceAutoColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceAutoColorTests.swift"; sourceTree = "<group>"; };
 		CA52C0160000000000000000 /* WorkspaceCanvasHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceCanvasHostView.swift"; sourceTree = "<group>"; };
 		3981070E40BA4F53B8406CE4 /* WorkspaceChecklistAttachmentQuickLookController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceChecklistAttachmentQuickLookController.swift; sourceTree = "<group>"; };
 		C12524000000000000000002 /* WorkspaceClosePanelFallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceClosePanelFallbackTests.swift; sourceTree = "<group>"; };
@@ -9458,6 +9473,7 @@
 		71F8ED91A4B55D34BE6A0668 /* WorkspaceUnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceUnitTests.swift; sourceTree = "<group>"; };
 		81464EB0D515022903F26DD8 /* WorkspaceWorkingDirectorySpawnUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceWorkingDirectorySpawnUITests.swift; sourceTree = "<group>"; };
 		8672E0078672E0078672E007 /* WorkstreamEvent+FeedIngress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkstreamEvent+FeedIngress.swift"; sourceTree = "<group>"; };
+		7E5D1A137E5D1A137E5D1A13 /* WorktreeDirectoryKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorktreeDirectoryKeyProvider.swift; sourceTree = "<group>"; };
 		A78C42010000000000000002 /* XCUIApplication+CmuxTestApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+CmuxTestApplication.swift"; sourceTree = "<group>"; };
 		B2E7294509CC42FE9191870E /* xterm-ghostty */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ghostty/terminfo/78/xterm-ghostty"; sourceTree = "<group>"; };
 
@@ -12195,6 +12211,13 @@
 				02B8A9858C9804AC9C37D7B4 /* RemoteTmuxHost.swift */,
 				E1587427C0041C5F99CA5858 /* RemoteHostColorRegistry.swift */,
 				7E5D1A007E5D1A007E5D1A00 /* WorkspaceDistinguishingPalette.swift */,
+				7E5D1A107E5D1A107E5D1A10 /* WorkspaceAutoColorInput.swift */,
+				7E5D1A117E5D1A117E5D1A11 /* WorkspaceAutoColorKeyProviding.swift */,
+				7E5D1A127E5D1A127E5D1A12 /* WorkspaceAutoColorAssigning.swift */,
+				7E5D1A137E5D1A137E5D1A13 /* WorktreeDirectoryKeyProvider.swift */,
+				7E5D1A147E5D1A147E5D1A14 /* HashedPaletteAssigner.swift */,
+				7E5D1A157E5D1A157E5D1A15 /* WorkspaceAutoColorResolver.swift */,
+				7E5D1A167E5D1A167E5D1A16 /* WorkspaceAutoColorInput+Workspace.swift */,
 				01B00D60543FED12E7E67E33 /* RemoteHostTitleSuffixes.swift */,
 				0A17C0DE0A17C0DE0A17C001 /* RemoteTmuxAttachOutcome.swift */,
 				0A17C0DE0A17C0DE0A17C901 /* RemoteTmuxVersion.swift */,
@@ -14356,6 +14379,7 @@
 				C978CC3C2D3FCCE66696C72C /* CLIKiroGlobalHooksTests.swift */,
 				B88325A2907EB7D69739349B /* ClaudeBackgroundWorkDrainTests.swift */,
 				852B556644233DBABC239B30 /* WorkspaceAutoColorSettingsFileTests.swift */,
+				E8E2EA0BF0A58711C6112B14 /* WorkspaceAutoColorTests.swift */,
 			);
 			path = cmuxTests;
 			sourceTree = "<group>";
@@ -16426,6 +16450,7 @@
 					A6AC72010000000000000001 /* GPUSpinnerNSView.swift in Sources */,
 					A6AC72020000000000000001 /* GPUSpinnerStyle.swift in Sources */,
 					A93770010000000000000002 /* GrokSessionLocator+ProcessDiscovery.swift in Sources */,
+				7E5D1B147E5D1B147E5D1B14 /* HashedPaletteAssigner.swift in Sources */,
 				9A64450B4D141E4A80FC9397 /* HerdrResumeBinding.swift in Sources */,
 					F5320000A1B2C3D4E5F60718 /* HermesAgentIndex.swift in Sources */,
 				A10348010000000000000001 /* HistoryMenuActions.swift in Sources */,
@@ -17886,6 +17911,11 @@
 				A11EAD000000000000000000 /* WorkspaceAppearanceResolution.swift in Sources */,
 				A85630010000000000000002 /* WorkspaceAttentionColor.swift in Sources */,
 				A5F0C0010000000000000002 /* WorkspaceAttentionFlashRingView.swift in Sources */,
+				7E5D1B127E5D1B127E5D1B12 /* WorkspaceAutoColorAssigning.swift in Sources */,
+				7E5D1B167E5D1B167E5D1B16 /* WorkspaceAutoColorInput+Workspace.swift in Sources */,
+				7E5D1B107E5D1B107E5D1B10 /* WorkspaceAutoColorInput.swift in Sources */,
+				7E5D1B117E5D1B117E5D1B11 /* WorkspaceAutoColorKeyProviding.swift in Sources */,
+				7E5D1B157E5D1B157E5D1B15 /* WorkspaceAutoColorResolver.swift in Sources */,
 				CA52B0160000000000000000 /* WorkspaceCanvasHostView.swift in Sources */,
 				B2929B53F4CC4C9D972771EC /* WorkspaceChecklistAttachmentQuickLookController.swift in Sources */,
 				D7AB3605C10DEF0000000003 /* WorkspaceCloseTabsBatching.swift in Sources */,
@@ -17989,6 +18019,7 @@
 				78F17D618B657B6CF929E327 /* WorkspaceTodoPanelView.swift in Sources */,
 				39EF42EF23A2F751429718CE /* WorkspaceTodoState.swift in Sources */,
 				8672E0088672E0088672E008 /* WorkstreamEvent+FeedIngress.swift in Sources */,
+				7E5D1B137E5D1B137E5D1B13 /* WorktreeDirectoryKeyProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19689,6 +19720,7 @@
 				D7AB00000000000000000011 /* WorkspaceAdjacentPaneMoveTests.swift in Sources */,
 				A11EAE000000000000000000 /* WorkspaceAppearanceConfigResolutionTests.swift in Sources */,
 				90A1860A0795B0B1A66CD37E /* WorkspaceAutoColorSettingsFileTests.swift in Sources */,
+				434A856FA2CD3922989F5E3A /* WorkspaceAutoColorTests.swift in Sources */,
 				C12524000000000000000001 /* WorkspaceClosePanelFallbackTests.swift in Sources */,
 				D7AB3605C10DEF0000000001 /* WorkspaceCloseTabsContextMenuTests.swift in Sources */,
 				970900030000000000000001 /* WorkspaceColorMenuTests.swift in Sources */,
