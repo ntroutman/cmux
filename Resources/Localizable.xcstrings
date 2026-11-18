@@ -361615,6 +361615,65 @@
         }
       }
     },
+    "settings.search.alias.setting.workspaceColors.auto-color": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree automatisch Farbe Worktree Arbeitsbereich Repository"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree automatique couleur arbre de travail dépôt"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree تلقائي لون شجرة العمل مستودع"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree automático color árbol de trabajo repositorio"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree 自動 顏色 工作樹 儲存庫"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree 自动 颜色 工作树 仓库"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree 자동 색상 작업 트리 저장소"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree 自動 カラー 色 ワークツリー リポジトリ"
+          }
+        }
+      }
+    },
     "settings.search.alias.setting.workspaceColors.palette": {
       "extractionState": "manual",
       "localizations": {
@@ -373019,6 +373078,242 @@
           "stringUnit": {
             "state": "translated",
             "value": "工作區顏色指示器"
+          }
+        }
+      }
+    },
+    "settings.workspaceColors.autoColor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic Colors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatische Farben"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleurs automatiques"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ألوان تلقائية"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colores automáticos"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動顏色"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动颜色"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자동 색상"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動カラー"
+          }
+        }
+      }
+    },
+    "settings.workspaceColors.autoColor.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workspaces without a chosen color take one from their git worktree. A chosen color always wins, and workspaces outside a git repository stay uncolored."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arbeitsbereiche ohne gewählte Farbe erhalten eine Farbe aus ihrem Git-Worktree. Eine gewählte Farbe hat immer Vorrang, und Arbeitsbereiche außerhalb eines Git-Repositorys bleiben ohne Farbe."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les espaces de travail sans couleur choisie en reçoivent une d’après leur arbre de travail git. Une couleur choisie l’emporte toujours, et les espaces de travail hors d’un dépôt git restent sans couleur."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تأخذ مساحات العمل التي لم يُختر لها لون لونًا من شجرة عمل git الخاصة بها. اللون المختار يغلب دائمًا، وتبقى مساحات العمل خارج مستودع git بلا لون."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los espacios de trabajo sin un color elegido toman uno de su árbol de trabajo de git. Un color elegido siempre tiene prioridad, y los espacios de trabajo fuera de un repositorio git quedan sin color."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未選擇顏色的工作區會依其 git 工作樹取得顏色。已選擇的顏色一律優先，git 儲存庫以外的工作區則維持無色。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未选择颜色的工作区会根据其 git 工作树获得颜色。已选择的颜色始终优先，git 仓库之外的工作区保持无色。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "색상을 선택하지 않은 작업 공간은 git 작업 트리에서 색상을 받습니다. 선택한 색상이 항상 우선하며, git 저장소 밖의 작업 공간은 색상 없이 유지됩니다."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "色を選んでいないワークスペースは、git ワークツリーから色を受け取ります。選んだ色が常に優先され、git リポジトリ外のワークスペースは色なしのままです。"
+          }
+        }
+      }
+    },
+    "settings.workspaceColors.autoColor.off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactivé"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إيقاف"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivado"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關閉"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "끔"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オフ"
+          }
+        }
+      }
+    },
+    "settings.workspaceColors.autoColor.worktree": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By Worktree"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Worktree"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Par arbre de travail"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حسب شجرة العمل"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por árbol de trabajo"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "依工作樹"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按工作树"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "작업 트리별"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ワークツリー別"
           }
         }
       }

@@ -192,6 +192,9 @@ struct SettingsSearchIndexTests {
         ("option as alt", "setting:app:terminal-config"),
         ("option", "setting:app:terminal-config"),
         ("environment variables", "setting:app:notification-command"),
+        ("automatic color", "setting:workspaceColors:auto-color"),
+        ("worktree color", "setting:workspaceColors:auto-color"),
+        ("workspaceColors.autoColor", "setting:workspaceColors:auto-color"),
     ])
     func searchesFindRealSettingsRows(query: String, expectedID: String) {
         let index = SettingsSearchIndex(catalog: SettingCatalog())

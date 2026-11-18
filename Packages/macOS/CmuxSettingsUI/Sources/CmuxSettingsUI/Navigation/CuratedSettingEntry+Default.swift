@@ -583,6 +583,14 @@ extension Array where Element == CuratedSettingEntry {
 
             // Workspace colors
             .init(section: .workspaceColors, id: "indicator", title: String(localized: "settings.workspaceColors.indicator", defaultValue: "Workspace Color Indicator"), synonyms: "Workspace Color Indicator workspaceColors.indicatorStyle tab indicator active workspace style color stripe dot"),
+            .init(
+                section: .workspaceColors,
+                id: "auto-color",
+                title: String(localized: "settings.workspaceColors.autoColor", defaultValue: "Automatic Colors"),
+                detailText: String(localized: "settings.workspaceColors.autoColor.subtitle", defaultValue: "Workspaces without a chosen color take one from their git worktree. A chosen color always wins, and workspaces outside a git repository stay uncolored."),
+                paths: ["workspaceColors.autoColor"],
+                synonyms: "workspaceColors.autoColor auto color automatic colors automatic workspace color worktree color git repository repo hash distinct by worktree"
+            ),
             .init(section: .workspaceColors, id: "subtle-selection", title: String(localized: "settings.workspaceColors.subtleSelection", defaultValue: "Subtle Selection Highlight"), synonyms: "Subtle Selection Highlight workspaceColors.subtleSelection subtle calm quiet selection highlight tint hairline edge selected workspace accent"),
             .init(section: .workspaceColors, id: "brighten-dark-mode", title: String(localized: "settings.workspaceColors.brightenInDarkMode", defaultValue: "Brighten Colors in Dark Mode"), synonyms: "Brighten Colors in Dark Mode workspaceColors.brightenInDarkMode brighten lighten dark mode workspace colors fill dim muted exact color"),
             .init(section: .workspaceColors, id: "unselected-fill-opacity", title: String(localized: "settings.workspaceColors.unselectedFillOpacity", defaultValue: "Unselected Fill Opacity"), synonyms: "Unselected Fill Opacity workspaceColors.unselectedFillOpacity opacity transparency alpha solid fill unselected inactive workspace row color dull faded strength"),
