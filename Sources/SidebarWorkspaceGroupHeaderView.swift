@@ -16,6 +16,8 @@ struct SidebarWorkspaceGroupHeaderView: View, Equatable {
             lhs.name == rhs.name &&
             lhs.iconSymbol == rhs.iconSymbol &&
             lhs.tintHex == rhs.tintHex &&
+            lhs.customColorHex == rhs.customColorHex &&
+            lhs.brightenInDarkMode == rhs.brightenInDarkMode &&
             lhs.isCollapsed == rhs.isCollapsed &&
             lhs.isPinned == rhs.isPinned &&
             lhs.isAnchorActive == rhs.isAnchorActive &&
@@ -56,6 +58,10 @@ struct SidebarWorkspaceGroupHeaderView: View, Equatable {
     let name: String
     let iconSymbol: String
     let tintHex: String?
+    /// The group's manually set color; see the row snapshot's field.
+    var customColorHex: String? = nil
+    /// The `brightenInDarkMode` setting for the Group Color menu's swatches.
+    var brightenInDarkMode: Bool = true
     let isCollapsed: Bool
     let isPinned: Bool
     let isAnchorActive: Bool
