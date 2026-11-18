@@ -142,7 +142,7 @@ struct SidebarGroupHeaderDividerPlumbingTests {
         )
     }
 
-    // MARK: Group color inputs (cmux-ums.6)
+    // MARK: Group color inputs
 
     @Test
     func colorInputsCarryManualColorSeparatelyFromEffectiveColor() {
