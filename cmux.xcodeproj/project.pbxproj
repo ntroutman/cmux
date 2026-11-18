@@ -4622,6 +4622,7 @@
 		7E5D1B167E5D1B167E5D1B16 /* WorkspaceAutoColorInput+Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A167E5D1A167E5D1A16 /* WorkspaceAutoColorInput+Workspace.swift */; };
 		7E5D1B107E5D1B107E5D1B10 /* WorkspaceAutoColorInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A107E5D1A107E5D1A10 /* WorkspaceAutoColorInput.swift */; };
 		7E5D1B117E5D1B117E5D1B11 /* WorkspaceAutoColorKeyProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A117E5D1A117E5D1A11 /* WorkspaceAutoColorKeyProviding.swift */; };
+		28A56A4FFBE2B9C8E1DE4574 /* WorkspaceAutoColorPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48CD447E6879B9616CDEA25E /* WorkspaceAutoColorPersistenceTests.swift */; };
 		7E5D1B157E5D1B157E5D1B15 /* WorkspaceAutoColorResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D1A157E5D1A157E5D1A15 /* WorkspaceAutoColorResolver.swift */; };
 		90A1860A0795B0B1A66CD37E /* WorkspaceAutoColorSettingsFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852B556644233DBABC239B30 /* WorkspaceAutoColorSettingsFileTests.swift */; };
 		434A856FA2CD3922989F5E3A /* WorkspaceAutoColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E2EA0BF0A58711C6112B14 /* WorkspaceAutoColorTests.swift */; };
@@ -9308,6 +9309,7 @@
 		7E5D1A167E5D1A167E5D1A16 /* WorkspaceAutoColorInput+Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceAutoColorInput+Workspace.swift"; sourceTree = "<group>"; };
 		7E5D1A107E5D1A107E5D1A10 /* WorkspaceAutoColorInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAutoColorInput.swift; sourceTree = "<group>"; };
 		7E5D1A117E5D1A117E5D1A11 /* WorkspaceAutoColorKeyProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAutoColorKeyProviding.swift; sourceTree = "<group>"; };
+		48CD447E6879B9616CDEA25E /* WorkspaceAutoColorPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceAutoColorPersistenceTests.swift"; sourceTree = "<group>"; };
 		7E5D1A157E5D1A157E5D1A15 /* WorkspaceAutoColorResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceAutoColorResolver.swift; sourceTree = "<group>"; };
 		852B556644233DBABC239B30 /* WorkspaceAutoColorSettingsFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceAutoColorSettingsFileTests.swift"; sourceTree = "<group>"; };
 		E8E2EA0BF0A58711C6112B14 /* WorkspaceAutoColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceAutoColorTests.swift"; sourceTree = "<group>"; };
@@ -14389,6 +14391,7 @@
 				852B556644233DBABC239B30 /* WorkspaceAutoColorSettingsFileTests.swift */,
 				E8E2EA0BF0A58711C6112B14 /* WorkspaceAutoColorTests.swift */,
 				EECDBA1A1EEF1C295F755424 /* SidebarAutoColorTests.swift */,
+				48CD447E6879B9616CDEA25E /* WorkspaceAutoColorPersistenceTests.swift */,
 			);
 			path = cmuxTests;
 			sourceTree = "<group>";
@@ -19731,6 +19734,7 @@
 				0C62C9D05238D5EF14815F78 /* WorkspaceActivityReorderControllerTests.swift in Sources */,
 				D7AB00000000000000000011 /* WorkspaceAdjacentPaneMoveTests.swift in Sources */,
 				A11EAE000000000000000000 /* WorkspaceAppearanceConfigResolutionTests.swift in Sources */,
+				28A56A4FFBE2B9C8E1DE4574 /* WorkspaceAutoColorPersistenceTests.swift in Sources */,
 				90A1860A0795B0B1A66CD37E /* WorkspaceAutoColorSettingsFileTests.swift in Sources */,
 				434A856FA2CD3922989F5E3A /* WorkspaceAutoColorTests.swift in Sources */,
 				C12524000000000000000001 /* WorkspaceClosePanelFallbackTests.swift in Sources */,
