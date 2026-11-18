@@ -1,3 +1,4 @@
+import CmuxFoundation
 import CmuxSettings
 import Foundation
 import Testing
@@ -11,7 +12,8 @@ import Testing
 /// cmux.json plumbing for `workspaceColors.autoColor`: the real settings file
 /// store must import a known mode into the defaults key the catalog reads,
 /// reject an unknown mode with an issue naming the path, and the template must
-/// carry the key with its default.
+/// carry the key with its default. The embedded schema must declare the path
+/// so `cmux config set` and config validation accept the known modes.
 ///
 /// Each case loads into a private defaults suite. The test host runs the app,
 /// whose live store re-applies `~/.config/cmux/cmux.json` on every defaults
@@ -77,6 +79,24 @@ struct WorkspaceAutoColorSettingsFileTests {
             JSONSerialization.jsonObject(with: Data("{\(entryJSON)}".utf8)) as? [String: Any]
         )
         #expect(entry["autoColor"] as? String == "off")
+    }
+
+    @Test
+    func embeddedSchemaDeclaresThePathWithDefaultOff() {
+        let lookup = CmuxConfigSchemaPathLookup()
+        #expect(lookup.isDeclared(["workspaceColors", "autoColor"]))
+        #expect(lookup.defaultValue(at: ["workspaceColors", "autoColor"]) as? String == "off")
+    }
+
+    @Test
+    func configValidationAcceptsKnownModesAndRejectsAnUnknownOne() {
+        let validator = CmuxConfigSemanticValidator(scope: .global)
+        for mode in WorkspaceAutoColorMode.allCases {
+            let issues = validator.validate(jsonObject: ["workspaceColors": ["autoColor": mode.rawValue]])
+            #expect(issues.isEmpty, "\(mode.rawValue): \(issues)")
+        }
+        let rejected = validator.validate(jsonObject: ["workspaceColors": ["autoColor": "rainbow"]])
+        #expect(rejected.contains { $0.path.contains("autoColor") }, "\(rejected)")
     }
 
     private func loadSettingsFile(

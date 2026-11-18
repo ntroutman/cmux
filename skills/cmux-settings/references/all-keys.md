@@ -168,6 +168,7 @@ Workspace tab and badge colors from Settings > Workspace Colors.
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `workspaceColors.indicatorStyle` | `"leftRail"` or `"solidFill"` or `"rail"` or `"border"` or `"wash"` or `"lift"` or `"typography"` or `"washRail"` or `"blueWashColorRail"` | `"leftRail"` | Active workspace indicator style. Legacy aliases are accepted and normalized. |
+| `workspaceColors.autoColor` | `"off"` or `"worktree"` | `"off"` | Give workspaces without a chosen color one derived from their git worktree, so each worktree keeps the same color across restarts. A chosen color always wins. Off by default. |
 | `workspaceColors.selectionColor` | colorHexOrNull | `null` | Override the selected workspace background color. |
 | `workspaceColors.subtleSelection` | boolean | `false` | Show the selected workspace as a faint accent tint with a thin edge instead of a solid fill. |
 | `workspaceColors.brightenInDarkMode` | boolean | `true` | Lighten workspace colors in dark mode. `false` shows colors exactly as chosen (`solidFill` only). |
