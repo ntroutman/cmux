@@ -2,8 +2,7 @@ import CmuxSettings
 import Foundation
 import os
 
-/// Settings-file parsing for the `workspaceColors` section, extracted from
-/// `KeyboardShortcutSettingsFileStore.swift`, which sits at its file-length budget.
+/// Settings-file parsing for the `workspaceColors` section.
 extension CmuxSettingsFileStore {
     func parseWorkspaceColorsSection(
         _ section: [String: Any],
