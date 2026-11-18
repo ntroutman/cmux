@@ -363,4 +363,27 @@ struct SettingsSearchIndexTests {
         let index = SettingsSearchIndex(catalog: SettingCatalog())
         #expect(index.anchorID(forSettingsPath: "totally.bogus.path") == nil)
     }
+
+    /// The Workspace Colors entries live in their own file and are spliced
+    /// into the default list, so pin that splice: in row order, right after
+    /// Keyboard Shortcuts and right before cmux.json.
+    @Test func defaultCuratedEntriesKeepWorkspaceColorsInPlace() throws {
+        let ids = [CuratedSettingEntry].cmuxDefault(catalog: SettingCatalog())
+            .map { "\($0.section.rawValue):\($0.id)" }
+        let expected = [
+            "keyboardShortcuts:reset-defaults",
+            "workspaceColors:indicator",
+            "workspaceColors:auto-color",
+            "workspaceColors:subtle-selection",
+            "workspaceColors:brighten-dark-mode",
+            "workspaceColors:unselected-fill-opacity",
+            "workspaceColors:selection",
+            "workspaceColors:badge",
+            "workspaceColors:pane-flash-color",
+            "workspaceColors:palette",
+            "settingsJSON:open-file",
+        ]
+        let start = try #require(ids.firstIndex(of: expected[0]))
+        #expect(Array(ids[start...].prefix(expected.count)) == expected)
+    }
 }
