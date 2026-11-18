@@ -46,7 +46,7 @@ struct WorkspaceAutoColorSettingsFileTests {
             {
               "workspaceColors": {
                 "autoColor": "rainbow",
-                "brightenInDarkMode": false
+                "notificationBadgeColor": "#ff0000"
               }
             }
             """
@@ -54,9 +54,10 @@ struct WorkspaceAutoColorSettingsFileTests {
             #expect(defaults.object(forKey: Self.key.userDefaultsKey) == nil)
             #expect(UserDefaultsSettingsClient(defaults: defaults).value(for: Self.key) == .off)
             #expect(store.configurationIssues.contains { $0.contains("invalid value for workspaceColors.autoColor") })
-            // An invalid autoColor must not abandon the rest of the section.
-            let brighten = SettingCatalog().workspaceColors.brightenInDarkMode
-            #expect(defaults.object(forKey: brighten.userDefaultsKey) as? Bool == false)
+            // An invalid autoColor must not abandon the rest of the section, so
+            // the probe is a key the parser reaches only after autoColor.
+            let badgeColor = SettingCatalog().workspaceColors.notificationBadgeColorHex
+            #expect(defaults.string(forKey: badgeColor.userDefaultsKey) == "#FF0000")
         }
     }
 
