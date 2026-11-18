@@ -15,10 +15,10 @@ struct SidebarWorkspaceSnapshotFactory {
     let workspace: Workspace
     let settings: SidebarTabItemSettingsSnapshot
     let showsAgentActivity: Bool
-    /// Resolved per-host origin color (hex), or nil when the beta flag is off or
-    /// the workspace has no host. Resolved by the caller above the row boundary
-    /// and passed in as a plain value; a manual `workspace.customColor` still wins.
-    var originColorHex: String? = nil
+    /// Per-host origin color, else automatic color (hex), or nil when neither applies.
+    /// Resolved by the caller above the row boundary and passed in as a plain value;
+    /// a manual `workspace.customColor` still wins.
+    var fallbackColorHex: String? = nil
     /// Remote host to name after the title because another workspace shares it (beta), else nil.
     /// Resolved by the caller over the whole workspace list, since it depends on the other titles.
     var hostTitleSuffix: String? = nil
@@ -30,14 +30,14 @@ struct SidebarWorkspaceSnapshotFactory {
         workspace: Workspace,
         settings: SidebarTabItemSettingsSnapshot,
         showsAgentActivity: Bool,
-        originColorHex: String? = nil,
+        fallbackColorHex: String? = nil,
         hostTitleSuffix: String? = nil
     ) {
         self.init(
             workspace: workspace,
             settings: settings,
             showsAgentActivity: showsAgentActivity,
-            originColorHex: originColorHex,
+            fallbackColorHex: fallbackColorHex,
             hostTitleSuffix: hostTitleSuffix,
             catalog: SurfaceCatalog.shared
         )
@@ -49,14 +49,14 @@ struct SidebarWorkspaceSnapshotFactory {
         workspace: Workspace,
         settings: SidebarTabItemSettingsSnapshot,
         showsAgentActivity: Bool,
-        originColorHex: String? = nil,
+        fallbackColorHex: String? = nil,
         hostTitleSuffix: String? = nil,
         catalog: SurfaceCatalog
     ) {
         self.workspace = workspace
         self.settings = settings
         self.showsAgentActivity = showsAgentActivity
-        self.originColorHex = originColorHex
+        self.fallbackColorHex = fallbackColorHex
         self.hostTitleSuffix = hostTitleSuffix
         self.catalog = catalog
     }
@@ -166,9 +166,9 @@ struct SidebarWorkspaceSnapshotFactory {
             customDescription: settings.showsWorkspaceDescription ? visibleCustomDescription : nil,
             isPinned: workspace.isPinned,
             isMuted: workspace.isMuted,
-            // A manual workspace color always wins; the per-host origin color
-            // (nil when the flag is off) is the fallback.
-            customColorHex: workspace.customColor ?? originColorHex,
+            // A manual workspace color always wins; the origin color, else the
+            // automatic color (each nil when its setting is off), is the fallback.
+            customColorHex: workspace.customColor ?? fallbackColorHex,
             hasManualCustomColor: workspace.customColor != nil,
             cloudWorkspaceLabel: cloud?.isDeviceWorkspace == true ? nil : cloud?.machineLabel,
             remoteWorkspaceSidebarText: remoteWorkspaceSidebarText,
@@ -227,7 +227,7 @@ struct SidebarWorkspaceSnapshotFactory {
         Self.presentationKey(
             settings: settings,
             showsAgentActivity: showsAgentActivity,
-            customColorHex: workspace.customColor ?? originColorHex,
+            customColorHex: workspace.customColor ?? fallbackColorHex,
             hasManualCustomColor: workspace.customColor != nil,
             hostTitleSuffix: hostTitleSuffix
         )

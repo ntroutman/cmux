@@ -11555,9 +11555,9 @@ struct VerticalTabsSidebar: View, Equatable {
     @LiveSetting(\.betaFeatures.conversationSidebar) private var conversationSidebarExperimentalEnabled
     @LiveSetting(\.customSidebars.renderer) private var customSidebarRenderer
     @LiveSetting(\.shortcuts.showModifierHoldHints) private var showModifierHoldHints
-    // Per-host origin colors (beta). Read here so toggling the flag re-evaluates
-    // the sidebar and rebuilds each row's snapshot with the resolved color.
+    // Origin colors (beta) and automatic colors, read here so a toggle rebuilds each row's snapshot with its color.
     @LiveSetting(\.betaFeatures.remoteTmuxOriginColors) private var remoteTmuxOriginColorsEnabled
+    @LiveSetting(\.workspaceColors.autoColor) var workspaceAutoColorMode
     // Names the remote host after a workspace title another workspace shares (beta).
     @LiveSetting(\.betaFeatures.remoteTmuxOriginHostTitles) private var remoteTmuxOriginHostTitlesEnabled
 #if DEBUG
@@ -12258,6 +12258,7 @@ struct VerticalTabsSidebar: View, Equatable {
             // snapshot on each evaluation.
             refreshWorkspaceSnapshots()
         }
+        .onChange(of: workspaceAutoColorMode) { _, _ in refreshWorkspaceSnapshots() }
         .onChange(of: remoteTmuxOriginHostTitlesEnabled) { _, _ in
             // The host after a colliding title is part of each snapshot's presentation key too.
             refreshWorkspaceSnapshots()
@@ -13320,7 +13321,7 @@ struct VerticalTabsSidebar: View, Equatable {
         let presentation = originPresentationValues(tabs: tabs)
         let mirrorDestinations = presentation.mirrorDestinations
         let hostTitleSuffixes = presentation.hostTitleSuffixes
-        // The origin color and the host after a colliding title differ per row, so each row's
+        // The fallback color and the host after a colliding title differ per row, so each row's
         // cached snapshot is reused only when its own key still matches.
         workspaceSnapshotCache.reconcile(
             workspaceIds: Set(workspaceById.keys),
@@ -13329,8 +13330,7 @@ struct VerticalTabsSidebar: View, Equatable {
                     settings: settings,
                     showsAgentActivity: showsAgentActivity,
                     customColorHex: workspaceById[workspaceId].flatMap { workspace in
-                        workspace.customColor
-                            ?? originColorHex(for: workspace, mirrorDestinations: mirrorDestinations)
+                        workspace.customColor ?? fallbackColorHex(for: workspace, mirrorDestinations: mirrorDestinations)
                     },
                     hasManualCustomColor: workspaceById[workspaceId]?.customColor != nil,
                     hostTitleSuffix: hostTitleSuffixes[workspaceId]
@@ -13362,7 +13362,7 @@ struct VerticalTabsSidebar: View, Equatable {
             workspace: workspace,
             settings: settings,
             showsAgentActivity: showsAgentActivity,
-            originColorHex: originColorHex(for: workspace, mirrorDestinations: mirrorDestinations),
+            fallbackColorHex: fallbackColorHex(for: workspace, mirrorDestinations: mirrorDestinations),
             hostTitleSuffix: hostTitleSuffixes[workspace.id]
         ).makeSnapshot()
     }
@@ -13373,7 +13373,7 @@ struct VerticalTabsSidebar: View, Equatable {
     /// Mirror workspaces carry their host only through the session mirror, so callers
     /// pass `mirrorDestinations` and the mirrors get walked once for a whole refresh
     /// rather than once per row. That map comes from `mirrorDestinationsForOriginPresentation()`.
-    private func originColorHex(
+    func originColorHex(
         for workspace: Workspace,
         mirrorDestinations: [UUID: String]?
     ) -> String? {
