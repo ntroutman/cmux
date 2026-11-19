@@ -4,7 +4,7 @@ import CmuxSettings
 import SwiftUI
 
 /// **Workspace Colors** section — mirrors the legacy in-app section:
-/// indicator-style picker, selection highlight color, notification
+/// indicator-style picker, automatic colors, selection highlight color, notification
 /// badge color, pane attention color, then a per-palette-entry editor
 /// and a Reset Palette action.
 @MainActor
@@ -15,6 +15,8 @@ public struct WorkspaceColorsSection: View {
     private let errorLog: SettingsErrorLog
 
     @State private var indicator: DefaultsValueModel<WorkspaceIndicatorStyle>
+    /// Internal so tests can prove an external write reaches the open row.
+    @State var autoColor: DefaultsValueModel<WorkspaceAutoColorMode>
     @State private var selectionHex: DefaultsValueModel<String>
     @State private var subtleSelection: DefaultsValueModel<Bool>
     @State private var brightenInDarkMode: DefaultsValueModel<Bool>
@@ -59,6 +61,7 @@ public struct WorkspaceColorsSection: View {
         self.catalog = catalog
         self.errorLog = errorLog
         _indicator = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.workspaceColors.indicatorStyle))
+        _autoColor = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.workspaceColors.autoColor))
         _selectionHex = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.workspaceColors.selectionColorHex))
         _subtleSelection = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.workspaceColors.subtleSelection))
         _brightenInDarkMode = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.workspaceColors.brightenInDarkMode))
@@ -86,9 +89,10 @@ public struct WorkspaceColorsSection: View {
         min(max(activeFillOpacityDragValue ?? unselectedFillOpacity.current, 0), 1)
     }
 
-    private func startObservingSettings() {
+    func startObservingSettings() {
         let models: [any SettingObservationStarting] = [
             indicator,
+            autoColor,
             selectionHex,
             subtleSelection,
             brightenInDarkMode,
@@ -111,6 +115,22 @@ public struct WorkspaceColorsSection: View {
                 Picker("", selection: Binding(get: { indicator.current }, set: { indicator.set($0) })) {
                     ForEach(WorkspaceIndicatorStyle.allCases, id: \.self) { style in
                         Text(indicatorStyleLabel(style)).tag(style)
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+            }
+            SettingsCardDivider()
+
+            SettingsCardRow(
+                configurationReview: .json("workspaceColors.autoColor"),
+                String(localized: "settings.workspaceColors.autoColor", defaultValue: "Automatic Colors"),
+                subtitle: String(localized: "settings.workspaceColors.autoColor.subtitle", defaultValue: "Workspaces without a chosen color take one from their git worktree. A chosen color always wins, and workspaces outside a git repository stay uncolored."),
+                controlWidth: 196
+            ) {
+                Picker("", selection: Binding(get: { autoColor.current }, set: { autoColor.set($0) })) {
+                    ForEach(WorkspaceAutoColorMode.allCases, id: \.self) { mode in
+                        Text(autoColorModeLabel(mode)).tag(mode)
                     }
                 }
                 .labelsHidden()
@@ -357,6 +377,13 @@ public struct WorkspaceColorsSection: View {
         switch style {
         case .leftRail: return String(localized: "sidebar.activeTabIndicator.leftRail", defaultValue: "Left Rail")
         case .solidFill: return String(localized: "sidebar.activeTabIndicator.solidFill", defaultValue: "Solid Fill")
+        }
+    }
+
+    private func autoColorModeLabel(_ mode: WorkspaceAutoColorMode) -> String {
+        switch mode {
+        case .off: return String(localized: "settings.workspaceColors.autoColor.off", defaultValue: "Off")
+        case .worktree: return String(localized: "settings.workspaceColors.autoColor.worktree", defaultValue: "By Worktree")
         }
     }
 }

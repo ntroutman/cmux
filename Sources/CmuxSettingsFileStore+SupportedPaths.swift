@@ -154,6 +154,7 @@ extension CmuxSettingsFileStore {
         "sidebar.selectionColor",
         "sidebar.notificationBadgeColor",
         "workspaceColors.indicatorStyle",
+        "workspaceColors.autoColor",
         "workspaceColors.selectionColor",
         "workspaceColors.subtleSelection",
         "workspaceColors.brightenInDarkMode",

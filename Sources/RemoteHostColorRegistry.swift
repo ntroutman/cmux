@@ -2,7 +2,8 @@ import Foundation
 
 /// Assigns each remote destination a color from ``hostPalette`` so servers are easy
 /// to tell apart at a glance, and the same destination shows the same color in every
-/// open window for the life of the app session. Gated by the
+/// open window for the life of the app session. The palette and hash live in
+/// ``WorkspaceDistinguishingPalette``, shared with the automatic workspace color. Gated by the
 /// `remoteTmux.beta.originColors.enabled` flag at the call sites.
 ///
 /// Keyed by the host's `destination` STRING (the ssh alias or `user@host` — the
@@ -36,33 +37,9 @@ import Foundation
 /// an injected `slotCount` to exercise the probing deterministically.
 @MainActor
 final class RemoteHostColorRegistry {
-    /// Sixteen soft colors picked for telling hosts apart, rather than borrowed from the
-    /// workspace tab palette, whose dark reds and magentas collapse into each other once the
-    /// sidebar rail brightens them (two pairs there differ by under 5). As the rail draws them,
-    /// every pair differs by at least 11 in OKLab (x100), colors that are neighbors in this order
-    /// differ by at least 26, so a host bumped to the next slot by a collision lands on a clearly
-    /// different color, each differs from the grey sidebar (#A9A9A9) by at least 15, and from
-    /// cmux's built-in blue accent by at least 12. Custom accents are user-controlled and may
-    /// intentionally match a palette color, so no universal contrast guarantee is possible for
-    /// arbitrary custom accents. `RemoteHostColorRegistryTests` checks those floors.
-    static let hostPalette: [String] = [
-        "#B1A2FA", // violet
-        "#E7BB4E", // gold
-        "#9B577B", // mauve
-        "#75D1A3", // mint
-        "#77779E", // slate
-        "#FF945A", // tangerine
-        "#A8EAF6", // sky
-        "#F06C7F", // coral
-        "#DDE2BB", // butter
-        "#E18DCD", // pink
-        "#8A9E2D", // olive
-        "#A963C7", // purple
-        "#9B6F0D", // ochre
-        "#FFDAFF", // lilac
-        "#259E6A", // green
-        "#9E5131", // rust
-    ]
+    /// The shared ``WorkspaceDistinguishingPalette/colors``; kept so existing callers and the
+    /// palette-floor tests keep compiling against the registry.
+    static let hostPalette = WorkspaceDistinguishingPalette.colors
 
     /// Number of palette slots to assign over. Defaults to ``hostPalette``'s count;
     /// tests inject other counts to exercise the probing.
@@ -104,14 +81,9 @@ final class RemoteHostColorRegistry {
         return Self.hostPalette[slot]
     }
 
-    /// Stable FNV-1a/64 hash of a string — deterministic across processes (unlike
-    /// `Hasher`), so a host's starting color doesn't change between app launches.
+    /// Forwards to ``WorkspaceDistinguishingPalette/stableHash(_:)``, the FNV-1a/64 hash that
+    /// keeps a host's starting color the same across app launches.
     static func stableHash(_ string: String) -> UInt64 {
-        var hash: UInt64 = 0xcbf2_9ce4_8422_2325 // FNV offset basis
-        for byte in string.utf8 {
-            hash ^= UInt64(byte)
-            hash = hash &* 0x0000_0100_0000_01b3 // FNV prime
-        }
-        return hash
+        WorkspaceDistinguishingPalette.stableHash(string)
     }
 }

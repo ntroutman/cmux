@@ -529,7 +529,7 @@ extension Array where Element == CuratedSettingEntry {
             .init(section: .browser, id: "enable-browser", title: String(localized: "settings.browser.enabled", defaultValue: "Enable cmux Browser"), synonyms: "Enable cmux Browser browser.disabled enable disable webview embedded browser tabs links"),
             .init(section: .browser, id: "search-engine", title: String(localized: "settings.browser.searchEngine", defaultValue: "Default Search Engine"), synonyms: "Default Search Engine browser.defaultSearchEngine omnibar address bar google duckduckgo bing kagi brave startpage perplexity exa yahoo ecosia qwant mojeek wikipedia github baidu yandex custom search provider engine name url template"),
             .init(section: .browser, id: "search-suggestions", title: String(localized: "settings.browser.searchSuggestions", defaultValue: "Show Search Suggestions"), synonyms: "Show Search Suggestions browser.showSearchSuggestions suggest autocomplete address bar search suggestions"),
-        ], and: [
+        ], and: insertingWorkspaceColorsEntries(between: [
             .init(
                 section: .browser,
                 id: "ask-where-to-save-downloads",
@@ -580,31 +580,14 @@ extension Array where Element == CuratedSettingEntry {
             .init(section: .keyboardShortcuts, id: "base-keymap", title: String(localized: "settings.shortcuts.baseKeymap", defaultValue: "Base Keymap"), synonyms: "Base Keymap preset keybindings iterm iterm2 terminal app terminal.app tmux prefix ctrl-b coming from switch shortcuts macos conflicts"),
             .init(section: .keyboardShortcuts, id: "shortcut-chords", title: String(localized: "settings.shortcuts.chords", defaultValue: "Shortcut Chords"), synonyms: "Shortcut Chords tmux prefix ctrl-b control-b multi key sequence chord cmux json"),
             .init(section: .keyboardShortcuts, id: "reset-defaults", title: String(localized: "settings.shortcuts.resetDefaults", defaultValue: "Reset Default Shortcuts"), synonyms: "Reset Default Shortcuts reset restore default defaults built in builtin shortcuts hotkeys keybindings commands"),
-
-            // Workspace colors
-            .init(section: .workspaceColors, id: "indicator", title: String(localized: "settings.workspaceColors.indicator", defaultValue: "Workspace Color Indicator"), synonyms: "Workspace Color Indicator workspaceColors.indicatorStyle tab indicator active workspace style color stripe dot"),
-            .init(section: .workspaceColors, id: "subtle-selection", title: String(localized: "settings.workspaceColors.subtleSelection", defaultValue: "Subtle Selection Highlight"), synonyms: "Subtle Selection Highlight workspaceColors.subtleSelection subtle calm quiet selection highlight tint hairline edge selected workspace accent"),
-            .init(section: .workspaceColors, id: "brighten-dark-mode", title: String(localized: "settings.workspaceColors.brightenInDarkMode", defaultValue: "Brighten Colors in Dark Mode"), synonyms: "Brighten Colors in Dark Mode workspaceColors.brightenInDarkMode brighten lighten dark mode workspace colors fill dim muted exact color"),
-            .init(section: .workspaceColors, id: "unselected-fill-opacity", title: String(localized: "settings.workspaceColors.unselectedFillOpacity", defaultValue: "Unselected Fill Opacity"), synonyms: "Unselected Fill Opacity workspaceColors.unselectedFillOpacity opacity transparency alpha solid fill unselected inactive workspace row color dull faded strength"),
-            .init(section: .workspaceColors, id: "selection", title: String(localized: "settings.workspaceColors.selectionColor", defaultValue: "Selection Highlight"), synonyms: "Selection Highlight workspaceColors.selectionColor selected workspace color highlight background active tab"),
-            .init(section: .workspaceColors, id: "badge", title: String(localized: "settings.workspaceColors.notificationBadgeColor", defaultValue: "Notification Badge"), synonyms: "Notification Badge workspaceColors.notificationBadgeColor unread notification badge color dot count"),
-            .init(
-                section: .workspaceColors,
-                id: "pane-flash-color",
-                title: String(localized: "settings.workspaceColors.paneFlashColor", defaultValue: "Pane Flash"),
-                detailText: String(localized: "settings.workspaceColors.paneFlashColor.subtitle", defaultValue: "Color of the attention ring and pane flash when a pane needs input."),
-                paths: ["notifications.paneFlashColor"],
-                synonyms: "notifications.paneFlashColor attention ring pane flash color unread needs input"
-            ),
-            .init(section: .workspaceColors, id: "palette", title: String(localized: "settings.workspaceColors.resetPalette", defaultValue: "Reset Palette"), synonyms: "Reset Palette reset palette named colors restore built-in custom remove default"),
-
+        ], and: [
             // cmux.json
             .init(section: .settingsJSON, id: "open-file", title: String(localized: "settings.settingsJSON.file", defaultValue: "User config file"), synonyms: "User config file open config file json jsonc config editor ~/.config cmux preferences"),
             .init(section: .settingsJSON, id: "documentation", title: String(localized: "settings.settingsJSON.documentation", defaultValue: "Documentation"), synonyms: "Documentation docs documentation schema reference cmux json keys configuration"),
 
             // Reset
             .init(section: .reset, id: "reset-all", title: String(localized: "settings.reset.resetAll", defaultValue: "Reset All Settings"), synonyms: "Reset All Settings factory reset restore defaults clear preferences"),
-        ])) + terminalGhosttyOptionEntries + sidebarAgentUsageEntries
+        ]))) + terminalGhosttyOptionEntries + sidebarAgentUsageEntries
     }
 
     private static var keyboardShortcutActionSynonyms: String {

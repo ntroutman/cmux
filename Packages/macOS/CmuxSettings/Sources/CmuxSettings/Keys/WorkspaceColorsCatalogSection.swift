@@ -39,6 +39,15 @@ public struct WorkspaceColorsCatalogSection: SettingCatalogSection {
         userDefaultsKey: "workspaceColorsUnselectedFillOpacity"
     )
 
+    /// Colors workspaces the user has not colored by hand from a stable key,
+    /// off by default. See
+    /// docs/superpowers/specs/2026-11-13-auto-color-workspaces-design.md.
+    public let autoColor = DefaultsKey<WorkspaceAutoColorMode>(
+        id: "workspaceColors.autoColor",
+        defaultValue: .off,
+        userDefaultsKey: "workspaceColorsAutoColor"
+    )
+
     public let notificationBadgeColorHex = DefaultsKey<String>(
         id: "workspaceColors.notificationBadgeColor",
         defaultValue: "",
