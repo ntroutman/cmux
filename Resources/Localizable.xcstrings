@@ -576224,6 +576224,65 @@
         }
       }
     },
+    "settings.search.alias.setting.app.group-auto-color": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette تلقائي مجموعة لون ألوان اسم لوحة"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette automatisch Gruppe Farbe Farben Name Palette"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette automático grupo color colores nombre paleta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette automatique groupe couleur couleurs nom palette"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette 自動 グループ 色 カラー 名前 パレット"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette 자동 그룹 색상 색 이름 팔레트"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette 自动 分组 颜色 名称 调色板"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.groupAutoColor automatic auto group color colors colour hash name palette 自動 群組 顏色 名稱 調色盤"
+          }
+        }
+      }
+    },
     "settings.search.alias.setting.app.group-dividers": {
       "extractionState": "manual",
       "localizations": {
@@ -673944,6 +674003,124 @@
           "stringUnit": {
             "state": "translated",
             "value": "群組顏色"
+          }
+        }
+      }
+    },
+    "settings.app.groupAutoColor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic group colors"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ألوان المجموعات التلقائية"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatische Gruppenfarben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colores de grupo automáticos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleurs de groupe automatiques"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "グループの自動カラー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자동 그룹 색상"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动分组颜色"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動群組顏色"
+          }
+        }
+      }
+    },
+    "settings.app.groupAutoColor.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color each group from its name when it has no color of its own."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لوّن كل مجموعة استنادًا إلى اسمها عندما لا يكون لها لون خاص بها."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Färbe jede Gruppe anhand ihres Namens ein, wenn sie keine eigene Farbe hat."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colorea cada grupo según su nombre cuando no tiene un color propio."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colorez chaque groupe d’après son nom lorsqu’il n’a pas de couleur propre."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "独自の色がないグループを、名前に基づいて色分けします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자체 색상이 없는 그룹은 이름에 따라 색을 입힙니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当分组没有自己的颜色时，根据其名称为其着色。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "當群組沒有自己的顏色時，依其名稱為其著色。"
           }
         }
       }

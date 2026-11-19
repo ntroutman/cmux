@@ -37,6 +37,8 @@ struct SettingsSearchIndexTests {
         assertSearch("clickable pull requests", contains: SettingsSearchIndex.settingID(for: .sidebarAppearance, idSuffix: "make-pr-clickable"))
         assertSearch("group dividers", contains: SettingsSearchIndex.settingID(for: .sidebarAppearance, idSuffix: "group-dividers"))
         assertSearch("divider", contains: SettingsSearchIndex.settingID(for: .sidebarAppearance, idSuffix: "group-dividers"))
+        assertSearch("automatic group colors", contains: SettingsSearchIndex.settingID(for: .sidebarAppearance, idSuffix: "group-auto-color"))
+        assertSearch("group color hash", contains: SettingsSearchIndex.settingID(for: .sidebarAppearance, idSuffix: "group-auto-color"))
         assertSearch("naming", contains: SettingsSearchIndex.settingID(for: .automation, idSuffix: "workspace-auto-naming"))
         assertSearch("nmaing", contains: SettingsSearchIndex.settingID(for: .automation, idSuffix: "workspace-auto-naming"))
         assertSearch("auto name", contains: SettingsSearchIndex.settingID(for: .automation, idSuffix: "workspace-auto-naming"))
@@ -137,6 +139,13 @@ struct SettingsSearchIndexTests {
         #expect(
             SettingsSearchIndex.anchorID(forSettingsPath: "sidebar.groupDividers")
                 == SettingsSearchIndex.settingID(for: .sidebarAppearance, idSuffix: "group-dividers")
+        )
+    }
+
+    @Test func settingsPathAnchorIncludesGroupAutoColor() {
+        #expect(
+            SettingsSearchIndex.anchorID(forSettingsPath: "sidebar.groupAutoColor")
+                == SettingsSearchIndex.settingID(for: .sidebarAppearance, idSuffix: "group-auto-color")
         )
     }
 
