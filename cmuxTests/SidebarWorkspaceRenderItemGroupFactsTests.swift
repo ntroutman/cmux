@@ -276,7 +276,8 @@ struct SidebarWorkspaceRenderItemGroupFactsTests {
 
         let map = VerticalTabsSidebar.groupColorHexByGroupId(
             groups: groups,
-            configColor: { configColors[$0.id] }
+            configColor: { configColors[$0.id] },
+            autoPalette: []
         )
 
         // Custom color wins over the directory config color.
