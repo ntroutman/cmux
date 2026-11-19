@@ -44,7 +44,7 @@ struct SidebarRowSnapshotCacheTests {
             workspace: workspace,
             settings: SidebarTabItemSettingsSnapshot(defaults: defaults),
             showsAgentActivity: false,
-            originColorHex: originColor
+            fallbackColorHex: originColor
         )
         let cache = SidebarRowSnapshotCache()
         let defaultSnapshot = factory.makeSnapshot()
@@ -71,6 +71,47 @@ struct SidebarRowSnapshotCacheTests {
         }
         #expect(cache.value(for: workspace.id)?.customColorHex == originColor)
         #expect(cache.value(for: workspace.id)?.hasManualCustomColor == false)
+    }
+
+    /// The full refresh reuses a cached row only while its presentation key
+    /// matches, so a changed automatic color must change the key.
+    @Test func changedAutomaticColorChangesThePresentationKey() throws {
+        let suiteName = "SidebarRowSnapshotCacheTests.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let workspace = Workspace(title: "Auto color key", initialSurface: .cloudVMLoading)
+        defer { workspace.teardownAllPanels() }
+        let resolver = WorkspaceAutoColorResolver.make(mode: .worktree)
+        let roots = (0..<16).map { "/work/auto-color-key/tree-\($0)" }
+        let firstColor = try #require(autoColor(resolver, root: roots[0]))
+        let secondColor = try #require(roots.lazy.compactMap { autoColor(resolver, root: $0) }.first { $0 != firstColor })
+        func snapshot(_ color: String) -> SidebarWorkspaceSnapshotBuilder.Snapshot {
+            SidebarWorkspaceSnapshotFactory(
+                workspace: workspace,
+                settings: SidebarTabItemSettingsSnapshot(defaults: defaults),
+                showsAgentActivity: false,
+                fallbackColorHex: color
+            ).makeSnapshot()
+        }
+        let firstSnapshot = snapshot(firstColor)
+        let secondSnapshot = snapshot(secondColor)
+        #expect(firstSnapshot.presentationKey != secondSnapshot.presentationKey)
+
+        let cache = SidebarRowSnapshotCache()
+        cache.reconcile(workspaceIds: [workspace.id], presentationKey: firstSnapshot.presentationKey) { _ in
+            firstSnapshot
+        }
+        cache.reconcile(workspaceIds: [workspace.id], presentationKey: secondSnapshot.presentationKey) { _ in
+            secondSnapshot
+        }
+        #expect(cache.value(for: workspace.id)?.customColorHex == secondColor)
+        #expect(cache.value(for: workspace.id)?.hasManualCustomColor == false)
+    }
+
+    private func autoColor(_ resolver: WorkspaceAutoColorResolver, root: String) -> String? {
+        resolver.colorHex(for: WorkspaceAutoColorInput(
+            stableId: UUID(), currentDirectory: root, projectRootPath: root, groupId: nil, isLocal: true
+        ))
     }
 
     @Test func repeatedWorkspaceReplacementDoesNotRetainHistoricalSnapshots() {

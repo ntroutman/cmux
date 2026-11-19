@@ -2275,6 +2275,9 @@
             }
           }
         },
+        "workspaceColors": {
+          "autoColor": "Radnim prostorima bez odabrane boje dodijeli boju izvedenu iz njihovog git worktreea, tako da svaki worktree zadrži istu boju nakon ponovnih pokretanja. Odabrana boja uvijek ima prednost. Podrazumijevano isključeno."
+        },
         "fileExplorer": {
           "description": "Postavke istraživača datoteka (stabla datoteka) u desnoj bočnoj traci.",
           "doubleClickAction": "Šta se dešava kada dvaput kliknete (ili pritisnete Return na rezultatu pretrage) datoteku u istraživaču datoteka. `preview` otvara ugrađeni cmux pregled datoteke (zadano i dosadašnje ponašanje). `defaultEditor` otvara datoteku macOS zadanom aplikacijom za tu vrstu datoteke. `preferredEditor` otvara pomoću komande `app.preferredEditor`, uz povratak na zadanu aplikaciju kada nije postavljena. Primjenjuje se samo na datoteke; direktoriji se uvijek proširuju/skupljaju, a nelokalni (udaljeni) istraživači datoteka uvijek otvaraju cmux pregled."

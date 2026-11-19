@@ -3528,6 +3528,9 @@
             }
           }
         },
+        "workspaceColors": {
+          "autoColor": "Give workspaces without a chosen color one derived from their git worktree, so each worktree keeps the same color across restarts. A chosen color always wins. Off by default."
+        },
         "fileExplorer": {
           "description": "Right-sidebar file explorer (file tree) settings.",
           "doubleClickAction": "What double-clicking (or pressing Return on a search result for) a file in the file explorer does. `preview` opens the built-in cmux file preview (the default and historical behavior). `defaultEditor` opens with the macOS default app for the file type. `preferredEditor` opens with the `app.preferredEditor` command, falling back to the default app when none is set. Only applies to files; directories always expand/collapse, and non-local (remote) file explorers always open the cmux preview."

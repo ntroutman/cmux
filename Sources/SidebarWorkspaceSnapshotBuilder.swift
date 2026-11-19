@@ -13,11 +13,11 @@ struct SidebarWorkspaceSnapshotBuilder {
         var compactsAgentStatus = false
         var compactStatusIcons: [String: String] = [:]
         let visibleAuxiliaryDetails: SidebarWorkspaceAuxiliaryDetailVisibility
-        // Effective row color (manual color, else resolved origin color). Part of
-        // the key so the cached snapshot is rebuilt when the color changes — e.g.
-        // toggling the origin-colors flag or a mirror host resolving after appear,
-        // neither of which is a Workspace @Published change that would otherwise
-        // refresh the snapshot.
+        // Effective row color (manual color, else origin color, else automatic
+        // color). Part of the key so the cached snapshot is rebuilt when the color
+        // changes — e.g. toggling the origin or automatic color setting, or a mirror
+        // host resolving after appear, none of which is a Workspace @Published
+        // change that would otherwise refresh the snapshot.
         let customColorHex: String?
         // Clear Color availability can change without changing the rendered color.
         var hasManualCustomColor = false
@@ -52,9 +52,9 @@ struct SidebarWorkspaceSnapshotBuilder {
         /// Whether any workspace-scoped notification mute is active.
         let isMuted: Bool
         // Effective row color: the manually chosen workspace color, else the
-        // per-host origin color when that beta flag is on. Rendering reads this;
-        // affordances that only make sense for a manual color (Clear Color)
-        // check `hasManualCustomColor` instead.
+        // per-host origin color or the automatic color when their settings are on.
+        // Rendering reads this; affordances that only make sense for a manual
+        // color (Clear Color) check `hasManualCustomColor` instead.
         let customColorHex: String?
         let hasManualCustomColor: Bool
         /// Stable Cloud identity, independent of connection status and detail visibility.

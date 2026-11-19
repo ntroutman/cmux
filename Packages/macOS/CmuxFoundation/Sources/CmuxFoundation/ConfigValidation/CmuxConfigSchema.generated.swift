@@ -1886,6 +1886,13 @@ enum CmuxEmbeddedConfigSchema {
           "default": "leftRail",
           "description": "Active workspace indicator style. Legacy aliases are accepted and normalized."
         },
+        "autoColor": {
+          "type": "string",
+          "enum": ["off", "worktree"],
+          "default": "off",
+          "descriptionKey": "schemaDescriptions.workspaceColors.autoColor",
+          "description": "Give workspaces without a chosen color one derived from their git worktree, so each worktree keeps the same color across restarts. A chosen color always wins. Off by default."
+        },
         "selectionColor": {
           "$ref": "#/$defs/colorHexOrNull",
           "default": null,

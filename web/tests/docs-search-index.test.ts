@@ -131,4 +131,23 @@ describe("docs search index", () => {
       ).toBeTruthy();
     }
   });
+
+  test("localizes the workspace auto-color schema description in every locale", async () => {
+    for (const locale of routing.locales) {
+      const messages = (await import(`../messages/${locale}.json`)).default as {
+        docs: {
+          configuration: {
+            schemaDescriptions: {
+              workspaceColors?: { autoColor?: string };
+            };
+          };
+        };
+      };
+
+      expect(
+        messages.docs.configuration.schemaDescriptions.workspaceColors
+          ?.autoColor,
+      ).toBeTruthy();
+    }
+  });
 });

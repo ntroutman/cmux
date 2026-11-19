@@ -208,6 +208,13 @@ has ready-to-copy ones.
   selected workspace.
 - `workspaceColors.selectionColor` and `workspaceColors.notificationBadgeColor`
   override those colors.
+- `workspaceColors.autoColor`: `off` (default) or `worktree`. With `worktree`,
+  a workspace you have not colored takes a stable color from its git worktree,
+  so each worktree keeps its own color across restarts. A color you choose
+  always wins, and workspaces outside a git repository stay uncolored. The
+  automatic colors come from a fixed sixteen-color palette, not the
+  `workspaceColors.colors` palette in the Workspace Color menu. Settings >
+  Workspace Colors > Automatic Colors sets the same value.
 - `workspaceColors.subtleSelection`: `true` swaps the solid left-rail selection
   for a light accent tint with a hairline edge. Off by default; ignored with
   `solidFill` or a custom `selectionColor`.

@@ -196,6 +196,7 @@ extension CmuxSettingsFileStore {
                     "subtleSelection": SettingCatalog().workspaceColors.subtleSelection.defaultValue,
                     "brightenInDarkMode": SettingCatalog().workspaceColors.brightenInDarkMode.defaultValue,
                     "unselectedFillOpacity": SettingCatalog().workspaceColors.unselectedFillOpacity.defaultValue,
+                    "autoColor": SettingCatalog().workspaceColors.autoColor.defaultValue.rawValue,
                     "notificationBadgeColor": NSNull(),
                     "colors": Dictionary(
                         uniqueKeysWithValues: WorkspaceTabColorSettings.defaultPalette.map { ($0.name, $0.hex) }

@@ -27,6 +27,17 @@ import Testing
         #expect(first != RemoteHostColorRegistry.stableHash("cmux-srvB"))
     }
 
+    @Test func registryForwardsToTheSharedDistinguishingPalette() {
+        #expect(RemoteHostColorRegistry.hostPalette == WorkspaceDistinguishingPalette.colors)
+        #expect(RemoteHostColorRegistry.stableHash("x") == WorkspaceDistinguishingPalette.stableHash("x"))
+    }
+
+    @Test func stableHashOfAFixedStringIsPinned() {
+        // The host origin color and the automatic workspace color both start from this hash, so
+        // changing it would silently recolor every host and workspace on the next launch.
+        #expect(WorkspaceDistinguishingPalette.stableHash("cmux") == 0x1e15_4c91_2400_a9d0)
+    }
+
     @Test func sameHostAlwaysGetsTheSameSlot() {
         let reg = RemoteHostColorRegistry(slotCount: 16)
         let first = reg.slot(for: "user@example.com")
