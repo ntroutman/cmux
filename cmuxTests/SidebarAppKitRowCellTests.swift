@@ -3141,3 +3141,145 @@ struct SidebarWorkspaceMemberGuideTests {
         #expect(idle.resolvedOpacity == 1)
     }
 }
+
+/// The AppKit header menu's Group Color submenu keys its checkmark and Clear
+/// Color off the manual color, never the effective tint.
+@Suite
+@MainActor
+struct SidebarGroupHeaderColorMenuTests {
+    private final class ColorRecorder {
+        var setColors: [String?] = []
+        var customColorRequests = 0
+    }
+
+    private static let groupColorTitle = String(
+        localized: "workspaceGroup.contextMenu.color",
+        defaultValue: "Group Color"
+    )
+    private static let clearColorTitle = String(localized: "contextMenu.clearColor", defaultValue: "Clear Color")
+    private static let chooseCustomColorTitle = String(
+        localized: "contextMenu.chooseCustomColor",
+        defaultValue: "Choose Custom Color…"
+    )
+
+    private static func makeActions(recorder: ColorRecorder) -> SidebarGroupHeaderRowActions {
+        SidebarGroupHeaderRowActions(
+            onToggleCollapsed: {},
+            onFocusAnchor: { _ in },
+            onTapPlus: {},
+            onRunResolvedItem: { _ in },
+            onRename: {},
+            onTogglePinned: {},
+            onMarkRead: {},
+            onMarkUnread: {},
+            onClearLatestNotifications: {},
+            onMarkAllRead: {},
+            onMarkAllUnread: {},
+            onUngroup: {},
+            onDelete: {},
+            onEditConfig: {},
+            onOpenDocs: {},
+            onSetColor: { recorder.setColors.append($0) },
+            onChooseCustomColor: { recorder.customColorRequests += 1 }
+        )
+    }
+
+    private static func headerMenu(
+        tintHex: String? = nil,
+        customColorHex: String? = nil,
+        recorder: ColorRecorder = ColorRecorder()
+    ) -> NSMenu {
+        var model = SidebarGroupHeaderBandTests.makeModel()
+        model.tintHex = tintHex
+        model.customColorHex = customColorHex
+        let cell = SidebarGroupHeaderTableCellView()
+        cell.configure(
+            model: model,
+            actions: makeActions(recorder: recorder),
+            isPointerHovering: false,
+            contextMenuDidOpen: {},
+            contextMenuDidClose: {}
+        )
+        return cell.makeHeaderMenu()
+    }
+
+    private static func colorSubmenu(of menu: NSMenu) throws -> NSMenu {
+        try #require(menu.items.first { $0.title == groupColorTitle }?.submenu)
+    }
+
+    private static func run(_ item: NSMenuItem) throws {
+        let action = try #require(item.action)
+        _ = (item.target as AnyObject?)?.perform(action, with: item)
+    }
+
+    @Test
+    func groupColorItemSitsBetweenPinAndTheMarkReadSeparator() throws {
+        let items = Self.headerMenu().items
+        let pinTitle = String(localized: "workspaceGroup.contextMenu.pin", defaultValue: "Pin Group")
+        let pinIndex = try #require(items.firstIndex { $0.title == pinTitle })
+        #expect(items[pinIndex + 1].title == Self.groupColorTitle)
+        #expect(items[pinIndex + 1].submenu != nil)
+        #expect(items[pinIndex + 2].isSeparatorItem)
+        #expect(items[pinIndex + 3].title == String(
+            localized: "workspaceGroup.contextMenu.markRead",
+            defaultValue: "Mark Group as Read"
+        ))
+    }
+
+    @Test
+    func clearColorAppearsOnlyWithAManualColor() throws {
+        let palette = WorkspaceTabColorSettings.palette()
+        let hex = try #require(palette.first?.hex)
+
+        let manual = try Self.colorSubmenu(of: Self.headerMenu(tintHex: hex, customColorHex: hex))
+        #expect(manual.items.first?.title == Self.clearColorTitle)
+
+        let uncolored = try Self.colorSubmenu(of: Self.headerMenu())
+        #expect(!uncolored.items.contains { $0.title == Self.clearColorTitle })
+        #expect(uncolored.items.first?.title == Self.chooseCustomColorTitle)
+        #expect(uncolored.items.filter { !$0.isSeparatorItem }.map(\.title).dropFirst() == palette.map(\.name)[...])
+    }
+
+    @Test
+    func paletteItemMatchingTheManualColorIsCheckedAndOthersAreNot() throws {
+        let palette = WorkspaceTabColorSettings.palette()
+        try #require(palette.count >= 2)
+        let chosen = palette[1]
+        let submenu = try Self.colorSubmenu(of: Self.headerMenu(
+            tintHex: chosen.hex,
+            customColorHex: chosen.hex.lowercased()
+        ))
+        for entry in palette {
+            let item = try #require(submenu.items.first { $0.title == entry.name })
+            #expect(item.state == (entry.hex == chosen.hex ? .on : .off), "\(entry.name)")
+        }
+    }
+
+    @Test
+    func configOnlyColorChecksNothingAndOffersNoClear() throws {
+        let palette = WorkspaceTabColorSettings.palette()
+        let hex = try #require(palette.first?.hex)
+        let submenu = try Self.colorSubmenu(of: Self.headerMenu(tintHex: hex, customColorHex: nil))
+        #expect(!submenu.items.contains { $0.title == Self.clearColorTitle })
+        #expect(submenu.items.allSatisfy { $0.state == .off })
+    }
+
+    @Test
+    func itemsCallTheSharedColorActions() throws {
+        let palette = WorkspaceTabColorSettings.palette()
+        let entry = try #require(palette.first)
+        let recorder = ColorRecorder()
+        let submenu = try Self.colorSubmenu(of: Self.headerMenu(
+            tintHex: entry.hex,
+            customColorHex: entry.hex,
+            recorder: recorder
+        ))
+
+        try Self.run(try #require(submenu.items.first { $0.title == entry.name }))
+        try Self.run(try #require(submenu.items.first { $0.title == Self.clearColorTitle }))
+        try Self.run(try #require(submenu.items.first { $0.title == Self.chooseCustomColorTitle }))
+
+        #expect(recorder.setColors == [entry.hex, nil])
+        #expect(recorder.customColorRequests == 1)
+    }
+}
