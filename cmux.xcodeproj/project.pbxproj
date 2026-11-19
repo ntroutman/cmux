@@ -3502,6 +3502,7 @@
 		B8624C060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8624D060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift */; };
 		A8624F0C0000000000000001 /* SidebarFocusBoundaryReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8624F0C0000000000000002 /* SidebarFocusBoundaryReference.swift */; };
 		8175A0010000000000000001 /* SidebarGitProcessCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8175A0010000000000000002 /* SidebarGitProcessCompositionTests.swift */; };
+		7D8ED5C15EA1BE3037BE0F81 /* SidebarGroupAutoColorSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96E24D0C42C96F247747CAB /* SidebarGroupAutoColorSettingsTests.swift */; };
 		EAEB8DD53EE969F4A1515AC7 /* SidebarGroupDividerAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */; };
 		D001BB48845BA64944C24902 /* SidebarGroupDividersSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5046B3760C3B8C7B84EC803D /* SidebarGroupDividersSettingsTests.swift */; };
 		DDDBEB1CC61EDAFD1469DD75 /* SidebarGroupHeaderDividerPlumbingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E04B49801F51D2F37502BE /* SidebarGroupHeaderDividerPlumbingTests.swift */; };
@@ -8189,6 +8190,7 @@
 		B8624D060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarFocusBoundaryLifecycleTests.swift; sourceTree = "<group>"; };
 		A8624F0C0000000000000002 /* SidebarFocusBoundaryReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar/SidebarFocusBoundaryReference.swift; sourceTree = "<group>"; };
 		8175A0010000000000000002 /* SidebarGitProcessCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarGitProcessCompositionTests.swift; sourceTree = "<group>"; };
+		B96E24D0C42C96F247747CAB /* SidebarGroupAutoColorSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupAutoColorSettingsTests.swift"; sourceTree = "<group>"; };
 		34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupDividerAppearanceTests.swift"; sourceTree = "<group>"; };
 		5046B3760C3B8C7B84EC803D /* SidebarGroupDividersSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupDividersSettingsTests.swift"; sourceTree = "<group>"; };
 		48E04B49801F51D2F37502BE /* SidebarGroupHeaderDividerPlumbingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupHeaderDividerPlumbingTests.swift"; sourceTree = "<group>"; };
@@ -14353,6 +14355,7 @@
 				C978CC3C2D3FCCE66696C72C /* CLIKiroGlobalHooksTests.swift */,
 				B88325A2907EB7D69739349B /* ClaudeBackgroundWorkDrainTests.swift */,
 				2464CD34FA5CD675B243A68C /* WorkspaceGroupColorNormalizationTests.swift */,
+				B96E24D0C42C96F247747CAB /* SidebarGroupAutoColorSettingsTests.swift */,
 			);
 			path = cmuxTests;
 			sourceTree = "<group>";
@@ -19437,6 +19440,7 @@
 				A7FD1002 /* SidebarFileDropFindRoutingTests.swift in Sources */,
 				B8624C060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift in Sources */,
 				8175A0010000000000000001 /* SidebarGitProcessCompositionTests.swift in Sources */,
+				7D8ED5C15EA1BE3037BE0F81 /* SidebarGroupAutoColorSettingsTests.swift in Sources */,
 				EAEB8DD53EE969F4A1515AC7 /* SidebarGroupDividerAppearanceTests.swift in Sources */,
 				D001BB48845BA64944C24902 /* SidebarGroupDividersSettingsTests.swift in Sources */,
 				DDDBEB1CC61EDAFD1469DD75 /* SidebarGroupHeaderDividerPlumbingTests.swift in Sources */,

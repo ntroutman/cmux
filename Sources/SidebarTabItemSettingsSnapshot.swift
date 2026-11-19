@@ -15,6 +15,18 @@ struct SidebarTabItemSettingsSnapshot: Equatable {
     /// `var` only so the member row model can neutralize this paint-only flag
     /// in its height comparator; the value is set once in `init`.
     var showsGroupDividers: Bool
+    /// `sidebar.groupAutoColor`: uncolored workspace groups take a color from
+    /// `groupAutoColorPalette`. `var` for the same height-comparator reason as
+    /// `showsGroupDividers`.
+    var autoColorsGroups: Bool
+    /// The colors automatic group colors draw from: the built-in-named entries
+    /// of the workspace palette as the user has them, in built-in order, with
+    /// duplicate hexes dropped. Custom entries stay out so picking a custom
+    /// color does not resize the palette and reshuffle every automatic group.
+    /// Carried here, not read at render time, because the settings store
+    /// republishes only when this snapshot changes; empty while the setting is
+    /// off so palette edits do not churn the sidebar. `var` as above.
+    var groupAutoColorPalette: [String]
     /// `sidebar.compactStatusIcons`, keeping only known states and non-empty names.
     let compactStatusIcons: [String: String]
     let showsWorkspaceDescription: Bool
@@ -81,6 +93,8 @@ struct SidebarTabItemSettingsSnapshot: Equatable {
         wrapsWorkspaceTitles = settings.value(for: sidebar.wrapWorkspaceTitles)
         compactsAgentStatus = settings.value(for: sidebar.compactAgentStatus)
         showsGroupDividers = settings.value(for: sidebar.groupDividers)
+        autoColorsGroups = settings.value(for: sidebar.groupAutoColor)
+        groupAutoColorPalette = autoColorsGroups ? Self.groupAutoColorPalette(defaults: defaults) : []
         compactStatusIcons = SidebarCompactStatusGlyph.validIconOverrides(settings.value(for: sidebar.compactStatusIcons))
         let detailVisibility = SidebarWorkspaceDetailVisibility(
             showWorkspaceDescription: settings.value(for: sidebar.showWorkspaceDescription),
@@ -119,6 +133,15 @@ struct SidebarTabItemSettingsSnapshot: Equatable {
         iMessageModeEnabled = IMessageModeSettings.isEnabled(defaults: defaults)
         workspaceTodoChecklistStyle = settings.value(for: betaFeatures.workspaceTodosChecklistStyle)
         self.accentColor = accentColor
+    }
+
+    private static func groupAutoColorPalette(defaults: UserDefaults) -> [String] {
+        let customNames = Set(WorkspaceTabColorSettings.customPaletteEntries(defaults: defaults).map(\.name))
+        var seenHexes: Set<String> = []
+        return WorkspaceTabColorSettings.palette(defaults: defaults)
+            .filter { !customNames.contains($0.name) }
+            .map(\.hex)
+            .filter { seenHexes.insert($0).inserted }
     }
 
     private static func bool(

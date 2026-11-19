@@ -203,6 +203,16 @@ public struct SidebarCatalogSection: SettingCatalogSection {
         userDefaultsKey: "sidebarGroupDividers"
     )
 
+    /// Whether a workspace group with no manual or config color takes a color
+    /// from the stock workspace palette, chosen from a stable hash of its name
+    /// (`sidebar.groupAutoColor`). Defaults to on; off restores the neutral
+    /// fallback for uncolored groups.
+    public let groupAutoColor = DefaultsKey<Bool>(
+        id: "sidebar.groupAutoColor",
+        defaultValue: true,
+        userDefaultsKey: "sidebarGroupAutoColor"
+    )
+
     /// `sidebar.compactAgentStatus` glyph overrides: SF Symbol names keyed by
     /// state (`needsInput`, `terminal`, `pullRequestMerged`, ...).
     public let compactStatusIcons = DefaultsKey<[String: String]>(

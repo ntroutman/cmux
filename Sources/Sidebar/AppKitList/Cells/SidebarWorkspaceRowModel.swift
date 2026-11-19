@@ -17,8 +17,8 @@ struct SidebarWorkspaceRowModel: Equatable {
     var index: Int
     let snapshot: SidebarWorkspaceSnapshotBuilder.Snapshot
     // `var` only so `hasHeightEquivalentContent` can neutralize the paint-only
-    // `settings.showsGroupDividers` flag on compared copies; the stored value
-    // stays authoritative.
+    // `settings.showsGroupDividers` and automatic group color fields on
+    // compared copies; the stored value stays authoritative.
     var settings: SidebarTabItemSettingsSnapshot
     // `var` (not `let`) so the optimistic press/deselect paint can apply a
     // selection-flipped copy of the model; the stored model stays
@@ -95,10 +95,11 @@ struct SidebarWorkspaceRowModel: Equatable {
     /// full equality would re-measure that whole tail and lose its entries
     /// exactly when a stale-width fallback needs them.
     ///
-    /// `groupGuide` and the `settings.showsGroupDividers` flag are paint-only:
-    /// the indent guide draws in the member gutter at the row's measured
-    /// height without changing it, so a guide recolor, a run-boundary flip or
-    /// a group-divider toggle must not remeasure the row.
+    /// `groupGuide`, the `settings.showsGroupDividers` flag and the automatic
+    /// group color fields are paint-only: the indent guide draws in the member
+    /// gutter at the row's measured height without changing it, so a guide
+    /// recolor, a run-boundary flip, a group-divider or automatic-color toggle
+    /// or a palette edit must not remeasure the row.
     func hasHeightEquivalentContent(to other: Self) -> Bool {
         if self == other { return true }
         var normalizedSelf = self
@@ -111,6 +112,10 @@ struct SidebarWorkspaceRowModel: Equatable {
         normalizedOther.groupGuide = nil
         normalizedSelf.settings.showsGroupDividers = false
         normalizedOther.settings.showsGroupDividers = false
+        normalizedSelf.settings.autoColorsGroups = false
+        normalizedOther.settings.autoColorsGroups = false
+        normalizedSelf.settings.groupAutoColorPalette = []
+        normalizedOther.settings.groupAutoColorPalette = []
         return normalizedSelf == normalizedOther
     }
 }

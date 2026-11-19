@@ -1811,6 +1811,12 @@ enum CmuxEmbeddedConfigSchema {
           "descriptionKey": "schemaDescriptions.sidebar.groupDividers",
           "description": "Mark workspace group boundaries: each group's collapsible header sits on a tinted band with space above it, and a thin guide runs down the gutter beside its members. Turn off to restore the flat list with a smaller header name and no band or guide."
         },
+        "groupAutoColor": {
+          "type": "boolean",
+          "default": true,
+          "descriptionKey": "schemaDescriptions.sidebar.groupAutoColor",
+          "description": "Color each workspace group from its name when it has no color of its own. A color set from the Group Color menu, the CLI, or a workspace-group config always wins. Colors come from the stock workspace palette as you have it, and two groups get different colors while unused ones remain. Turn off to leave uncolored groups neutral."
+        },
         "compactStatusIcons": {
           "type": "object",
           "default": {},

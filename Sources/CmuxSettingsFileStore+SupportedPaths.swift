@@ -148,6 +148,7 @@ extension CmuxSettingsFileStore {
         "sidebar.showCustomMetadata",
         "sidebar.compactAgentStatus",
         "sidebar.groupDividers",
+        "sidebar.groupAutoColor",
         "sidebar.compactStatusIcons",
         RightSidebarWidthSettings.settingsPath,
         "sidebar.activeTabIndicatorStyle",

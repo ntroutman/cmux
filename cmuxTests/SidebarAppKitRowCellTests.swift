@@ -3108,6 +3108,27 @@ struct SidebarWorkspaceMemberGuideTests {
     }
 
     @Test
+    func groupAutoColorToggleAndPaletteAreHeightEquivalent() throws {
+        let base = SidebarAppKitRowCellTests.makeModel(
+            isGrouped: true,
+            groupGuide: try Self.guide(endsRun: false)
+        )
+        var on = base
+        on.settings.autoColorsGroups = true
+        on.settings.groupAutoColorPalette = ["#C0392B", "#1565C0"]
+        var off = base
+        off.settings.autoColorsGroups = false
+        off.settings.groupAutoColorPalette = []
+        #expect(on != off)
+        #expect(on.hasHeightEquivalentContent(to: off))
+
+        var edited = on
+        edited.settings.groupAutoColorPalette = ["#1565C0"]
+        #expect(on != edited)
+        #expect(on.hasHeightEquivalentContent(to: edited))
+    }
+
+    @Test
     func swiftUIOverlayDimsWithTheDraggedRow() throws {
         let guide = try Self.guide(endsRun: false)
         let dragged = SidebarWorkspaceMemberGuideOverlay(
