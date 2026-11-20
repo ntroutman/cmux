@@ -380,6 +380,14 @@ extension Array where Element == CuratedSettingEntry {
                 paths: ["sidebar.groupDividers"],
                 synonyms: "sidebar.groupDividers group dividers divider band guide folder separator header tint group boundary"
             ),
+            .init(
+                section: .sidebarAppearance,
+                id: "group-auto-color",
+                title: String(localized: "settings.app.groupAutoColor", defaultValue: "Automatic group colors"),
+                detailText: String(localized: "settings.app.groupAutoColor.subtitle", defaultValue: "Color each group from its name when it has no color of its own."),
+                paths: ["sidebar.groupAutoColor"],
+                synonyms: "sidebar.groupAutoColor automatic auto group color colors colour hash name palette"
+            ),
             .init(section: .sidebarAppearance, id: "right-max-width", title: String(localized: "settings.sidebar.rightMaxWidth", defaultValue: "Dock Max Width"), synonyms: "Dock Max Width sidebar.rightMaxWidth dock right sidebar max width terminal reservation cap logs lazygit"),
 
             // Mobile

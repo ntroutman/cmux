@@ -147,6 +147,7 @@ Sidebar content and metadata visibility from Settings > Sidebar.
 | `sidebar.showCustomMetadata` | boolean | `true` | Show custom metadata pills. |
 | `sidebar.compactAgentStatus` | boolean | `false` | Fold a workspace's agent status, branch, pull request and unread rows into one colored icon before the title, with the details in its tooltip. Rows you added yourself keep their lines. |
 | `sidebar.groupDividers` | boolean | `true` | Mark workspace group boundaries with a tinted header band and an indent guide down each group's members. Off restores the flat list with a smaller header name and no band or guide. |
+| `sidebar.groupAutoColor` | boolean | `true` | Color each workspace group from its name when it has no color of its own. A color set from the Group Color menu, the CLI, or a workspace-group config always wins. Colors come from the stock workspace palette as you have it, and two groups get different colors while unused ones remain. Turn off to leave uncolored groups neutral. |
 | `sidebar.compactStatusIcons` | object | `{}` | SF Symbol names that replace the compactAgentStatus glyph for each state, for example {"terminal": "apple.terminal", "needsInput": "hand.raised.fill"}. Unset states keep the built-in symbol, and a name that does not render falls back to it. |
 | `sidebar.wrapWorkspaceTitles` | boolean | `false` | Allow workspace titles in the sidebar to wrap to multiple lines instead of truncating after one line. |
 | `sidebar.beta` | object | — | Experimental sidebar features. |

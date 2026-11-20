@@ -3506,6 +3506,7 @@
 		B8624C060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8624D060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift */; };
 		A8624F0C0000000000000001 /* SidebarFocusBoundaryReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8624F0C0000000000000002 /* SidebarFocusBoundaryReference.swift */; };
 		8175A0010000000000000001 /* SidebarGitProcessCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8175A0010000000000000002 /* SidebarGitProcessCompositionTests.swift */; };
+		7D8ED5C15EA1BE3037BE0F81 /* SidebarGroupAutoColorSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96E24D0C42C96F247747CAB /* SidebarGroupAutoColorSettingsTests.swift */; };
 		EAEB8DD53EE969F4A1515AC7 /* SidebarGroupDividerAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */; };
 		D001BB48845BA64944C24902 /* SidebarGroupDividersSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5046B3760C3B8C7B84EC803D /* SidebarGroupDividersSettingsTests.swift */; };
 		DDDBEB1CC61EDAFD1469DD75 /* SidebarGroupHeaderDividerPlumbingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E04B49801F51D2F37502BE /* SidebarGroupHeaderDividerPlumbingTests.swift */; };
@@ -4661,6 +4662,8 @@
 		C0DE36230000000000000001 /* WorkspaceFinderDirectoryResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE36230000000000000002 /* WorkspaceFinderDirectoryResolver.swift */; };
 		F0ACC0DE000000000000000B /* WorkspaceForkAgentConversationAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ACC0DE000000000000000C /* WorkspaceForkAgentConversationAvailability.swift */; };
 		F0ACC0DE0000000000000005 /* WorkspaceForkConversationContextMenuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ACC0DE0000000000000006 /* WorkspaceForkConversationContextMenuTests.swift */; };
+		440D4CF4C7DDA5295C15D79B /* WorkspaceGroupAutoColorResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BB18C6D2860DD91CB69FDE /* WorkspaceGroupAutoColorResolverTests.swift */; };
+		7B3A458440C1B84D84FA927A /* WorkspaceGroupColorNormalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2464CD34FA5CD675B243A68C /* WorkspaceGroupColorNormalizationTests.swift */; };
 		9137C0019137C0019137C001 /* WorkspaceGroupCycleShortcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9137C0029137C0029137C002 /* WorkspaceGroupCycleShortcutTests.swift */; };
 		C9A57203C9A57203C9A57203 /* WorkspaceGroupMenuSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A57204C9A57204C9A57204 /* WorkspaceGroupMenuSnapshot.swift */; };
 		C9A57206C9A57206C9A57206 /* WorkspaceGroupMoveToMenuState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A57205C9A57205C9A57205 /* WorkspaceGroupMoveToMenuState.swift */; };
@@ -8206,6 +8209,7 @@
 		B8624D060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarFocusBoundaryLifecycleTests.swift; sourceTree = "<group>"; };
 		A8624F0C0000000000000002 /* SidebarFocusBoundaryReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar/SidebarFocusBoundaryReference.swift; sourceTree = "<group>"; };
 		8175A0010000000000000002 /* SidebarGitProcessCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarGitProcessCompositionTests.swift; sourceTree = "<group>"; };
+		B96E24D0C42C96F247747CAB /* SidebarGroupAutoColorSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupAutoColorSettingsTests.swift"; sourceTree = "<group>"; };
 		34CF9010969FE3A4F716B232 /* SidebarGroupDividerAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupDividerAppearanceTests.swift"; sourceTree = "<group>"; };
 		5046B3760C3B8C7B84EC803D /* SidebarGroupDividersSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupDividersSettingsTests.swift"; sourceTree = "<group>"; };
 		48E04B49801F51D2F37502BE /* SidebarGroupHeaderDividerPlumbingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarGroupHeaderDividerPlumbingTests.swift"; sourceTree = "<group>"; };
@@ -9348,6 +9352,8 @@
 		C0DE36230000000000000002 /* WorkspaceFinderDirectoryResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceFinderDirectoryResolver.swift; sourceTree = "<group>"; };
 		F0ACC0DE000000000000000C /* WorkspaceForkAgentConversationAvailability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceForkAgentConversationAvailability.swift; sourceTree = "<group>"; };
 		F0ACC0DE0000000000000006 /* WorkspaceForkConversationContextMenuTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceForkConversationContextMenuTests.swift; sourceTree = "<group>"; };
+		73BB18C6D2860DD91CB69FDE /* WorkspaceGroupAutoColorResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceGroupAutoColorResolverTests.swift"; sourceTree = "<group>"; };
+		2464CD34FA5CD675B243A68C /* WorkspaceGroupColorNormalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkspaceGroupColorNormalizationTests.swift"; sourceTree = "<group>"; };
 		9137C0029137C0029137C002 /* WorkspaceGroupCycleShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceGroupCycleShortcutTests.swift; sourceTree = "<group>"; };
 		C9A57204C9A57204C9A57204 /* WorkspaceGroupMenuSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceGroupMenuSnapshot.swift; sourceTree = "<group>"; };
 		C9A57205C9A57205C9A57205 /* WorkspaceGroupMoveToMenuState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceGroupMoveToMenuState.swift; sourceTree = "<group>"; };
@@ -14388,6 +14394,9 @@
 				A6FA6CA3BD8C6FB44634D416 /* WorkspaceContentViewVisibilityTests+AgentIndex.swift */,
 				C978CC3C2D3FCCE66696C72C /* CLIKiroGlobalHooksTests.swift */,
 				B88325A2907EB7D69739349B /* ClaudeBackgroundWorkDrainTests.swift */,
+				2464CD34FA5CD675B243A68C /* WorkspaceGroupColorNormalizationTests.swift */,
+				B96E24D0C42C96F247747CAB /* SidebarGroupAutoColorSettingsTests.swift */,
+				73BB18C6D2860DD91CB69FDE /* WorkspaceGroupAutoColorResolverTests.swift */,
 				852B556644233DBABC239B30 /* WorkspaceAutoColorSettingsFileTests.swift */,
 				E8E2EA0BF0A58711C6112B14 /* WorkspaceAutoColorTests.swift */,
 				EECDBA1A1EEF1C295F755424 /* SidebarAutoColorTests.swift */,
@@ -19487,6 +19496,7 @@
 				A7FD1002 /* SidebarFileDropFindRoutingTests.swift in Sources */,
 				B8624C060000000000000006 /* SidebarFocusBoundaryLifecycleTests.swift in Sources */,
 				8175A0010000000000000001 /* SidebarGitProcessCompositionTests.swift in Sources */,
+				7D8ED5C15EA1BE3037BE0F81 /* SidebarGroupAutoColorSettingsTests.swift in Sources */,
 				EAEB8DD53EE969F4A1515AC7 /* SidebarGroupDividerAppearanceTests.swift in Sources */,
 				D001BB48845BA64944C24902 /* SidebarGroupDividersSettingsTests.swift in Sources */,
 				DDDBEB1CC61EDAFD1469DD75 /* SidebarGroupHeaderDividerPlumbingTests.swift in Sources */,
@@ -19756,6 +19766,8 @@
 				9504D5F00000000000000001 /* WorkspaceDragSplitFocusTests.swift in Sources */,
 				72DB1838A0F1B710BFB45DC1 /* WorkspaceEnvironmentTests.swift in Sources */,
 				F0ACC0DE0000000000000005 /* WorkspaceForkConversationContextMenuTests.swift in Sources */,
+				440D4CF4C7DDA5295C15D79B /* WorkspaceGroupAutoColorResolverTests.swift in Sources */,
+				7B3A458440C1B84D84FA927A /* WorkspaceGroupColorNormalizationTests.swift in Sources */,
 				9137C0019137C0019137C001 /* WorkspaceGroupCycleShortcutTests.swift in Sources */,
 				C9A57401C9A57401C9A57401 /* WorkspaceGroupMoveToMenuStateTests.swift in Sources */,
 				9164A0019164A0019164A001 /* WorkspaceGroupNumberedSelectionTests.swift in Sources */,

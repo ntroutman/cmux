@@ -17,6 +17,13 @@ struct SidebarGroupHeaderRowModel: Equatable, Hashable {
     // `var` only so `hasHeightEquivalentContent` can neutralize the group
     // color when comparing heights; the stored value stays authoritative.
     var tintHex: String?
+    /// The group's manually set color, nil when the header color comes from a
+    /// config or nothing; the Group Color menu's Clear Color and checkmark key
+    /// off this, never the effective ``tintHex``. Paint-only.
+    var customColorHex: String? = nil
+    /// The `brightenInDarkMode` setting for the Group Color menu's swatches.
+    /// Paint-only.
+    var brightenInDarkMode: Bool = true
     let isCollapsed: Bool
     let isPinned: Bool
     let isAnchorActive: Bool
@@ -79,18 +86,24 @@ struct SidebarGroupHeaderRowModel: Equatable, Hashable {
 
     /// Equality over every field that can influence the measured header height,
     /// mirroring ``SidebarWorkspaceRowModel/hasHeightEquivalentContent(to:)``.
-    /// A group recolor rewrites `tintHex`, `bandStyle`, the multi-selection
-    /// wash and the anchor-active hairline, none of which move the header, so
-    /// those paint-only fields are neutralized while the top gap, first-row
-    /// fact, divider flag, name and status content stay. The AppKit height
-    /// cache keys on this, so a recolor repaints without re-measuring the
-    /// header; toggling the setting (name size + gap) still does, correctly.
+    /// A group recolor rewrites `tintHex`, `customColorHex`, `bandStyle`, the
+    /// multi-selection wash and the anchor-active hairline, and the brighten
+    /// setting only changes swatch and band paint; none of these move the
+    /// header, so those paint-only fields are neutralized while the top gap,
+    /// first-row fact, divider flag, name and status content stay. The AppKit
+    /// height cache keys on this, so a recolor repaints without re-measuring
+    /// the header; toggling the setting (name size + gap) still does,
+    /// correctly.
     func hasHeightEquivalentContent(to other: Self) -> Bool {
         if self == other { return true }
         var normalizedSelf = self
         var normalizedOther = other
         normalizedSelf.tintHex = nil
         normalizedOther.tintHex = nil
+        normalizedSelf.customColorHex = nil
+        normalizedOther.customColorHex = nil
+        normalizedSelf.brightenInDarkMode = true
+        normalizedOther.brightenInDarkMode = true
         normalizedSelf.bandStyle = nil
         normalizedOther.bandStyle = nil
         normalizedSelf.multiSelectionBackgroundStyle = .clear
@@ -120,6 +133,10 @@ struct SidebarGroupHeaderRowActions {
     let onDelete: () -> Void
     let onEditConfig: () -> Void
     let onOpenDocs: () -> Void
+    /// Sets (or, with nil, clears) the context-clicked group's manual color.
+    var onSetColor: (String?) -> Void = { _ in }
+    /// Asks for a hex color and applies it to the context-clicked group.
+    var onChooseCustomColor: () -> Void = {}
     /// Resolves current notification availability for retained rows.
     var notificationState: () -> NotificationState = { .unavailable }
 }

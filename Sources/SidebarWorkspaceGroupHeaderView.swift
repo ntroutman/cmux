@@ -16,6 +16,8 @@ struct SidebarWorkspaceGroupHeaderView: View, Equatable {
             lhs.name == rhs.name &&
             lhs.iconSymbol == rhs.iconSymbol &&
             lhs.tintHex == rhs.tintHex &&
+            lhs.customColorHex == rhs.customColorHex &&
+            lhs.brightenInDarkMode == rhs.brightenInDarkMode &&
             lhs.isCollapsed == rhs.isCollapsed &&
             lhs.isPinned == rhs.isPinned &&
             lhs.isAnchorActive == rhs.isAnchorActive &&
@@ -56,6 +58,10 @@ struct SidebarWorkspaceGroupHeaderView: View, Equatable {
     let name: String
     let iconSymbol: String
     let tintHex: String?
+    /// The group's manually set color; see the row snapshot's field.
+    var customColorHex: String? = nil
+    /// The `brightenInDarkMode` setting for the Group Color menu's swatches.
+    var brightenInDarkMode: Bool = true
     let isCollapsed: Bool
     let isPinned: Bool
     let isAnchorActive: Bool
@@ -166,6 +172,63 @@ struct SidebarWorkspaceGroupHeaderView: View, Equatable {
 
     private var selectionCornerRadius: CGFloat {
         isMultiSelected && !isAnchorActive ? 6 : 4
+    }
+
+    /// Mirrors the Workspace Color menu. Clear Color and the checkmark key off
+    /// the manual color: a config-derived tint has nothing to clear and must
+    /// not look chosen.
+    @ViewBuilder
+    private var groupColorMenu: some View {
+        Menu(String(localized: "workspaceGroup.contextMenu.color", defaultValue: "Group Color")) {
+            let palette = WorkspaceTabColorSettings.palette()
+
+            if customColorHex != nil {
+                Button {
+                    actions.onSetColor(nil)
+                } label: {
+                    Label(String(localized: "contextMenu.clearColor", defaultValue: "Clear Color"), systemImage: "xmark.circle")
+                }
+            }
+
+            Button {
+                actions.onChooseCustomColor()
+            } label: {
+                Label(String(localized: "contextMenu.chooseCustomColor", defaultValue: "Choose Custom Color…"), systemImage: "paintpalette")
+            }
+
+            if !palette.isEmpty {
+                Divider()
+            }
+
+            ForEach(palette, id: \.id) { entry in
+                let isSelected = WorkspaceTabColorSettings.paletteEntryMatches(
+                    currentHex: customColorHex,
+                    entryHex: entry.hex
+                )
+                Button {
+                    actions.onSetColor(entry.hex)
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark")
+                            .opacity(isSelected ? 1 : 0)
+                            .frame(width: 12)
+                        Image(nsImage: coloredCircleImage(color: groupColorSwatch(for: entry.hex)))
+                        Text(entry.name)
+                    }
+                }
+            }
+        }
+    }
+
+    /// Unlike the workspace menu's swatch, never force-brightened: group
+    /// headers have no left-rail rendering to match.
+    private func groupColorSwatch(for hex: String) -> NSColor {
+        WorkspaceTabColorSettings.displayNSColor(
+            hex: hex,
+            colorScheme: colorScheme,
+            forceBright: false,
+            brightenInDarkMode: brightenInDarkMode
+        ) ?? NSColor(hex: hex) ?? .gray
     }
 
     var body: some View {
@@ -402,6 +465,7 @@ struct SidebarWorkspaceGroupHeaderView: View, Equatable {
                     ),
                 action: actions.onTogglePinned
             )
+            groupColorMenu
             Divider()
             Button(
                 String(

@@ -659,7 +659,8 @@ final class SidebarGroupHeaderTableCellView: NSTableCellView {
         ))
     }
 
-    private func makeHeaderMenu() -> NSMenu {
+    /// Internal so tests can inspect the menu without synthesizing a right-click.
+    func makeHeaderMenu() -> NSMenu {
         guard let model, let actions else { return NSMenu() }
         let menu = trackedMenu()
         // Resolve availability at menu-open time. The row may have retained an
@@ -681,6 +682,7 @@ final class SidebarGroupHeaderTableCellView: NSTableCellView {
                 : String(localized: "workspaceGroup.contextMenu.pin", defaultValue: "Pin Group"),
             action: actions.onTogglePinned
         ))
+        addColorMenu(to: menu, model: model, actions: actions)
         menu.addItem(.separator())
         menu.addItem(menuItem(
             String(localized: "workspaceGroup.contextMenu.markRead", defaultValue: "Mark Group as Read"),
@@ -722,6 +724,52 @@ final class SidebarGroupHeaderTableCellView: NSTableCellView {
             action: actions.onDelete
         ))
         return menu
+    }
+
+    /// Mirrors the workspace row's Workspace Color submenu. Clear Color and the
+    /// checkmark key off the manual color: a config-derived tint has nothing to
+    /// clear and must not look chosen.
+    private func addColorMenu(
+        to menu: NSMenu,
+        model: SidebarGroupHeaderRowModel,
+        actions: SidebarGroupHeaderRowActions
+    ) {
+        let submenu = NSMenu()
+        submenu.autoenablesItems = false
+        let palette = WorkspaceTabColorSettings.palette()
+
+        if model.customColorHex != nil {
+            let clearItem = menuItem(String(localized: "contextMenu.clearColor", defaultValue: "Clear Color")) {
+                actions.onSetColor(nil)
+            }
+            clearItem.image = RenderableSystemSymbol.configuredAppKitImage(
+                systemName: "xmark.circle", pointSize: 13, weight: nil
+            )
+            submenu.addItem(clearItem)
+        }
+
+        let customItem = menuItem(
+            String(localized: "contextMenu.chooseCustomColor", defaultValue: "Choose Custom Color…"),
+            action: actions.onChooseCustomColor
+        )
+        customItem.image = RenderableSystemSymbol.configuredAppKitImage(
+            systemName: "paintpalette", pointSize: 13, weight: nil
+        )
+        submenu.addItem(customItem)
+
+        if !palette.isEmpty {
+            submenu.addItem(.separator())
+        }
+        SidebarWorkspaceRowColorMenu(
+            currentColorHex: model.customColorHex,
+            colorScheme: model.colorSchemeIsDark ? .dark : .light,
+            brightenInDarkMode: model.brightenInDarkMode
+        ).addPaletteItems(to: submenu, palette: palette) { hex in
+            actions.onSetColor(hex)
+        }
+        let parent = menuItem(String(localized: "workspaceGroup.contextMenu.color", defaultValue: "Group Color")) {}
+        parent.submenu = submenu
+        menu.addItem(parent)
     }
 }
 

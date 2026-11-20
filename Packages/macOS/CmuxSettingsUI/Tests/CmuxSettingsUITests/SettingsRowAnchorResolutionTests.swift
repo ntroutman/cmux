@@ -139,6 +139,7 @@ struct SettingsRowAnchorResolutionTests {
         "sidebar.showCustomMetadata",
         "sidebar.compactAgentStatus",
         "sidebar.groupDividers",
+        "sidebar.groupAutoColor",
         "sidebar.showLog",
         "sidebar.showNotificationMessage",
         "sidebar.notificationMessageLineLimit",

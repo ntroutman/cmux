@@ -38,6 +38,7 @@ public struct SidebarSection: View {
     @State var showMetadata: DefaultsValueModel<Bool>
     @State private var compactAgentStatus: DefaultsValueModel<Bool>
     @State private var groupDividers: DefaultsValueModel<Bool>
+    @State private var groupAutoColor: DefaultsValueModel<Bool>
     @State private var rightMaxWidth: DefaultsValueModel<Double>
     @State private var rememberedRightMaxWidth: DefaultsValueModel<Double>
     public init(defaultsStore: UserDefaultsSettingsStore, catalog: SettingCatalog, hostActions: SettingsHostActions) {
@@ -73,6 +74,7 @@ public struct SidebarSection: View {
         _showMetadata = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.sidebar.showCustomMetadata))
         _compactAgentStatus = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.sidebar.compactAgentStatus))
         _groupDividers = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.sidebar.groupDividers))
+        _groupAutoColor = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.sidebar.groupAutoColor))
         _rightMaxWidth = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.sidebar.rightMaxWidth))
         _rememberedRightMaxWidth = State(initialValue: DefaultsValueModel(store: defaultsStore, key: catalog.sidebar.rememberedRightMaxWidth))
     }
@@ -114,6 +116,7 @@ public struct SidebarSection: View {
             showMetadata,
             compactAgentStatus,
             groupDividers,
+            groupAutoColor,
             rightMaxWidth,
             rememberedRightMaxWidth,
         ]
@@ -549,6 +552,17 @@ public struct SidebarSection: View {
                 subtitle: String(localized: "settings.app.groupDividers.subtitle", defaultValue: "Tint each group's header and run a guide down its members.")
             ) {
                 Toggle("", isOn: Binding(get: { groupDividers.current }, set: { groupDividers.set($0) }))
+                    .labelsHidden()
+                    .controlSize(.small)
+            }
+            SettingsCardDivider()
+
+            SettingsCardRow(
+                configurationReview: .json("sidebar.groupAutoColor"),
+                String(localized: "settings.app.groupAutoColor", defaultValue: "Automatic group colors"),
+                subtitle: String(localized: "settings.app.groupAutoColor.subtitle", defaultValue: "Color each group from its name when it has no color of its own.")
+            ) {
+                Toggle("", isOn: Binding(get: { groupAutoColor.current }, set: { groupAutoColor.set($0) }))
                     .labelsHidden()
                     .controlSize(.small)
             }

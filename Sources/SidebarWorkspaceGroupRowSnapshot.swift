@@ -13,6 +13,13 @@ struct SidebarWorkspaceGroupRowSnapshot {
     let name: String
     let iconSymbol: String
     let tintHex: String?
+    /// The group's manually set color, nil when the header color comes from a
+    /// config or nothing; the Group Color menu's Clear Color and checkmark key
+    /// off this, never the effective ``tintHex``.
+    var customColorHex: String? = nil
+    /// The `brightenInDarkMode` setting, carried so the menu draws its swatches
+    /// without reading settings across the list boundary.
+    var brightenInDarkMode: Bool = true
     let isCollapsed: Bool
     let isPinned: Bool
     let isAnchorActive: Bool

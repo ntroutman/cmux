@@ -278,6 +278,24 @@ Makes workspace group boundaries read clearly. Each group's collapsible header s
 - Turn it off to restore the flat list exactly: no band, no top gap, no guide, and the smaller group header name.
 - The top gap changes the header row's frame, so drop-before-group indicators center in the new gap; drag and drop targets are unchanged.
 
+## `sidebar.groupAutoColor`
+
+Colors each workspace group from its name when it has no color of its own. A group with neither a color set from **Group Color** (or `cmux workspace-group set-color`) nor a `color` in its per-directory `workspaceGroups.byCwd` entry gets one of the built-in workspace colors, picked from a hash of the group name, so it holds steady across relaunches. A group whose pick is already taken, by another automatic group or by a group's own or config color, moves to the next free color while the palette has one. See [Group colors](workspace-groups.md#group-colors) for the full order.
+
+```json
+{
+  "sidebar": {
+    "groupAutoColor": true
+  }
+}
+```
+
+- Default: `true`.
+- Turn it off to show groups without a color of their own untinted, as before. Toggle it from **Settings > Sidebar > Automatic group colors**.
+- The palette is the built-in entries of `workspaceColors.colors` with your hexes; colors added under other names are left out, and entries that share a hex count once. Editing it recolors automatic groups.
+- Nothing is stored: renaming a group can change its automatic color.
+- A malformed group color, set manually or in the per-directory config, counts as absent whether this setting is on or off, so the group falls through to the next rung instead of showing no tint.
+
 ## `terminal.showTextBoxOnNewTerminals` and `terminal.focusTextBoxOnNewTerminals`
 
 `terminal.showTextBoxOnNewTerminals` opens the TextBox on newly-created terminal sessions without moving keyboard focus into it.

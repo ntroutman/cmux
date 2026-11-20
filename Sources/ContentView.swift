@@ -12016,7 +12016,8 @@ struct VerticalTabsSidebar: View, Equatable {
                 let anchorCwd = group.liveAnchorWorkspaceId
                     .flatMap { workspaceById[$0]?.currentDirectory }
                 return cmuxConfigStore.resolveWorkspaceGroupConfig(forCwd: anchorCwd)?.color
-            }
+            },
+            autoPalette: tabItemSettings.groupAutoColorPalette
         )
         let isWorkspaceRowRendered: (UUID) -> Bool = {
             workspaceSnapshotCache.value(for: $0) != nil

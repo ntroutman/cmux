@@ -2467,8 +2467,15 @@ class TabManager: ObservableObject {
         workspaceGrouping.setWorkspaceGroupPinned(groupId: groupId, isPinned: isPinned)
     }
 
+    /// Every app writer of a group color (the sidebar menu, the socket's
+    /// `workspace.group.set_color`) goes through here, so each stores the
+    /// same `#RRGGBB` spelling. Nil, empty and unparseable input clear the
+    /// color, matching `Workspace.setCustomColor`.
     func setWorkspaceGroupColor(groupId: UUID, hex: String?) {
-        workspaceGrouping.setWorkspaceGroupColor(groupId: groupId, hex: hex)
+        workspaceGrouping.setWorkspaceGroupColor(
+            groupId: groupId,
+            hex: hex.flatMap(WorkspaceTabColorSettings.normalizedHex)
+        )
     }
 
     @discardableResult

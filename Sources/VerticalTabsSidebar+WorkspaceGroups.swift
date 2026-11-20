@@ -9,22 +9,90 @@ import CmuxWorkspaces
 
 extension VerticalTabsSidebar {
     /// Effective header color hex per group, resolved once per sidebar refresh
-    /// so the header icon, band, and guide all read the same value below the
-    /// list boundary. Matches the rule the header icon already used: the
-    /// group's own custom color wins, else the matching per-directory
-    /// workspace-group config color (`configColor`), else no entry. Groups with
-    /// no effective color are omitted so callers index with an optional lookup.
+    /// so the header icon, band, guide, and multi-selection wash all read the
+    /// same value below the list boundary. Precedence: the group's own custom
+    /// color, else the matching per-directory workspace-group config color
+    /// (`configColor`), else an automatic color drawn from `autoPalette` by a
+    /// stable hash of the group's name, else no entry. Groups with no effective
+    /// color are omitted so callers index with an optional lookup.
+    ///
+    /// A manual or config value that does not normalize counts as absent, so a
+    /// malformed stored color falls to the next rung instead of painting
+    /// neutral. Stored values are not rewritten. `autoPalette` empty means
+    /// automatic colors are off or have nothing to draw from; it has no default
+    /// so every caller states which.
+    ///
+    /// Automatic groups probe in name order (plain `String` `<`, scalar order,
+    /// so a locale change cannot reorder colliders; ties by id) for the first
+    /// slot no other group already wears, manual and config colors included,
+    /// and reuse the hashed slot only when every slot is taken. Nothing is
+    /// cached: the same groups, colors and palette give the same result on
+    /// every refresh and after a relaunch.
     static func groupColorHexByGroupId(
         groups: [WorkspaceGroup],
-        configColor: (WorkspaceGroup) -> String?
+        configColor: (WorkspaceGroup) -> String?,
+        autoPalette: [String]
     ) -> [UUID: String] {
         var result: [UUID: String] = [:]
         result.reserveCapacity(groups.count)
+        let normalizedPalette = autoPalette.map { WorkspaceTabColorSettings.normalizedHex($0) ?? $0 }
+        var occupiedSlots = Set<Int>()
+        var uncolored: [WorkspaceGroup] = []
         for group in groups {
-            guard let color = group.customColor ?? configColor(group) else { continue }
+            let color = group.customColor.flatMap(WorkspaceTabColorSettings.normalizedHex)
+                ?? configColor(group).flatMap(WorkspaceTabColorSettings.normalizedHex)
+            guard let color else {
+                uncolored.append(group)
+                continue
+            }
             result[group.id] = color
+            for (slot, entry) in normalizedPalette.enumerated() where entry == color {
+                occupiedSlots.insert(slot)
+            }
+        }
+        guard !normalizedPalette.isEmpty else { return result }
+
+        let slotCount = normalizedPalette.count
+        let ordered = uncolored.sorted { lhs, rhs in
+            lhs.name != rhs.name ? lhs.name < rhs.name : lhs.id.uuidString < rhs.id.uuidString
+        }
+        for group in ordered {
+            let start = Int(fnv1a64(group.name) % UInt64(slotCount))
+            let slot = (0..<slotCount)
+                .lazy
+                .map { (start + $0) % slotCount }
+                .first { !occupiedSlots.contains($0) } ?? start
+            occupiedSlots.insert(slot)
+            result[group.id] = normalizedPalette[slot]
         }
         return result
+    }
+
+    /// FNV-1a/64 over UTF-8: deterministic across processes, unlike `Hasher`,
+    /// so automatic group colors survive a relaunch. Deliberately a copy of
+    /// `RemoteHostColorRegistry.stableHash` rather than a call: the "Workspaces
+    /// automatically color themselves" epic moves that hash into a shared
+    /// palette type, which is the eventual single home for both once it lands.
+    static func fnv1a64(_ string: String) -> UInt64 {
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325 // FNV offset basis
+        for byte in string.utf8 {
+            hash ^= UInt64(byte)
+            hash = hash &* 0x0000_0100_0000_01b3 // FNV prime
+        }
+        return hash
+    }
+
+    /// The color facts both header builders carry below the list boundary:
+    /// the effective color that paints the header (`tintHex`), the group's own
+    /// manual color that the Group Color menu's Clear Color and checkmark key
+    /// off (`customColorHex`, nil for a config-only color), and the dark-mode
+    /// brighten setting for the menu's swatches.
+    static func sidebarGroupHeaderColorInputs(
+        group: WorkspaceGroup,
+        groupColorHexByGroupId: [UUID: String],
+        brightenInDarkMode: Bool
+    ) -> (tintHex: String?, customColorHex: String?, brightenInDarkMode: Bool) {
+        (groupColorHexByGroupId[group.id], group.customColor, brightenInDarkMode)
     }
 
     /// The two computed header-band facts — the band fill and the scaled top
@@ -77,7 +145,12 @@ extension VerticalTabsSidebar {
             && selectedTabIds.count > 1
         let anchorCwd = liveAnchorId.flatMap { renderContext.workspaceById[$0]?.currentDirectory }
         let resolvedConfig = cmuxConfigStore.resolveWorkspaceGroupConfig(forCwd: anchorCwd)
-        let effectiveColor = renderContext.groupColorHexByGroupId[group.id]
+        let colorInputs = VerticalTabsSidebar.sidebarGroupHeaderColorInputs(
+            group: group,
+            groupColorHexByGroupId: renderContext.groupColorHexByGroupId,
+            brightenInDarkMode: settings.brightenInDarkMode
+        )
+        let effectiveColor = colorInputs.tintHex
         let effectiveIcon = RenderableSystemSymbol.resolvedWorkspaceGroupIcon(
             explicit: group.iconSymbol,
             configured: resolvedConfig?.iconSymbol
@@ -172,6 +245,8 @@ extension VerticalTabsSidebar {
             name: group.name,
             iconSymbol: effectiveIcon,
             tintHex: effectiveColor,
+            customColorHex: colorInputs.customColorHex,
+            brightenInDarkMode: colorInputs.brightenInDarkMode,
             isCollapsed: group.isCollapsed,
             isPinned: group.isPinned,
             isAnchorActive: isAnchorActive,
@@ -279,7 +354,12 @@ extension VerticalTabsSidebar {
             && selectedTabIds.count > 1
         let anchorCwd = liveAnchorId.flatMap { renderContext.workspaceById[$0]?.currentDirectory }
         let resolvedConfig = cmuxConfigStore.resolveWorkspaceGroupConfig(forCwd: anchorCwd)
-        let effectiveColor = renderContext.groupColorHexByGroupId[group.id]
+        let colorInputs = VerticalTabsSidebar.sidebarGroupHeaderColorInputs(
+            group: group,
+            groupColorHexByGroupId: renderContext.groupColorHexByGroupId,
+            brightenInDarkMode: settings.brightenInDarkMode
+        )
+        let effectiveColor = colorInputs.tintHex
         let effectiveIcon = RenderableSystemSymbol.resolvedWorkspaceGroupIcon(
             explicit: group.iconSymbol,
             configured: resolvedConfig?.iconSymbol
@@ -377,6 +457,8 @@ extension VerticalTabsSidebar {
             name: group.name,
             iconSymbol: effectiveIcon,
             tintHex: effectiveColor,
+            customColorHex: colorInputs.customColorHex,
+            brightenInDarkMode: colorInputs.brightenInDarkMode,
             isCollapsed: group.isCollapsed,
             isPinned: group.isPinned,
             isAnchorActive: isAnchorActive,
@@ -436,6 +518,8 @@ extension VerticalTabsSidebar {
             name: snapshot.name,
             iconSymbol: snapshot.iconSymbol,
             tintHex: snapshot.tintHex,
+            customColorHex: snapshot.customColorHex,
+            brightenInDarkMode: snapshot.brightenInDarkMode,
             isCollapsed: snapshot.isCollapsed,
             isPinned: snapshot.isPinned,
             isAnchorActive: snapshot.isAnchorActive,
@@ -668,7 +752,41 @@ extension VerticalTabsSidebar {
             }
         )
         actions.notificationState = resolveNotificationState
+        let colorActions = Self.makeWorkspaceGroupColorActions(groupId: groupId, tabManager: tabManager)
+        actions.onSetColor = colorActions.onSetColor
+        actions.onChooseCustomColor = colorActions.onChooseCustomColor
         return actions
+    }
+
+    /// The Group Color menu's actions for one header. Both are bound to the
+    /// context-clicked header's `groupId` and take no selection input, so a
+    /// multi-selection of several anchors is neither recolored nor changed.
+    /// Every write goes through `TabManager.setWorkspaceGroupColor`, the path
+    /// the CLI's `set-color` uses.
+    @MainActor
+    static func makeWorkspaceGroupColorActions(
+        groupId: UUID,
+        tabManager: TabManager
+    ) -> (onSetColor: (String?) -> Void, onChooseCustomColor: () -> Void) {
+        let onSetColor: (String?) -> Void = { [weak tabManager] hex in
+            tabManager?.setWorkspaceGroupColor(groupId: groupId, hex: hex)
+        }
+        let onChooseCustomColor: () -> Void = { [weak tabManager] in
+            guard let tabManager else { return }
+            let manualColor = tabManager.workspaceGroups
+                .first(where: { $0.id == groupId })?.customColor
+            // Same window lookup as `onRename`: the window holding the live
+            // anchor, so the alert attaches to the sidebar that was clicked.
+            let presentingWindow = tabManager.workspaceGroupAnchor(for: groupId).flatMap {
+                AppDelegate.shared?.mainWindowContainingWorkspace($0.id)
+            }
+            guard let hex = WorkspaceCustomColorPrompt.runForGroup(
+                currentHex: manualColor,
+                presentingWindow: presentingWindow
+            ) else { return }
+            onSetColor(hex)
+        }
+        return (onSetColor, onChooseCustomColor)
     }
 
     /// Applies one shared group-header selection action to the live anchor.

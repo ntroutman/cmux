@@ -26,6 +26,12 @@ The sidebar layout, top to bottom:
 1. Pinned top-level rows (workspaces and groups).
 2. Unpinned top-level rows (workspaces and groups).
 
+### Group colors
+
+A group's color tints its header icon, the header band and the member guide (see [`sidebar.groupDividers`](configuration.md#sidebargroupdividers)). Set it from the header's **Group Color** submenu: pick a palette swatch, **Choose Custom Color…** for any hex, or **Clear Color** (shown only when the group has a color of its own) to remove it. The menu writes the same stored value as `cmux workspace-group set-color <group-id> --hex "#RRGGBB"`; omit `--hex` to clear. A group with no color of its own can take the `color` of its anchor's per-directory entry under [Configuration](#configuration), and otherwise gets an automatic color picked from the group's name. Automatic colors come from the built-in workspace colors, with your edits to their hexes in `workspaceColors.colors`; colors you added under other names are not used. Turn them off with [`sidebar.groupAutoColor`](configuration.md#sidebargroupautocolor) or **Settings > Sidebar > Automatic group colors**.
+
+Precedence: the group's own color, then the per-directory config `color`, then the automatic color (when `sidebar.groupAutoColor` is on), then no tint. Clear Color drops the group to the next rung. Automatic colors are never stored, so renaming a group can change its automatic color, and editing the palette recolors groups that use one.
+
 ## Creating a group
 
 ### From the keyboard (`⌃⌘G` or `⌘⇧G`)
@@ -42,7 +48,7 @@ Right-click any workspace in the sidebar, choose **New Empty Workspace Group** f
 
 ### From the group header context menu
 
-Right-click an existing group's header for: **Rename Group…**, **Pin / Unpin Group**, **Edit Group Config…** (opens `~/.config/cmux/cmux.json`), **Open Workspace Groups Docs**, **Ungroup Workspaces**, **Delete Group**. Ungroup Workspaces keeps the workspaces and removes only the group container. Delete Group closes the group header workspace and every workspace inside the group; if the group contains child workspaces, it prompts for confirmation first.
+Right-click an existing group's header for: **Rename Group…**, **Pin / Unpin Group**, **Group Color**, **Edit Group Config…** (opens `~/.config/cmux/cmux.json`), **Open Workspace Groups Docs**, **Ungroup Workspaces**, **Delete Group**. Ungroup Workspaces keeps the workspaces and removes only the group container. Delete Group closes the group header workspace and every workspace inside the group; if the group contains child workspaces, it prompts for confirmation first.
 
 ### From the `+` button on a group header
 

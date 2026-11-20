@@ -231,6 +231,9 @@ has ready-to-copy ones.
   schema that you want to keep.
 - Color a workspace from the CLI: `cmux workspace-action set-color Amber` or
   `cmux workspace-action --action set-color --color "#C0392B"`.
+- Color a workspace group from its header's **Group Color** menu or with
+  `cmux workspace-group set-color <group-id> --hex "#C0392B"`; groups without a
+  color are colored from their name unless `sidebar.groupAutoColor` is off.
 - `notifications.paneFlashColor` recolors the unread pane ring and pane flash.
   `notifications.unreadPaneRing` and `notifications.paneFlash` turn them off.
 

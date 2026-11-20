@@ -194,9 +194,12 @@ struct SidebarAutoColorTests {
         #expect(await sidebar.converge { sidebar.colorHex(of: member) == worktrees.firstHex })
 
         let configStore = CmuxConfigStore()
+        // Automatic group colors are off here (empty palette), so a nil header
+        // color proves the automatic workspace color alone never reaches the header.
         let headerColors = VerticalTabsSidebar.groupColorHexByGroupId(
             groups: sidebar.manager.workspaceGroups,
-            configColor: { _ in configStore.resolveWorkspaceGroupConfig(forCwd: anchor.currentDirectory)?.color }
+            configColor: { _ in configStore.resolveWorkspaceGroupConfig(forCwd: anchor.currentDirectory)?.color },
+            autoPalette: []
         )
         #expect(group.customColor == nil)
         #expect(headerColors[groupId] == nil)

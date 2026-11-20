@@ -25,8 +25,10 @@ public struct WorkspaceGroup: Identifiable, Equatable, Sendable {
     /// Current header anchor state.
     public var anchor: WorkspaceGroupAnchor
     /// Group-level color override (hex string). When nil, falls back to the
-    /// cwd-config color resolved from `cmux.json` for the anchor's cwd, then
-    /// to no tint.
+    /// cwd-config color resolved from `cmux.json` for the anchor's cwd; the
+    /// app may then apply an automatic color derived from the group's name
+    /// before falling back to no tint. This package stores the manual value
+    /// only; the app resolves both fallbacks.
     public var customColor: String?
     /// SF symbol name for the header icon. When nil, defaults to `folder.fill`.
     public var iconSymbol: String?

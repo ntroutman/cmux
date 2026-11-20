@@ -142,7 +142,111 @@ struct SidebarGroupHeaderDividerPlumbingTests {
         )
     }
 
+    // MARK: Group color inputs
+
+    @Test
+    func colorInputsCarryManualColorSeparatelyFromEffectiveColor() {
+        let manual = "#C0392B"
+        let configColor = "#3FAE6A"
+        let manualGroup = makeGroup(customColor: manual)
+        let configOnlyGroup = makeGroup(customColor: nil)
+
+        let manualInputs = VerticalTabsSidebar.sidebarGroupHeaderColorInputs(
+            group: manualGroup,
+            groupColorHexByGroupId: [manualGroup.id: manual],
+            brightenInDarkMode: true
+        )
+        let configOnlyInputs = VerticalTabsSidebar.sidebarGroupHeaderColorInputs(
+            group: configOnlyGroup,
+            groupColorHexByGroupId: [configOnlyGroup.id: configColor],
+            brightenInDarkMode: false
+        )
+
+        #expect(manualInputs.tintHex == manual)
+        #expect(manualInputs.customColorHex == manual)
+        #expect(manualInputs.brightenInDarkMode)
+        // A config color paints the header but is not a manual choice, so the
+        // menu's Clear Color and checkmark must not see it.
+        #expect(configOnlyInputs.tintHex == configColor)
+        #expect(configOnlyInputs.customColorHex == nil)
+        #expect(configOnlyInputs.brightenInDarkMode == false)
+    }
+
+    @Test
+    func manualColorAndBrightenAreHeightNeutral() {
+        let env = makeEnvironment()
+        let base = makeModel(customColorHex: nil, brightenInDarkMode: true)
+        let manuallyColored = makeModel(customColorHex: "#C0392B", brightenInDarkMode: true)
+        let notBrightened = makeModel(customColorHex: nil, brightenInDarkMode: false)
+
+        #expect(
+            makeConfig(base, env).hasEquivalentContent(to: makeConfig(manuallyColored, env)) == false
+        )
+        #expect(
+            makeConfig(base, env).hasEquivalentContent(to: makeConfig(notBrightened, env)) == false
+        )
+        #expect(makeConfig(base, env).hasEquivalentHeightContent(to: makeConfig(manuallyColored, env)))
+        #expect(makeConfig(base, env).hasEquivalentHeightContent(to: makeConfig(notBrightened, env)))
+    }
+
+    @Test
+    func setColorTargetsOnlyTheClickedGroupAndKeepsSelection() throws {
+        let manager = makeTabManager()
+        let firstGroupId = try #require(manager.createWorkspaceGroup(name: "First"))
+        let secondGroupId = try #require(manager.createWorkspaceGroup(name: "Second"))
+        let firstAnchor = try #require(manager.workspaceGroupAnchor(for: firstGroupId)?.id)
+        let secondAnchor = try #require(manager.workspaceGroupAnchor(for: secondGroupId)?.id)
+        manager.setWorkspaceGroupColor(groupId: secondGroupId, hex: "#3FAE6A")
+        // Both header anchors multi-selected, as Command-click leaves them,
+        // with the second group focused: a selection-driven action would
+        // recolor the second group too.
+        manager.sidebarMultiSelection.replaceSelection(with: [firstAnchor, secondAnchor])
+        let selectedWorkspaceId = manager.selectedTabId
+
+        let actions = VerticalTabsSidebar.makeWorkspaceGroupColorActions(
+            groupId: firstGroupId,
+            tabManager: manager
+        )
+        actions.onSetColor("#c0392b")
+
+        let first = try #require(manager.workspaceGroups.first { $0.id == firstGroupId })
+        let second = try #require(manager.workspaceGroups.first { $0.id == secondGroupId })
+        #expect(first.customColor == "#C0392B")
+        #expect(second.customColor == "#3FAE6A")
+        #expect(manager.sidebarSelectedWorkspaceIds == [firstAnchor, secondAnchor])
+        #expect(manager.selectedTabId == selectedWorkspaceId)
+
+        actions.onSetColor(nil)
+        #expect(manager.workspaceGroups.first { $0.id == firstGroupId }?.customColor == nil)
+        #expect(manager.workspaceGroups.first { $0.id == secondGroupId }?.customColor == "#3FAE6A")
+    }
+
     // MARK: Fixtures
+
+    private func makeTabManager() -> TabManager {
+        let suiteName = "cmux.group-header-plumbing-tests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let manager = TabManager(
+            autoWelcomeIfNeeded: false,
+            settings: UserDefaultsSettingsClient(defaults: defaults),
+            closeTabWarningDefaults: defaults
+        )
+        manager.addWorkspace(autoWelcomeIfNeeded: false)
+        return manager
+    }
+
+    private func makeGroup(customColor: String?) -> WorkspaceGroup {
+        WorkspaceGroup(
+            id: UUID(),
+            name: "Group",
+            isCollapsed: false,
+            isPinned: false,
+            anchorWorkspaceId: UUID(),
+            customColor: customColor,
+            iconSymbol: nil
+        )
+    }
 
     private func makeEnvironment() -> SidebarWorkspaceTableEnvironmentSnapshot {
         SidebarWorkspaceTableEnvironmentSnapshot(
@@ -175,6 +279,8 @@ struct SidebarGroupHeaderDividerPlumbingTests {
     private func makeModel(
         name: String = "Group",
         tintHex: String? = nil,
+        customColorHex: String? = nil,
+        brightenInDarkMode: Bool = true,
         bandStyle: SidebarWorkspaceRowBackgroundStyle? = nil,
         multiSelectionBackgroundStyle: SidebarWorkspaceRowBackgroundStyle = .clear,
         topGap: CGFloat = 0,
@@ -187,6 +293,8 @@ struct SidebarGroupHeaderDividerPlumbingTests {
             name: name,
             iconSymbol: "folder",
             tintHex: tintHex,
+            customColorHex: customColorHex,
+            brightenInDarkMode: brightenInDarkMode,
             isCollapsed: false,
             isPinned: false,
             isAnchorActive: false,

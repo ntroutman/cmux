@@ -527,7 +527,10 @@ public final class WorkspaceGroupCoordinator<Tab: WorkspaceTabRepresenting> {
         host?.workspaceOrderDidChange(movedWorkspaceIds: memberIds)
     }
 
-    /// Sets the group-level color override (hex string, nil clears).
+    /// Sets the group-level color override (hex string, nil clears). Stores
+    /// the value as given: app callers go through
+    /// `TabManager.setWorkspaceGroupColor`, which normalizes it, because this
+    /// package cannot see `WorkspaceTabColorSettings`.
     public func setWorkspaceGroupColor(groupId: UUID, hex: String?) {
         guard let index = model.workspaceGroups.firstIndex(where: { $0.id == groupId }) else { return }
         guard model.workspaceGroups[index].customColor != hex else { return }

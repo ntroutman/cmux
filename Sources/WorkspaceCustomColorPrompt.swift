@@ -1,11 +1,12 @@
 import AppKit
 
-/// The one "Custom Workspace Color" dialog, shared by the SwiftUI and AppKit
-/// sidebar rows. A hex value has no inline or palette editor, so this stays an
-/// alert; an invalid entry is explained in a follow-up alert.
+/// The one custom-color dialog, shared by the SwiftUI and AppKit sidebar rows
+/// for workspaces ("Custom Workspace Color") and groups ("Custom Group Color").
+/// A hex value has no inline or palette editor, so this stays an alert; an
+/// invalid entry is explained in a follow-up alert.
 @MainActor
 enum WorkspaceCustomColorPrompt {
-    /// Asks for a hex color and adds it to the custom palette.
+    /// Asks for a workspace's hex color and adds it to the custom palette.
     ///
     /// - Parameters:
     ///   - currentHex: The workspace's current color, used as the initial text.
@@ -13,8 +14,33 @@ enum WorkspaceCustomColorPrompt {
     /// - Returns: The normalized `#RRGGBB` value, or nil when the user cancels
     ///   or enters an invalid color.
     static func run(currentHex: String?, presentingWindow: NSWindow?) -> String? {
+        run(
+            title: String(localized: "alert.customColor.title", defaultValue: "Custom Workspace Color"),
+            currentHex: currentHex,
+            presentingWindow: presentingWindow
+        )
+    }
+
+    /// Asks for a workspace group's hex color and adds it to the shared custom
+    /// palette; identical to ``run(currentHex:presentingWindow:)`` apart from
+    /// the title.
+    ///
+    /// - Parameters:
+    ///   - currentHex: The group's manual color, used as the initial text.
+    ///   - presentingWindow: The window the alert attaches to.
+    /// - Returns: The normalized `#RRGGBB` value, or nil when the user cancels
+    ///   or enters an invalid color.
+    static func runForGroup(currentHex: String?, presentingWindow: NSWindow?) -> String? {
+        run(
+            title: String(localized: "alert.customGroupColor.title", defaultValue: "Custom Group Color"),
+            currentHex: currentHex,
+            presentingWindow: presentingWindow
+        )
+    }
+
+    private static func run(title: String, currentHex: String?, presentingWindow: NSWindow?) -> String? {
         let alert = NSAlert()
-        alert.messageText = String(localized: "alert.customColor.title", defaultValue: "Custom Workspace Color")
+        alert.messageText = title
         alert.informativeText = String(localized: "alert.customColor.message", defaultValue: "Enter a hex color in the format #RRGGBB.")
         let seed = currentHex ?? WorkspaceTabColorSettings.customPaletteEntries().first?.hex ?? ""
         let input = NSTextField(string: seed)

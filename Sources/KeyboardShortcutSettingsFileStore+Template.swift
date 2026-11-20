@@ -185,6 +185,7 @@ extension CmuxSettingsFileStore {
                     "showCustomMetadata": SidebarWorkspaceDetailDefaults.showCustomMetadata,
                     "compactAgentStatus": SidebarWorkspaceDetailDefaults.compactAgentStatus,
                     "groupDividers": SidebarWorkspaceDetailDefaults.groupDividers,
+                    "groupAutoColor": SidebarWorkspaceDetailDefaults.groupAutoColor,
                     "compactStatusIcons": [String: String](),
                 ],
             ],
